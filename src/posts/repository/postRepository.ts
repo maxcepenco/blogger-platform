@@ -26,5 +26,25 @@ export const postRepository = {
         }
         db.posts.push(newPost)
         return newPost;
+    },
+
+    updatePost( post: PostInputModel,id: string ) {
+        const indexPost = db.posts.find(p => p.id === id)
+        if(indexPost) {
+            indexPost.title = post.title;
+            indexPost.shortDescription = post.shortDescription
+            indexPost.content = post.content
+            indexPost.blogId = post.blogId
+            return true
+        }
+        return false
+    },
+
+    deletePost( id: string ) {
+        const indexPost = db.posts.findIndex(p => p.id === id)
+        if(indexPost === -1) {
+            return false
+        }
+        db.posts.splice(indexPost, 1)
     }
 }

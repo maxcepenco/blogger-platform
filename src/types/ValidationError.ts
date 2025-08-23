@@ -1,6 +1,6 @@
 
 
-export type FieldErrorModel = {
+export type ValidationErrorType = {
     message: string;
     field: string;
 }

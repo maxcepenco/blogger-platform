@@ -3,7 +3,7 @@ import {UriParamsInputDto} from "../../Dto/InputIUriParamsModel";
 import {BlogInputModel} from "../../Dto/BlogInputModel";
 import {blogRepository} from "../../repository/blogRepository";
 import {HttpStatuses} from "../../../core/httpSatuses";
-import {Request, Response} from "express";
+import {Response} from "express";
 
 
 export const updateBlog = (req:RequestWithParamsAndBody<UriParamsInputDto, BlogInputModel>,res:Response)  => {
