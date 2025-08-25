@@ -61,7 +61,7 @@ describe('Blogger-platform API',() => {
         const blogUpdateData: BlogInputModel = {
             name: 'Update name',
             description: 'Update name description',
-            websiteUri: 'https://example.com',
+            websiteUrl: 'https://example.com',
         }
         await updateBlog( app, createdBlog.id, blogUpdateData)
         const blogResponse = await getBlogById(app, createdBlog.id)

@@ -17,17 +17,17 @@ const descriptionValidation = body('description')
 .isLength({min: 1, max: 500})
 .withMessage('Length of description is not correct')
 
-const websiteUriValidation = body('websiteUri')
+const websiteUrlValidation = body('websiteUrl')
     .isString()
-    .withMessage('websiteUri should be string')
+    .withMessage('websiteUrl should be string')
     .trim()
     .isLength({min: 1, max: 100})
-    .withMessage('Length of  websiteUri is not correct')
+    .withMessage('Length of  websiteUrl is not correct')
     .matches(URL_REGEX)
-    .withMessage('websiteUri not correct')
+    .withMessage('websiteUrl not correct')
 
 export const blogInputDtoValidation =[
     nameValidation,
     descriptionValidation,
-    websiteUriValidation,
+    websiteUrlValidation,
 ]

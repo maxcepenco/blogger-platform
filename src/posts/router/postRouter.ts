@@ -14,8 +14,8 @@ export const postRouter = Router({});
 
 
 postRouter
-    .get('/:id',idValidation, getAllPosts)
-    .get('', findPostBiId)
+    .get('',getAllPosts )
+    .get('/:id',idValidation,findPostBiId)
     .post('',authValidationMiddleware,postInputDtoMiddleware,handlerValidationErrors, createPost)
     .put('/:id',authValidationMiddleware,idValidation,postInputDtoMiddleware,handlerValidationErrors, updatePost)
-    .delete('/:id',authValidationMiddleware,deletePost)
+    .delete('/:id',authValidationMiddleware,idValidation,deletePost)

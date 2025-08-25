@@ -34,7 +34,7 @@ export const postRepository = {
             indexPost.title = post.title;
             indexPost.shortDescription = post.shortDescription
             indexPost.content = post.content
-            indexPost.blogId = post.blogId
+            indexPost.blogId = post.blogId``
             return true
         }
         return false
@@ -46,5 +46,6 @@ export const postRepository = {
             return false
         }
         db.posts.splice(indexPost, 1)
+        return true
     }
 }

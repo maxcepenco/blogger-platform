@@ -23,7 +23,7 @@ export const handlerValidationErrors = (req:Request, res:Response, next: NextFun
          .array({onlyFirstError: true })
 
     if( errors.length > 0 ) {
-        res.status(HttpStatuses.BadRequest_400).json({errorMessages:errors})
+        res.status(HttpStatuses.BadRequest_400).json({errorsMessages:errors})
         return
     }
     next()
