@@ -1,5 +1,5 @@
 import {Router} from "express";
-import {getAllBlogHandler} from "./handlers/getAllBlogsHandler";
+import { getAllBlogs} from "./handlers/getAllBlogsHandler";
 import {createBlogHandler} from "./handlers/createBlogHandler";
 import {findBlogBiId} from "./handlers/getlBlogHandler";
 import {updateBlog} from "./handlers/updateBlogHandler";
@@ -11,7 +11,7 @@ import {blogInputDtoValidation} from "../../midleware/blogInputDateMidlleware";
 export const blogRouter = Router({});
 
 blogRouter
-    .get('', getAllBlogHandler)
+    .get('', getAllBlogs)
     .post('', blogInputDtoValidation, createBlogHandler)
     .get('/:id',idValidation ,findBlogBiId)
     .put('/:id',idValidation,blogInputDtoValidation, updateBlog)
