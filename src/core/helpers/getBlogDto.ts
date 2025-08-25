@@ -5,6 +5,6 @@ export function getBlogDto():BlogInputModel {
     return {
         name: 'Example 4',
         description: 'Example description 4',
-        webSiteUrl: 'https://example4.com',
+        websiteUri: 'https://example4.com',
     }
 }

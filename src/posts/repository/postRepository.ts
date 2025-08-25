@@ -5,7 +5,7 @@ import {PostInputModel} from "../Dto/PostInputModel";
 
 
 export const postRepository = {
-    findAllPosts(): Post[] {
+    findAllPosts(): PostViewModel[] {
         return db.posts.map(p =>({...p}))
     },
     findPostById(id: string):PostViewModel | null{

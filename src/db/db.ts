@@ -8,19 +8,19 @@ export const db = {
             id: '1',
             name: 'example 1',
             description: 'Example blog',
-            webSiteUrl:  'https://example.com',
+            websiteUri:  'https://example.com',
         },
         {
             id: '2',
             name: 'example 2',
             description: 'Example blog 2',
-            webSiteUrl:  'https://example2.com',
+            websiteUri:  'https://example2.com',
         },
         {
             id: '3',
             name: 'example 3',
             description: 'Example blog 3',
-            webSiteUrl:  'https://example3.com',
+            websiteUri:  'https://example3.com',
         }
     ],
     posts:<Post[]> [

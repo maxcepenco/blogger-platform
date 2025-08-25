@@ -16,5 +16,3 @@ blogRouter
     .get('/:id',idValidation ,findBlogBiId)
     .put('/:id',idValidation,blogInputDtoValidation, updateBlog)
     .delete('/:id',idValidation, deleteBlog);
-
-

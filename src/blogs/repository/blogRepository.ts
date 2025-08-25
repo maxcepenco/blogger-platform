@@ -14,7 +14,7 @@ export const blogRepository = {
             id: (Date.now()).toString(),
             name: blog.name,
             description: blog.description,
-            webSiteUrl: blog.webSiteUrl,
+            websiteUri: blog.websiteUri,
         }
         db.blogs.push(newBlog)
         return newBlog;
@@ -28,7 +28,7 @@ export const blogRepository = {
         if(indexBlog) {
             indexBlog.name = blog.name
             indexBlog.description = blog.description
-            indexBlog.webSiteUrl = blog.webSiteUrl
+            indexBlog.websiteUri = blog.websiteUri
             return true
             }
         return false
