@@ -20,7 +20,7 @@ const contentValidation = body('content')
     .isString()
     .withMessage('Content must be a string')
     .trim()
-    .isLength({max: 1000})
+    .isLength({min: 1,max: 1000})
     .withMessage('Content length not correct ')
 
 const blogIdValidation = body('blogId')

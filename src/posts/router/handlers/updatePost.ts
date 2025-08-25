@@ -10,6 +10,7 @@ export const updatePost = (req:RequestWithParamsAndBody<UriParamsInputDto, PostI
     const updateThisPost = postRepository.updatePost(req.body, req.params.id)
     if(!updateThisPost) {
         res.sendStatus(HttpStatuses.NotFound_404)
+        return
     }
     res.sendStatus(HttpStatuses.NoContent_204)
 }

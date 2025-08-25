@@ -30,11 +30,16 @@ export const postRepository = {
 
     updatePost( post: PostInputModel,id: string ) {
         const indexPost = db.posts.find(p => p.id === id)
+        const blog = db.blogs.find(b => b.id === post.blogId)
+        if(!blog) {
+            return false
+        }
         if(indexPost) {
             indexPost.title = post.title;
             indexPost.shortDescription = post.shortDescription
             indexPost.content = post.content
-            indexPost.blogId = post.blogId``
+            indexPost.blogId = post.blogId
+            indexPost.blogName = blog.name
             return true
         }
         return false
