@@ -17,3 +17,4 @@ export const updatePost = async (req:RequestWithParamsAndBody<UriParamsInputDto,
 }
 
 
+``

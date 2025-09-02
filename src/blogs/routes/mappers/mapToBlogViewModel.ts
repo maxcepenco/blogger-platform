@@ -8,7 +8,7 @@ export const  mapToBlogViewModel = (blog: WithId<Blog>): BlogViewModel => {
         name: blog.name,
         description: blog.description,
         websiteUrl: blog.websiteUrl,
-        createdAt: new Date().toISOString(),
+        createdAt: blog.createdAt,
         isMembership: false,
     }
 }

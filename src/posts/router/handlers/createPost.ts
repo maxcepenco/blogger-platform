@@ -18,7 +18,7 @@ export const createPost = async (req:RequestWithBody<PostInputModel>,res:Respons
         content:req.body.content,
         blogId: req.body.blogId,
         blogName: blog!.name,
-        createdAt: new Date().toString(),
+        createdAt: new Date().toISOString(),
 
     }
     const createdPost = await  postRepository.createPost(newPost)
