@@ -1,10 +1,14 @@
 import {Request, Response} from 'express';
-import {PostViewModel} from "../../Dto/PostViewModel";
 import {postRepository} from "../../repository/postRepository";
-import {HttpStatuses} from "../../../core/httpSatuses";
+import {HttpStatuses} from "../../../core/types/httpSatuses";
+import {mapPostToViewModel} from "../mappers/mapPostToViewModel";
 
-export const getAllPosts = (req:Request, res:Response) => {
-    const findAllPosts = postRepository.findAllPosts();
-    res.status(HttpStatuses.Ok_200).send(findAllPosts);
+export const getAllPosts = async (req:Request, res:Response) => {
+    const findAllPosts = await postRepository.findAllPosts();
+
+    const postViewModel = findAllPosts.map(mapPostToViewModel)
+
+    res.status(HttpStatuses.Ok_200).send(postViewModel);
 }
+
 

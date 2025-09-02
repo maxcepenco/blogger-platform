@@ -1,56 +1,31 @@
 import {Post} from "../Dto/Post";
-import {db} from "../../db/db";
-import {PostViewModel} from "../Dto/PostViewModel";
 import {PostInputModel} from "../Dto/PostInputModel";
+import {ObjectId, WithId} from "mongodb";
+import {postCollection} from "../../db/mongoDB";
 
 
 export const postRepository = {
-    findAllPosts(): PostViewModel[] {
-        return db.posts.map(p =>({...p}))
+   async findAllPosts(): Promise<WithId<Post>[]> {
+        return postCollection.find().toArray();
     },
-    findPostById(id: string):PostViewModel | null{
-        return  db.posts.find(c => c.id === id) || null
+    async findPostById(id: string): Promise<WithId<Post> | null>{
+       return postCollection.findOne({_id: new ObjectId(id)});
     },
-    createPost(post: PostInputModel): PostViewModel {
+    async createPost(newPost: Post): Promise<WithId<Post>> {
+       const insertResult = await postCollection.insertOne(newPost);
+       return {...newPost, _id:insertResult.insertedId}
 
-        const blog = db.blogs.find(b => b.id === post.blogId)!
-
-
-        const newPost = {
-            id: Date.now().toString(),
-            title: post.title,
-            shortDescription: post.shortDescription,
-            content: post.content,
-            blogId: post.blogId,
-            blogName:blog.name
-        }
-        db.posts.push(newPost)
-        return newPost;
     },
 
-    updatePost( post: PostInputModel,id: string ) {
-        const indexPost = db.posts.find(p => p.id === id)
-        const blog = db.blogs.find(b => b.id === post.blogId)
-        if(!blog) {
-            return false
-        }
-        if(indexPost) {
-            indexPost.title = post.title;
-            indexPost.shortDescription = post.shortDescription
-            indexPost.content = post.content
-            indexPost.blogId = post.blogId
-            indexPost.blogName = blog.name
-            return true
-        }
-        return false
+    async updatePost( id:string, dto:PostInputModel ): Promise<boolean> {
+       const updateResult = await postCollection.updateOne(
+           {_id: new ObjectId(id)},
+           {$set: dto}
+       )
+        return updateResult.matchedCount === 1
     },
-
-    deletePost( id: string ) {
-        const indexPost = db.posts.findIndex(p => p.id === id)
-        if(indexPost === -1) {
-            return false
-        }
-        db.posts.splice(indexPost, 1)
-        return true
+    async deletePost( id: string): Promise<boolean> {
+        const deleteResult = await postCollection.deleteOne({_id: new ObjectId(id)});
+        return deleteResult.deletedCount === 1
     }
 }

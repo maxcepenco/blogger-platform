@@ -1,8 +1,8 @@
-import {ValidationErrorDto} from "../types/ValidationErrorDto";
-import {ValidationErrorType} from "../types/ValidationError";
+import {ValidationErrorDto} from "../../types/ValidationErrorDto";
+import {ValidationErrorType} from "../../types/ValidationError";
 import {FieldValidationError, ValidationError, validationResult} from "express-validator";
 import {Request,Response,NextFunction} from "express";
-import {HttpStatuses} from "../core/httpSatuses";
+import {HttpStatuses} from "../types/httpSatuses";
 
  export const createErrorMessage = (errors: ValidationErrorType[]): ValidationErrorDto => {
     return {errorMessages: errors}

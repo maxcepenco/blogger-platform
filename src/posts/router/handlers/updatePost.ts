@@ -1,13 +1,14 @@
-import {RequestWithParamsAndBody} from "../../../core/RequestInputType";
+import {RequestWithParamsAndBody} from "../../../core/types/RequestInputType";
 import {UriParamsInputDto} from "../../../blogs/Dto/InputIUriParamsModel";
 import {PostInputModel} from "../../Dto/PostInputModel";
 import {postRepository} from "../../repository/postRepository";
-import {HttpStatuses} from "../../../core/httpSatuses";
+import {HttpStatuses} from "../../../core/types/httpSatuses";
 import {Response} from "express";
 
 
-export const updatePost = (req:RequestWithParamsAndBody<UriParamsInputDto, PostInputModel>,res:Response) => {
-    const updateThisPost = postRepository.updatePost(req.body, req.params.id)
+export const updatePost = async (req:RequestWithParamsAndBody<UriParamsInputDto, PostInputModel>,res:Response) => {
+
+    const updateThisPost = await postRepository.updatePost(req.params.id, req.body)
     if(!updateThisPost) {
         res.sendStatus(HttpStatuses.NotFound_404)
         return

@@ -1,18 +1,20 @@
-import {RequestWithParamsAndBody} from "../../../core/RequestInputType";
+import {RequestWithParamsAndBody} from "../../../core/types/RequestInputType";
 import {UriParamsInputDto} from "../../Dto/InputIUriParamsModel";
 import {BlogInputModel} from "../../Dto/BlogInputModel";
 import {blogRepository} from "../../repository/blogRepository";
-import {HttpStatuses} from "../../../core/httpSatuses";
+import {HttpStatuses} from "../../../core/types/httpSatuses";
 import {Response} from "express";
 
 
-export const updateBlog = (req:RequestWithParamsAndBody<UriParamsInputDto, BlogInputModel>,res:Response)  => {
+export const updateBlog = async (req:RequestWithParamsAndBody<UriParamsInputDto, BlogInputModel>,res:Response)  => {
     const index = req.params.id
 
-    const isUpdated = blogRepository.updateBlog(index, req.body)
-    if (!isUpdated) {
+
+    const isUpdateBlog = await blogRepository.updateBlog(index, req.body)
+    if (!isUpdateBlog) {
         res.sendStatus(HttpStatuses.NotFound_404)
         return
     }
     res.sendStatus(HttpStatuses.NoContent_204)
+
 }

@@ -1,5 +1,5 @@
 import {NextFunction} from "express";
-import {HttpStatuses} from "../core/httpSatuses";
+import {HttpStatuses} from "../types/httpSatuses";
 import {Request, Response} from "express";
 
 

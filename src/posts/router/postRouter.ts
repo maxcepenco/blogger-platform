@@ -4,10 +4,10 @@ import {findPostBiId} from "./handlers/getPost";
 import {createPost} from "./handlers/createPost";
 import {updatePost} from "./handlers/updatePost";
 import {deletePost} from "./handlers/deletePost";
-import {idValidation} from "../../midleware/validationInputIdMiddleware";
-import {postInputDtoMiddleware} from "../../midleware/postInputDateMiddleware";
-import {handlerValidationErrors} from "../../midleware/handlerValidationErrors";
-import {authValidationMiddleware} from "../../midleware/authValidationMiddleware";
+import {idValidation} from "../../core/midleware/validationInputIdMiddleware";
+import {postInputDtoMiddleware} from "../validatiion/postInputDateMiddleware";
+import {handlerValidationErrors} from "../../core/midleware/handlerValidationErrors";
+import {authValidationMiddleware} from "../../core/midleware/authValidationMiddleware";
 
 
 export const postRouter = Router({});

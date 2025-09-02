@@ -1,5 +1,5 @@
 import {body} from "express-validator";
-import {db} from "../db/db";
+import {blogRepository} from "../../blogs/repository/blogRepository";
 
 
 const titleValidation = body('title')
@@ -27,11 +27,13 @@ const blogIdValidation = body('blogId')
     .isString()
     .withMessage('Blog must be a string')
     .trim()
-    .isLength({min: 1})
-    .custom((value) => {
-        const blog =db.blogs.find( b=> b.id === value)
-        if(!blog) {
-            throw new Error('Blog not found')
+    .notEmpty()
+    .withMessage("BlogId is required")
+    .bail()
+    .custom(async (value) => {
+        const blog = await blogRepository.findById(value)
+        if (!blog) {
+            throw new Error('Blog with given id does not exist')
         }
         return true
     })
