@@ -15,3 +15,5 @@ export const updatePost = async (req:RequestWithParamsAndBody<UriParamsInputDto,
     }
     res.sendStatus(HttpStatuses.NoContent_204)
 }
+
+
