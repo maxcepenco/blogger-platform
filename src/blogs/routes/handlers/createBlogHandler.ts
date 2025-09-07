@@ -1,30 +1,30 @@
 import {blogRepository} from "../../repository/blogRepository";
 import {HttpStatuses} from "../../../core/types/httpSatuses";
-import {Request,Response}   from "express";
+import {Response} from "express";
 import {RequestWithBody} from "../../../core/types/RequestInputType";
 import {BlogInputModel} from "../../Dto/BlogInputModel";
 import {Blog} from "../../Dto/Blog";
 import {mapToBlogViewModel} from "../mappers/mapToBlogViewModel";
-
+import {blogService} from "../../application/blog.servece";
 
 
 export const createBlogHandler = async (req:RequestWithBody<BlogInputModel>, res: Response) => {
     try{
-    const newBlog: Blog = {
-        name: req.body.name,
-        description: req.body.description,
-        websiteUrl: req.body.websiteUrl,
-        createdAt: new Date().toISOString(),
-        isMembership: false
-    }
-    const createdBlog =  await blogRepository.createBlog(newBlog)
-    const blogViewModel = mapToBlogViewModel(createdBlog)
+        const createdBlog = await blogService.create(req.body);
+        const foundBlog = await blogService.findById(createdBlog)
+        const blogViewModel = mapToBlogViewModel(foundBlog)
 
-    res
-        .status(HttpStatuses.Created_201)
-        .send(blogViewModel)
-
-    }catch(e:unknown){
-        res.sendStatus(HttpStatuses.InternalServerError_500)
+        res
+            .status(HttpStatuses.Created_201)
+            .send(blogViewModel)
+    }catch (error){
+        res.status(HttpStatuses.BadRequest_400).send({
+            errorsMessages: [{
+                message: "Failed to create blog",
+                field: "general"
+            }]
+        });
     }
+
 }
+

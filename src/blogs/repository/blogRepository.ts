@@ -11,16 +11,26 @@ export const blogRepository = {
         return blogCollection.find().toArray();
     },
 
-    async findById(id: string): Promise<WithId<Blog> | null> {
-        if(!ObjectId.isValid(id)) {
-            return  null
+    async findById(id: string): Promise<WithId<Blog>> {
+
+        const result =await  blogCollection.findOne({_id: new ObjectId(id)})
+        if(!result) {
+            throw  new Error("No blog found.");
         }
-        return blogCollection.findOne({_id: new ObjectId(id)})
+        return result
     },
 
-    async createBlog(newBlog: Blog): Promise<WithId<Blog>> {
+ async findByIdForGet(id: string): Promise<WithId<Blog> | null> {
+
+        return await  blogCollection.findOne({_id: new ObjectId(id)})
+
+
+    },
+
+    async createBlog(newBlog: Blog): Promise<string> {
         const insertResult = await blogCollection.insertOne(newBlog);
-        return { ...newBlog,_id: insertResult.insertedId }
+        return insertResult.insertedId.toString();
+
     },
 
     async updateBlog(id: string, blog: BlogInputModel): Promise<boolean> {
