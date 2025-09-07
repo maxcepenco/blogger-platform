@@ -3,9 +3,11 @@ import {blogRepository} from "../../repository/blogRepository";
 import {HttpStatuses} from "../../../core/types/httpSatuses";
 import {mapToBlogViewModel} from "../mappers/mapToBlogViewModel";
 import {blogService} from "../../application/blog.servece";
+import {RequestWithParams} from "../../../core/types/RequestInputType";
+import {UriParamsInputDto} from "../../../core/types/InputIUriParamsModel";
 
 
-export const  findBlogBiId =async (req:Request, res:Response) => {
+export const  findBlogBiId =async (req:RequestWithParams<UriParamsInputDto>, res:Response) => {
 
         const id = req.params.id
         const foundBlog = await blogService.findByIdForGet(id);

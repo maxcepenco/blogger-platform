@@ -1,8 +1,8 @@
-import {BlogInputModel} from "../Dto/BlogInputModel";
-import {Blog} from "../Dto/Blog";
+import {BlogInputModel} from "../input/blog-input-model";
+import {Blog} from "../domain/Blog";
 import {blogRepository} from "../repository/blogRepository";
 import {WithId} from "mongodb";
-import {blogCollection} from "../../db/mongoDB";
+import {BlogQueryInput} from "../input/blog-query.input";
 
 export const blogService = {
     async create(blogDto: BlogInputModel):Promise<string> {
@@ -25,6 +25,18 @@ export const blogService = {
     },
 
     async updateBlog(id: string, blog: BlogInputModel): Promise<boolean> {
-        return  blogRepository.updateBlog(id, blog)
+        return  await blogRepository.updateBlog(id, blog)
+    },
+
+
+    async deleteBlog(id: string): Promise<boolean> {
+        return await  blogRepository.deleteBlog(id)
+    },
+
+
+    async findMany(inputParams:BlogQueryInput): Promise<{items :WithId<Blog>[]; totalCount: number}>{
+        return await blogRepository.findMany(inputParams)
+
     }
+
 }

@@ -1,13 +1,13 @@
 import {Router} from "express";
 import {getAllPosts} from "./handlers/GetAllPosts";
-import {findPostBiId} from "./handlers/getPost";
-import {createPost} from "./handlers/createPost";
+import {findPostBiId} from "./handlers/get-post-by-id";
 import {updatePost} from "./handlers/updatePost";
 import {deletePost} from "./handlers/deletePost";
 import {idValidation} from "../../core/midleware/validationInputIdMiddleware";
 import {postInputDtoMiddleware} from "../validatiion/postInputDateMiddleware";
 import {handlerValidationErrors} from "../../core/midleware/handlerValidationErrors";
 import {authValidationMiddleware} from "../../core/midleware/authValidationMiddleware";
+import {createPost} from "./handlers/create-post";
 
 
 export const postRouter = Router({});

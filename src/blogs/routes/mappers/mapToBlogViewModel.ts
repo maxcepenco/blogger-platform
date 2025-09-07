@@ -1,6 +1,6 @@
-import {Blog} from "../../Dto/Blog";
+import {Blog} from "../../domain/Blog";
 import {WithId} from "mongodb";
-import {BlogViewModel} from "../../Dto/BlogViweModel";
+import {BlogViewModel} from "../../output/blog-view-model";
 
 export const  mapToBlogViewModel = (blog: WithId<Blog>): BlogViewModel => {
     return {

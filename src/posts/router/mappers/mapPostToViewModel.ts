@@ -1,5 +1,5 @@
-import {PostViewModel} from "../../Dto/PostViewModel";
-import {Post} from "../../Dto/Post";
+import {PostViewModel} from "../../output/PostViewModel";
+import {Post} from "../../domain/Post";
 import {WithId} from "mongodb";
 
 export const  mapPostToViewModel = (post: WithId<Post>): PostViewModel => {

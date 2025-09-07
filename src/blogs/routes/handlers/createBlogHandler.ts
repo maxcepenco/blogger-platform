@@ -2,8 +2,8 @@ import {blogRepository} from "../../repository/blogRepository";
 import {HttpStatuses} from "../../../core/types/httpSatuses";
 import {Response} from "express";
 import {RequestWithBody} from "../../../core/types/RequestInputType";
-import {BlogInputModel} from "../../Dto/BlogInputModel";
-import {Blog} from "../../Dto/Blog";
+import {BlogInputModel} from "../../input/blog-input-model";
+import {Blog} from "../../domain/Blog";
 import {mapToBlogViewModel} from "../mappers/mapToBlogViewModel";
 import {blogService} from "../../application/blog.servece";
 
