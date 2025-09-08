@@ -1,5 +1,5 @@
 import {Router} from "express";
-import { getAllBlogs} from "./handlers/getAllBlogsHandler";
+import {getAllBlogs} from "./handlers/getAllBlogsHandler";
 import {createBlogHandler} from "./handlers/createBlogHandler";
 import {findBlogBiId} from "./handlers/getlBlogHandler";
 import {updateBlog} from "./handlers/updateBlogHandler";
@@ -14,9 +14,8 @@ import {
 import {BlogSortField} from "../input/blog-sort-field";
 import {getBlogPostList} from "./handlers/get-blog-post-list";
 import {PostSortField} from "../../posts/input/post-sort-field";
-import {postInputDtoMiddleware} from "../../posts/validatiion/postInputDateMiddleware";
-import {createPost} from "../../posts/router/handlers/create-post";
 import {createPostForBlog} from "./handlers/create-post-for-blog";
+import {BlogPostInputDtoMiddleware} from "../validation/blogPostInputDataMiddleware";
 
 
 export const blogRouter = Router({});
@@ -33,6 +32,6 @@ blogRouter
         paginationAndSortingValidation(PostSortField),
         getBlogPostList,
     )
-    .post('/:blogId/posts',authValidationMiddleware,idValidation, postInputDtoMiddleware,handlerValidationErrors, createPostForBlog)
+    .post('/:blogId/posts',authValidationMiddleware,BlogPostInputDtoMiddleware,handlerValidationErrors, createPostForBlog)
 
 
