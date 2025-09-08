@@ -1,19 +1,16 @@
-import {RequestWithParamsAndQuery} from "../../../core/types/RequestInputType";
-import {UriParamsInputDto} from "../../../core/types/InputIUriParamsModel";
-import {BlogQueryInput} from "../../input/blog-query.input";
 import {PostQueryInput} from "../../../posts/input/post-query.input";
 import {postService} from "../../../posts/application/post.service";
 import {mapToPostListPaginationOutput} from "../../../posts/router/mappers/map-to-post-list-pagination-output.util";
 import {HttpStatuses} from "../../../core/types/httpSatuses";
-import {Response,Request} from "express";
+import {Request, Response} from "express";
 
 
 export async function getBlogPostList(
-    req: Request<{ id: string }, {}, {}, PostQueryInput>,
+    req: Request<{ blogId: string }, {}, {}, PostQueryInput>,
     res: Response,
 ) {
     try{
-        const blogId = req.params.id;
+        const blogId = req.params.blogId;
         const  queryInput = req.query;
 
         const { items, totalCount } = await postService.findPostByBlog(

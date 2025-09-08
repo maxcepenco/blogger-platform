@@ -28,7 +28,7 @@ blogRouter
     .put('/:id',authValidationMiddleware,idValidation,blogInputDtoValidation,handlerValidationErrors, updateBlog)
     .delete('/:id',authValidationMiddleware,idValidation, deleteBlog)
     .get(
-        '/:id/rides',
+        '/:blogId/rides',
         idValidation,
         paginationAndSortingValidation(PostSortField),
         getBlogPostList,
