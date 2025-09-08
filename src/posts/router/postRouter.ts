@@ -18,7 +18,7 @@ export const postRouter = Router({});
 
 
 postRouter
-    .get('',paginationAndSortingValidation(PostSortField),getAllPosts )
+    .get('',getAllPosts )
     .get('/:id',idValidation,findPostBiId)
     .post('',authValidationMiddleware,postInputDtoMiddleware,handlerValidationErrors, createPost)
     .put('/:id',authValidationMiddleware,idValidation,postInputDtoMiddleware,handlerValidationErrors, updatePost)
