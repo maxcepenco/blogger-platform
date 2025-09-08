@@ -56,11 +56,12 @@ export const postRepository = {
 
        const skip = (pageNumber - 1) * pageSize;
        const filter = {}
+        const mongoSortDirection = sortDirection === SortDirection.Asc ? 1 : -1;
 
-       const [items, totalCount] = await Promise.all([
+        const [items, totalCount] = await Promise.all([
            postCollection
                .find(filter)
-               .sort({[sortBy]: sortDirection})
+               .sort({[sortBy]: mongoSortDirection})
                .skip(skip)
                .limit(pageSize)
                .toArray(),

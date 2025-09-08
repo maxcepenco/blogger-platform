@@ -22,16 +22,17 @@ import {blogIdValidation} from "../../core/midleware/validationInputBlogIdMiddle
 export const blogRouter = Router({});
 
 blogRouter
-    .get('',paginationAndSortingValidation(BlogSortField), getAllBlogs)
-    .post('',authValidationMiddleware, blogInputDtoValidation,handlerValidationErrors, createBlogHandler)
-    .get('/:id',findBlogBiId)
-    .put('/:id',authValidationMiddleware,idValidation,blogInputDtoValidation,handlerValidationErrors, updateBlog)
-    .delete('/:id',authValidationMiddleware,idValidation, deleteBlog)
     .get(
         '/:blogId/posts',
         paginationAndSortingValidation(PostSortField),
         getBlogPostList,
     )
+    .get('',paginationAndSortingValidation(BlogSortField), getAllBlogs)
+    .post('',authValidationMiddleware, blogInputDtoValidation,handlerValidationErrors, createBlogHandler)
+    .get('/:id',findBlogBiId)
+    .put('/:id',authValidationMiddleware,idValidation,blogInputDtoValidation,handlerValidationErrors, updateBlog)
+    .delete('/:id',authValidationMiddleware,idValidation, deleteBlog)
+
     .post('/:blogId/posts',authValidationMiddleware,BlogPostInputDtoMiddleware,handlerValidationErrors, createPostForBlog)
 
 
