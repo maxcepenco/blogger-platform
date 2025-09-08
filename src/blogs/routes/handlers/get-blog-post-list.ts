@@ -11,7 +11,7 @@ export async function getBlogPostList(
     req: Request<{ blogId: string }, {}, {}, PostQueryInput>,
     res: Response,
 ) {
-    try{
+
         const blogId = req.params.blogId;
 
         const blogExists = await blogRepository.findByIdForGet(blogId);
@@ -32,8 +32,6 @@ export async function getBlogPostList(
         )
         res.status(HttpStatuses.Ok_200).send(postListOutput)
 
-    }catch (error) {
-      res.sendStatus(HttpStatuses.NotFound_404)
-    }
+
 
 }
