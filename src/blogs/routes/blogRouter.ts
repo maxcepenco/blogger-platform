@@ -12,6 +12,11 @@ import {
     paginationAndSortingValidation
 } from "../../core/midleware/validation/query-pagination-sorting.validation-middleware";
 import {BlogSortField} from "../input/blog-sort-field";
+import {getBlogPostList} from "./handlers/get-blog-post-list";
+import {PostSortField} from "../../posts/input/post-sort-field";
+import {postInputDtoMiddleware} from "../../posts/validatiion/postInputDateMiddleware";
+import {createPost} from "../../posts/router/handlers/create-post";
+import {createPostForBlog} from "./handlers/create-post-for-blog";
 
 
 export const blogRouter = Router({});
@@ -20,6 +25,14 @@ blogRouter
     .get('',paginationAndSortingValidation(BlogSortField), getAllBlogs)
     .post('',authValidationMiddleware, blogInputDtoValidation,handlerValidationErrors, createBlogHandler)
     .get('/:id',findBlogBiId)
-    .post('',authValidationMiddleware, blogInputDtoValidation,handlerValidationErrors, createBlogHandler)
     .put('/:id',authValidationMiddleware,idValidation,blogInputDtoValidation,handlerValidationErrors, updateBlog)
-    .delete('/:id',authValidationMiddleware,idValidation, deleteBlog);
+    .delete('/:id',authValidationMiddleware,idValidation, deleteBlog)
+    .get(
+        '/:id/rides',
+        idValidation,
+        paginationAndSortingValidation(PostSortField),
+        getBlogPostList,
+    )
+    .post('/:id/posts',authValidationMiddleware, postInputDtoMiddleware,handlerValidationErrors, createPostForBlog)
+
+

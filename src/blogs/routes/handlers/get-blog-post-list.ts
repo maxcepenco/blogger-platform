@@ -5,11 +5,12 @@ import {PostQueryInput} from "../../../posts/input/post-query.input";
 import {postService} from "../../../posts/application/post.service";
 import {mapToPostListPaginationOutput} from "../../../posts/router/mappers/map-to-post-list-pagination-output.util";
 import {HttpStatuses} from "../../../core/types/httpSatuses";
-import {Response} from "express";
+import {Response,Request} from "express";
 
 
 export async function getBlogPostList(
-    req: RequestWithParamsAndQuery<UriParamsInputDto, PostQueryInput>, res:Response
+    req: Request<{ id: string }, {}, {}, PostQueryInput>,
+    res: Response,
 ) {
     try{
         const blogId = req.params.id;

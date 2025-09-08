@@ -6,7 +6,9 @@ import {blogService} from "../../application/blog.servece";
 import {mapToBlogListPaginationOutput} from "../mappers/map-to-blog-list-pagination-output.util";
 
 export const getAllBlogs =async ( req:RequestWithQuery<BlogQueryInput>, res:Response ) => {
+
     const queryInput = setDefaultSortAndPaginationIfNotExist(req.query)
+
     const result = await blogService.findMany(queryInput)
     const items = result.items;
     const totalCount = result.totalCount
