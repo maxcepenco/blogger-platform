@@ -73,7 +73,7 @@ export const postRepository = {
 
         const { pageNumber, pageSize, sortBy, sortDirection } = queryDto;
 
-        const filter = { 'blog.id': blogId };
+        const filter = { blogId: blogId };
         const skip = (pageNumber - 1) * pageSize;
 
         const [items, totalCount] = await Promise.all([

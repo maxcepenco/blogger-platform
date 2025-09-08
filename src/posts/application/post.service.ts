@@ -45,6 +45,7 @@ export const postService = {
     },
 
     async createPostForBlog(blogIdData:string, postData: blogPostInput):Promise<string> {
+
         const blog =await  blogRepository.findById(blogIdData);
 
         const newPost:Post = {

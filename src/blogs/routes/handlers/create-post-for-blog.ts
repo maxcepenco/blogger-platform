@@ -7,21 +7,16 @@ import {HttpStatuses} from "../../../core/types/httpSatuses";
 import {Response} from "express";
 
 
-export const createPostForBlog = async (req:RequestWithParamsAndBody<UriParamsInputDto, blogPostInput>,res:Response) => {
-    try{  const   blogId = req.params.id;
+export const createPostForBlog = async (req:RequestWithParamsAndBody<{ blogId:string }, blogPostInput>,res:Response) => {
+    try{  const   blogId = req.params.blogId;
         const     postData = req.body;
 
         const newPost =  await postService.createPostForBlog(blogId, postData);
 
         const foundCreatedPost = await postService.findById(newPost)
         const postOutput = mapPostToViewModel(foundCreatedPost)
-        res.status(HttpStatuses.Created_201).send(postOutput)}catch (error) {
-        res.status(HttpStatuses.BadRequest_400).send({
-            errorsMessages: [{
-                message: "Failed to create blog",
-                field: "general"
-            }]
-        })
+        res.status(HttpStatuses.Created_201).send(postOutput)
+    }catch (error) {
+        res.sendStatus(HttpStatuses.NotFound_404)
     }
-
 }
