@@ -16,6 +16,7 @@ import {getBlogPostList} from "./handlers/get-blog-post-list";
 import {PostSortField} from "../../posts/input/post-sort-field";
 import {createPostForBlog} from "./handlers/create-post-for-blog";
 import {BlogPostInputDtoMiddleware} from "../validation/blogPostInputDataMiddleware";
+import {blogIdValidation} from "../../core/midleware/validationInputBlogIdMiddleware";
 
 
 export const blogRouter = Router({});
@@ -32,6 +33,6 @@ blogRouter
         paginationAndSortingValidation(PostSortField),
         getBlogPostList,
     )
-    .post('/:blogId/posts',authValidationMiddleware,BlogPostInputDtoMiddleware,handlerValidationErrors, createPostForBlog)
+    .post('/:blogId/posts',authValidationMiddleware,blogIdValidation,BlogPostInputDtoMiddleware,handlerValidationErrors, createPostForBlog)
 
 
