@@ -21,7 +21,7 @@ import {BlogPostInputDtoMiddleware} from "../validation/blogPostInputDataMiddlew
 export const blogRouter = Router({});
 
 blogRouter
-    .get('', getAllBlogs)
+    .get('', paginationAndSortingValidation, getAllBlogs)
     .post('', authValidationMiddleware, blogInputDtoValidation, handlerValidationErrors, createBlogHandler)
     .get('/:blogId/posts', getBlogPostList)
     .post('/:blogId/posts', authValidationMiddleware, BlogPostInputDtoMiddleware, handlerValidationErrors, createPostForBlog)

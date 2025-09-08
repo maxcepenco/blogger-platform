@@ -2,13 +2,15 @@ import {Response} from 'express';
 import {HttpStatuses} from "../../../core/types/httpSatuses";
 import {RequestWithQuery} from "../../../core/types/RequestInputType";
 import {PostQueryInput} from "../../input/post-query.input";
-import {setDefaultSortAndPaginationIfNotExist} from "../../../core/helpers/set-default-sort-and-pagination";
+
 import {postService} from "../../application/post.service";
 import {mapToPostListPaginationOutput} from "../mappers/map-to-post-list-pagination-output.util";
+import {PostSortField} from "../../input/post-sort-field";
+import {setDefaultPostQueryParams} from "../../../core/helpers/set-default-sort-and-pagination";
 
-export const getAllPosts = async (req:RequestWithQuery<PostQueryInput>, res:Response) => {
+export const getAllPosts = async (req: RequestWithQuery<PostQueryInput>, res: Response) => {
 
- const queryInput = setDefaultSortAndPaginationIfNotExist(req.query)
+    const queryInput = setDefaultPostQueryParams(req.query)
 
     const {items, totalCount} = await postService.findMany(queryInput)
 
@@ -17,9 +19,8 @@ export const getAllPosts = async (req:RequestWithQuery<PostQueryInput>, res:Resp
         queryInput.pageNumber,
         queryInput.pageSize,
         totalCount,
-        )
+    )
     res.status(HttpStatuses.Ok_200).send(postListOutput)
-
 }
 
 

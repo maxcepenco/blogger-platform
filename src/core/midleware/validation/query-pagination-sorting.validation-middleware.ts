@@ -15,11 +15,18 @@ export const paginationAndSortingDefault: PaginationAndSorting<string> = {
 };
 
 export function paginationAndSortingValidation<T extends string>(
-    sortFieldsEnum: Record<string, T>,
+    sortFieldsEnum?: Record<string, T>,
 ) {
-    const allowedSortFields = Object.values(sortFieldsEnum);
+    const allowedSortFields = sortFieldsEnum ? Object.values(sortFieldsEnum) : [DEFAULT_SORT_BY];
+    const defaultSortBy = sortFieldsEnum ? Object.values(sortFieldsEnum)[0] : DEFAULT_SORT_BY;
 
     return [
+        // searchNameTerm - согласно Swagger: может быть null, string
+        query('searchNameTerm')
+            .optional({ nullable: true })
+            .isString()
+            .withMessage('Search name term must be a string'),
+
         query('pageNumber')
             .optional()
             .default(DEFAULT_PAGE_NUMBER)
@@ -36,7 +43,7 @@ export function paginationAndSortingValidation<T extends string>(
 
         query('sortBy')
             .optional()
-            .default(Object.values(sortFieldsEnum)[0]) // Первое значение enum как дефолтное
+            .default(defaultSortBy)
             .isIn(allowedSortFields)
             .withMessage(
                 `Invalid sort field. Allowed values: ${allowedSortFields.join(', ')}`,

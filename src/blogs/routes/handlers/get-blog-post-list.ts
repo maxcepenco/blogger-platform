@@ -4,7 +4,9 @@ import {mapToPostListPaginationOutput} from "../../../posts/router/mappers/map-t
 import {HttpStatuses} from "../../../core/types/httpSatuses";
 import {Request, Response} from "express";
 import {blogRepository} from "../../repository/blogRepository";
-import {setDefaultSortAndPaginationIfNotExist} from "../../../core/helpers/set-default-sort-and-pagination";
+import {
+        setDefaultBlogQueryParams, setDefaultPostQueryParams,
+} from "../../../core/helpers/set-default-sort-and-pagination";
 
 
 export async function getBlogPostList(
@@ -18,7 +20,7 @@ export async function getBlogPostList(
         if (!blogExists) {
             res.sendStatus(HttpStatuses.NotFound_404)
         }
-        const  queryInput = setDefaultSortAndPaginationIfNotExist(req.query)
+        const  queryInput = setDefaultPostQueryParams(req.query)
 
         const { items, totalCount } = await postService.findPostByBlog(
             queryInput,

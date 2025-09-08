@@ -14,16 +14,16 @@ export const blogRepository = {
 
     async findById(id: string): Promise<WithId<Blog>> {
 
-        const result =await  blogCollection.findOne({_id: new ObjectId(id)})
-        if(!result) {
-            throw  new Error("No blog found.");
+        const result = await blogCollection.findOne({_id: new ObjectId(id)})
+        if (!result) {
+            throw new Error("No blog found.");
         }
         return result
     },
 
- async findByIdForGet(id: string): Promise<WithId<Blog> | null> {
+    async findByIdForGet(id: string): Promise<WithId<Blog> | null> {
 
-        return await  blogCollection.findOne({_id: new ObjectId(id)})
+        return await blogCollection.findOne({_id: new ObjectId(id)})
     },
 
     async createBlog(newBlog: Blog): Promise<string> {
@@ -36,14 +36,13 @@ export const blogRepository = {
         const updatedResult = await blogCollection.updateOne(
             {_id: new ObjectId(id)},
             {
-                $set:{
+                $set: {
                     name: blog.name,
                     description: blog.description,
                     websiteUrl: blog.websiteUrl
                 }
             }
-
-            )
+        )
 
         return updatedResult.matchedCount === 1
     },
@@ -55,38 +54,37 @@ export const blogRepository = {
 
 
 
-    async findMany(inputParams:BlogQueryInput): Promise<{items :WithId<Blog>[]; totalCount: number}> {
+    async findMany(inputParams: BlogQueryInput): Promise<{ items: WithId<Blog>[]; totalCount: number }> {
         const {
             searchNameTerm,
             pageNumber,
             pageSize,
             sortBy,
             sortDirection,
-        } =  inputParams;
-
+        } = inputParams;
 
         const skip = (pageNumber - 1) * pageSize;
-        const filter: any = {}
+        const filter: any = {};
 
-        if(searchNameTerm) {
-            filter.name = { $regex: searchNameTerm , $options: "i" };
+        if (searchNameTerm && searchNameTerm.trim() !== '') {
+            filter.name = {$regex: searchNameTerm.trim(), $options: "i"};
         }
+
         const mongoSortDirection = sortDirection === SortDirection.Asc ? 1 : -1;
 
-        const items = await blogCollection
-            .find(filter)
-            .sort({ [sortBy]:mongoSortDirection })
-            .skip(skip)
-            .limit(pageSize)
-            .toArray();
 
-        const totalCount = await blogCollection.countDocuments(filter);
+        const [items, totalCount] = await Promise.all([
+            blogCollection
+                .find(filter)
+                .sort({[sortBy]: mongoSortDirection})
+                .skip(skip)
+                .limit(pageSize)
+                .toArray(),
+            blogCollection.countDocuments(filter)
+        ]);
 
-        return {items, totalCount}
-
+        return {items, totalCount};
     }
 
 
-    }
-
-
+}
