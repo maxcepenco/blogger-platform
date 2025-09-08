@@ -5,6 +5,7 @@ import {blogCollection, postCollection} from "../../db/mongoDB";
 import {RepositoryNotFoundError} from "../../core/errors/response-not-found.error";
 import {Blog} from "../../blogs/domain/Blog";
 import {PostQueryInput} from "../input/post-query.input";
+import {SortDirection} from "../../core/types/sort-direction";
 
 
 export const postRepository = {
@@ -75,11 +76,12 @@ export const postRepository = {
 
         const filter = { blogId: blogId };
         const skip = (pageNumber - 1) * pageSize;
+        const mongoSortDirection = sortDirection === SortDirection.Asc ? 1 : -1;
 
         const [items, totalCount] = await Promise.all([
             postCollection
                 .find(filter)
-                .sort({ [sortBy]: sortDirection })
+                .sort({ [sortBy]: mongoSortDirection })
                 .skip(skip)
                 .limit(pageSize)
                 .toArray(),

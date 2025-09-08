@@ -3,6 +3,7 @@ import {ObjectId, WithId} from "mongodb";
 import {blogCollection} from "../../db/mongoDB";
 import {BlogInputModel} from "../input/blog-input-model";
 import {BlogQueryInput} from "../input/blog-query.input";
+import {SortDirection} from "../../core/types/sort-direction";
 
 
 export const blogRepository = {
@@ -70,10 +71,11 @@ export const blogRepository = {
         if(searchNameTerm) {
             filter.name = { $regex: searchNameTerm , $options: "i" };
         }
+        const mongoSortDirection = sortDirection === SortDirection.Asc ? 1 : -1;
 
         const items = await blogCollection
             .find(filter)
-            .sort({ [sortBy]:sortDirection })
+            .sort({ [sortBy]:mongoSortDirection })
             .skip(skip)
             .limit(pageSize)
             .toArray();
