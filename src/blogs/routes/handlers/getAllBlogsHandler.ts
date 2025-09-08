@@ -1,4 +1,4 @@
-import {Response} from "express";
+import {Request,Response} from "express";
 import {RequestWithQuery} from "../../../core/types/RequestInputType";
 import {BlogQueryInput} from "../../input/blog-query.input";
 import {blogService} from "../../application/blog.servece";
@@ -7,9 +7,12 @@ import {HttpStatuses} from "../../../core/types/httpSatuses";
 import {setDefaultBlogQueryParams} from "../../../core/helpers/set-default-sort-and-pagination";
 
 
-export const getAllBlogs = async (req: RequestWithQuery<BlogQueryInput>, res: Response) => {
+export const getAllBlogs = async (req: Request, res: Response) => {
     try {
-        const queryInput = setDefaultBlogQueryParams(req.query);
+
+        const query = req.query as Partial<BlogQueryInput>;
+
+        const queryInput = setDefaultBlogQueryParams(query);
 
         const result = await blogService.findMany(queryInput);
         const items = result.items;
@@ -24,9 +27,8 @@ export const getAllBlogs = async (req: RequestWithQuery<BlogQueryInput>, res: Re
 
         res.status(HttpStatuses.Ok_200).json(BlogListOutput);
     } catch (error) {
-        console.error('Error in getAllBlogs:', error);
-        res.status(HttpStatuses.InternalServerError_500).json({
-            error: 'Internal server error'
-        });
+        console.error('Error in getAllBlogs:', error);      // <-- уже есть
+        res.status(HttpStatuses.InternalServerError_500)
+            .json({ error: error instanceof Error ? error.message : 'Internal server error' });
     }
 };

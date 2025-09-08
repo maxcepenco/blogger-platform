@@ -8,25 +8,21 @@ import {idValidation} from "../../core/midleware/validationInputIdMiddleware";
 import {blogInputDtoValidation} from "../validation/blogInputDateMidlleware";
 import {authValidationMiddleware} from "../../core/midleware/authValidationMiddleware";
 import {handlerValidationErrors} from "../../core/midleware/handlerValidationErrors";
-import {
-    paginationAndSortingValidation
-} from "../../core/midleware/validation/query-pagination-sorting.validation-middleware";
-import {BlogSortField} from "../input/blog-sort-field";
 import {getBlogPostList} from "./handlers/get-blog-post-list";
-import {PostSortField} from "../../posts/input/post-sort-field";
 import {createPostForBlog} from "./handlers/create-post-for-blog";
 import {BlogPostInputDtoMiddleware} from "../validation/blogPostInputDataMiddleware";
+import {sanitizeQueryParams} from "../../core/midleware/validation/sanitize-qery-param";
 
 
 export const blogRouter = Router({});
 
 blogRouter
-    .get('', paginationAndSortingValidation, getAllBlogs)
+    .get('', sanitizeQueryParams, getAllBlogs)
     .post('', authValidationMiddleware, blogInputDtoValidation, handlerValidationErrors, createBlogHandler)
-    .get('/:blogId/posts', getBlogPostList)
+    .get('/:blogId/posts',sanitizeQueryParams, getBlogPostList)
     .post('/:blogId/posts', authValidationMiddleware, BlogPostInputDtoMiddleware, handlerValidationErrors, createPostForBlog)
 
-    .get('/:id', findBlogBiId)
+    .get('/:id',sanitizeQueryParams, findBlogBiId)
     .put('/:id', authValidationMiddleware, idValidation, blogInputDtoValidation, handlerValidationErrors, updateBlog)
     .delete('/:id', authValidationMiddleware, idValidation, deleteBlog)
 

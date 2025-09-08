@@ -7,8 +7,8 @@ import {PostSortField} from "../../posts/input/post-sort-field";
 
 export function setDefaultBlogQueryParams(query: any): BlogQueryInput {
     return {
-        pageNumber: query.pageNumber || 1,
-        pageSize: query.pageSize || 10,
+        pageNumber: parseInt(query.pageNumber, 10) || 1,
+        pageSize: parseInt(query.pageSize, 10) || 10,
         sortBy: (query.sortBy as BlogSortField) || BlogSortField.CreatedAt,
         sortDirection: query.sortDirection || SortDirection.Desc,
         searchNameTerm: query.searchNameTerm || undefined
@@ -17,10 +17,9 @@ export function setDefaultBlogQueryParams(query: any): BlogQueryInput {
 
 export function setDefaultPostQueryParams(query: any): PostQueryInput {
     return {
-        pageNumber: query.pageNumber || 1,
-        pageSize: query.pageSize || 10,
+        pageNumber: parseInt(query.pageNumber, 10) || 1,
+        pageSize: parseInt(query.pageSize, 10) || 10,
         sortBy: (query.sortBy as PostSortField) || PostSortField.CreatedAt,
         sortDirection: query.sortDirection || SortDirection.Desc,
-
     };
 }
