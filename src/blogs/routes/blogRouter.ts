@@ -32,6 +32,6 @@ blogRouter
         paginationAndSortingValidation(PostSortField),
         getBlogPostList,
     )
-    .post('/:blogId/posts',authValidationMiddleware,blogIdValidation,BlogPostInputDtoMiddleware,handlerValidationErrors, createPostForBlog)
+    .post('/:blogId/posts',authValidationMiddleware,BlogPostInputDtoMiddleware,handlerValidationErrors, createPostForBlog)
 
 

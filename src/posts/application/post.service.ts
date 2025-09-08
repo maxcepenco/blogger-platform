@@ -40,7 +40,6 @@ export const postService = {
     },
 
     async findPostByBlog(queryDto:PostQueryInput, driverId:string ): Promise<{items:WithId<Post>[], totalCount: number}> {
-        await blogRepository.findById(driverId)
         return postRepository.findPostByBlog(queryDto,  driverId )
     },
 
