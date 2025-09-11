@@ -2,8 +2,6 @@ import {Blog} from "../domain/Blog";
 import {ObjectId, WithId} from "mongodb";
 import {blogCollection} from "../../db/mongoDB";
 import {BlogInputModel} from "../input/blog-input-model";
-import {BlogQueryInput} from "../input/blog-query.input";
-import {SortDirection} from "../../core/types/sort-direction";
 
 
 export const blogRepository = {

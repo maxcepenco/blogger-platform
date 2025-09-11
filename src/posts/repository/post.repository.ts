@@ -1,11 +1,7 @@
 import {Post} from "../domain/Post";
 import {PostInputModel} from "../input/post-input-model";
-import {ObjectId, WithId} from "mongodb";
-import {blogCollection, postCollection} from "../../db/mongoDB";
-import {RepositoryNotFoundError} from "../../core/errors/response-not-found.error";
-import {Blog} from "../../blogs/domain/Blog";
-import {PostQueryInput} from "../input/post-query.input";
-import {SortDirection} from "../../core/types/sort-direction";
+import {ObjectId} from "mongodb";
+import {postCollection} from "../../db/mongoDB";
 
 
 export const postRepository = {

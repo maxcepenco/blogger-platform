@@ -1,7 +1,6 @@
 import {RequestWithParamsAndBody} from "../../../core/types/RequestInputType";
 import {UriParamsInputDto} from "../../../core/types/InputIUriParamsModel";
 import {BlogInputModel} from "../../input/blog-input-model";
-import {blogRepository} from "../../repository/blog.repository";
 import {HttpStatuses} from "../../../core/types/httpSatuses";
 import {Response} from "express";
 import {blogService} from "../../application/blog.servece";
