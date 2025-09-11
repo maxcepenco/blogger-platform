@@ -8,9 +8,6 @@ import {SortDirection} from "../../core/types/sort-direction";
 
 export const blogRepository = {
 
-    async findAllBlogs(): Promise<WithId<Blog>[]> {
-        return blogCollection.find().toArray();
-    },
 
     async findById(id: string): Promise<WithId<Blog>> {
 
@@ -54,37 +51,6 @@ export const blogRepository = {
 
 
 
-    async findMany(inputParams: BlogQueryInput): Promise<{ items: WithId<Blog>[]; totalCount: number }> {
-        const {
-            searchNameTerm,
-            pageNumber,
-            pageSize,
-            sortBy,
-            sortDirection,
-        } = inputParams;
-
-        const skip = (pageNumber - 1) * pageSize;
-        const filter: any = {};
-
-        if (searchNameTerm && searchNameTerm.trim() !== '') {
-            filter.name = {$regex: searchNameTerm.trim(), $options: "i"};
-        }
-
-        const mongoSortDirection = sortDirection === SortDirection.Asc ? 1 : -1;
-
-
-        const [items, totalCount] = await Promise.all([
-            blogCollection
-                .find(filter)
-                .sort({[sortBy]: mongoSortDirection})
-                .skip(skip)
-                .limit(pageSize)
-                .toArray(),
-            blogCollection.countDocuments(filter)
-        ]);
-
-        return {items, totalCount};
-    }
 
 
 }

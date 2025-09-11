@@ -1,6 +1,6 @@
 import {BlogInputModel} from "../input/blog-input-model";
 import {Blog} from "../domain/Blog";
-import {blogRepository} from "../repository/blogRepository";
+import {blogRepository} from "../repository/blog.repository";
 import {WithId} from "mongodb";
 import {BlogQueryInput} from "../input/blog-query.input";
 

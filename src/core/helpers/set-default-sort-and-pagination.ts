@@ -3,6 +3,7 @@ import {BlogSortField} from "../../blogs/input/blog-sort-field";
 import {BlogQueryInput} from "../../blogs/input/blog-query.input";
 import {PostQueryInput} from "../../posts/input/post-query.input";
 import {PostSortField} from "../../posts/input/post-sort-field";
+import {QueryParams} from "../types/QuareParams";
 
 
 export function setDefaultBlogQueryParams(query: any): BlogQueryInput {

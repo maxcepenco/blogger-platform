@@ -1,21 +1,20 @@
 import {RequestWithParams} from "../../../core/types/RequestInputType";
 import {UriParamsInputDto} from "../../../core/types/InputIUriParamsModel";
-import {postRepository} from "../../repository/postRepository";
 import {HttpStatuses} from "../../../core/types/httpSatuses";
 import {Response} from "express";
-import {mapPostToViewModel} from "../mappers/mapPostToViewModel";
-import {postService} from "../../application/post.service";
+import {postQueryRepository} from "../../repository/post.query-repository";
 
 
 export const  findPostBiId =  async (req:RequestWithParams<UriParamsInputDto>,res:Response) => {
     const index = req.params.id;
-    const foundPostById = await postService.findByIdForGet(index);
+
+    const foundPostById = await postQueryRepository.findPostById(index);
+
     if(!foundPostById) {
         return res.sendStatus(HttpStatuses.NotFound_404)
     }
 
-    const postViewModel = mapPostToViewModel(foundPostById);
-     res.status(HttpStatuses.Ok_200).send(postViewModel);
+     res.status(HttpStatuses.Ok_200).send(foundPostById);
 
 
 }

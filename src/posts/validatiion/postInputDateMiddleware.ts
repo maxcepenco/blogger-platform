@@ -1,5 +1,5 @@
 import {body} from "express-validator";
-import {blogRepository} from "../../blogs/repository/blogRepository";
+import {blogRepository} from "../../blogs/repository/blog.repository";
 
 
 const titleValidation = body('title')

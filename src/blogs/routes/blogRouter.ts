@@ -1,9 +1,9 @@
 import {Router} from "express";
-import {getAllBlogs} from "./handlers/getAllBlogsHandler";
-import {createBlogHandler} from "./handlers/createBlogHandler";
-import {findBlogBiId} from "./handlers/getlBlogHandler";
-import {updateBlog} from "./handlers/updateBlogHandler";
-import {deleteBlog} from "./handlers/deleteBlogHandler";
+import {getAllBlogs} from "./handlers/get-blogs-list";
+import {createBlog} from "./handlers/create-blog";
+import {findBlogBiId} from "./handlers/get-blog";
+import {updateBlog} from "./handlers/update-blog";
+import {deleteBlog} from "./handlers/delete-blog";
 import {idValidation} from "../../core/midleware/validationInputIdMiddleware";
 import {blogInputDtoValidation} from "../validation/blogInputDateMidlleware";
 import {authValidationMiddleware} from "../../core/midleware/authValidationMiddleware";
@@ -18,7 +18,7 @@ export const blogRouter = Router({});
 
 blogRouter
     .get('', sanitizeQueryParams, getAllBlogs)
-    .post('', authValidationMiddleware, blogInputDtoValidation, handlerValidationErrors, createBlogHandler)
+    .post('', authValidationMiddleware, blogInputDtoValidation, handlerValidationErrors, createBlog)
     .get('/:blogId/posts',sanitizeQueryParams, getBlogPostList)
     .post('/:blogId/posts', authValidationMiddleware, BlogPostInputDtoMiddleware, handlerValidationErrors, createPostForBlog)
 

@@ -1,6 +1,6 @@
 import {param} from 'express-validator';
 
-export const blogIdValidation = param('blogId')
+export const validateBlogId = param('blogId')
     .exists()
     .withMessage('ID is required')
     .isString()

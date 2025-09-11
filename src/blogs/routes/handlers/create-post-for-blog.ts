@@ -1,26 +1,33 @@
 import {RequestWithParamsAndBody} from "../../../core/types/RequestInputType";
 import {blogPostInput} from "../../input/blog-post-input-model";
 import {postService} from "../../../posts/application/post.service";
-import {mapPostToViewModel} from "../../../posts/router/mappers/mapPostToViewModel";
 import {HttpStatuses} from "../../../core/types/httpSatuses";
 import {Response} from "express";
-import {blogRepository} from "../../repository/blogRepository";
+import {blogQueryRepository} from "../../repository/blog.query-repository";
+import {postQueryRepository} from "../../../posts/repository/post.query-repository";
 
 
 export const createPostForBlog = async (req:RequestWithParamsAndBody<{ blogId:string }, blogPostInput>,res:Response) => {
-    try{  const   blogId = req.params.blogId;
-        const     postData = req.body;
+    try{
+        const   blogId = req.params.blogId;
 
-        const blogExists = await blogRepository.findByIdForGet(blogId);
-        if(!blogExists){
+        const existingBlog = await blogQueryRepository.findById(blogId);
+
+        if(!existingBlog) {
             res.sendStatus(HttpStatuses.NotFound_404);
+            return
         }
 
-        const newPostId =  await postService.createPostForBlog(blogId, postData);
+       // const postData = req.body;
 
-        const foundCreatedPost = await postService.findById(newPostId)
-        const postOutput = mapPostToViewModel(foundCreatedPost)
-        res.status(HttpStatuses.Created_201).send(postOutput)
+
+        const createdPostForId =  await postService.createPostForBlog(blogId,existingBlog.name, req.body);
+
+        const createdPost = await postQueryRepository.findPostById(createdPostForId)
+        if(!createdPost) {
+            return res.sendStatus(HttpStatuses.NotFound_404);
+        }
+        res.status(HttpStatuses.Created_201).send(createdPost)
     }catch (error) {
         return res.status(500).json({
             errorsMessages: [{ field: "server", message: "Internal server error" }]

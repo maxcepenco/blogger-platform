@@ -1,8 +1,8 @@
 import {Router} from "express";
-import {getAllPosts} from "./handlers/GetAllPosts";
+import {getPostList} from "./handlers/get-post-list";
 import {findPostBiId} from "./handlers/get-post-by-id";
-import {updatePost} from "./handlers/updatePost";
-import {deletePost} from "./handlers/deletePost";
+import {updatePost} from "./handlers/update-post";
+import {deletePost} from "./handlers/delete-post";
 import {idValidation} from "../../core/midleware/validationInputIdMiddleware";
 import {postInputDtoMiddleware} from "../validatiion/postInputDateMiddleware";
 import {handlerValidationErrors} from "../../core/midleware/handlerValidationErrors";
@@ -18,7 +18,7 @@ export const postRouter = Router({});
 
 
 postRouter
-    .get('',getAllPosts )
+    .get('',getPostList )
     .get('/:id',idValidation,findPostBiId)
     .post('',authValidationMiddleware,postInputDtoMiddleware,handlerValidationErrors, createPost)
     .put('/:id',authValidationMiddleware,idValidation,postInputDtoMiddleware,handlerValidationErrors, updatePost)

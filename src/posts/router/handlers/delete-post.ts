@@ -1,7 +1,6 @@
 import {RequestWithParams} from "../../../core/types/RequestInputType";
 import {UriParamsInputDto} from "../../../core/types/InputIUriParamsModel"
 import {Response} from "express";
-import {postRepository} from "../../repository/postRepository";
 import {HttpStatuses} from "../../../core/types/httpSatuses";
 import {postService} from "../../application/post.service";
 
