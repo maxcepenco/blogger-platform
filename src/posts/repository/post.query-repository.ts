@@ -4,8 +4,7 @@ import {postCollection} from "../../db/mongoDB";
 import {PostQueryInput} from "../input/post-query.input";
 import {SortDirection} from "../../core/types/sort-direction";
 import {PostViewModel} from "../output/PostViewModel";
-import {PostQueryOutput} from "../output/post-query.output";
-import {mapPostToViewModel} from "../router/mappers/mapPostToViewModel";
+import {PaginateQueryOutput} from "../../core/types/pagination-output-model";
 
 export const postQueryRepository = {
     async findByIdForGet(id: string): Promise<WithId<Post> | null> {
@@ -59,11 +58,11 @@ export const postQueryRepository = {
         if (!result) {
             return null
         }
-        return postQueryRepository._mapPostToViewModel(result);
+        return postQueryRepository.mapPostToViewModel(result);
     },
 
 
-    _mapPostToViewModel(post: WithId<Post>): PostViewModel {
+    mapPostToViewModel(post: WithId<Post>): PostViewModel {
         return {
             id: post._id.toString(),
             title: post.title,
@@ -81,7 +80,7 @@ export const postQueryRepository = {
         pageSize: number,
         totalCount: number
 
-    ): PostQueryOutput {
+    ): PaginateQueryOutput<PostViewModel[]> {
         const pagesCount = Math.ceil(totalCount/ pageSize);
 
         return {
@@ -89,7 +88,7 @@ export const postQueryRepository = {
             page:pageNumber,
             pageSize: pageSize,
             totalCount: totalCount,
-            items: items.map(mapPostToViewModel)
+            items: items.map(this.mapPostToViewModel)
         }
     }
 }

@@ -34,9 +34,6 @@ export const blogService = {
     },
 
 
-    async findMany(inputParams:BlogQueryInput): Promise<{items :WithId<Blog>[]; totalCount: number}>{
-        return await blogRepository.findMany(inputParams)
 
-    }
 
 }

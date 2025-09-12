@@ -6,7 +6,7 @@ import {updateBlog} from "./handlers/update-blog";
 import {deleteBlog} from "./handlers/delete-blog";
 import {idValidation} from "../../core/midleware/validationInputIdMiddleware";
 import {blogInputDtoValidation} from "../validation/blogInputDateMidlleware";
-import {authValidationMiddleware} from "../../core/midleware/authValidationMiddleware";
+import {authValidationMiddleware} from "../../auth/api/guard/authValidationMiddleware";
 import {handlerValidationErrors} from "../../core/midleware/handlerValidationErrors";
 import {getBlogPostList} from "./handlers/get-blog-post-list";
 import {createPostForBlog} from "./handlers/create-post-for-blog";

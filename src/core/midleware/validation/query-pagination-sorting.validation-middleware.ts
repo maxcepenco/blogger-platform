@@ -5,7 +5,7 @@ import { PaginationAndSorting } from '../../types/pagination-and-sorting.input';
 
 const DEFAULT_PAGE_NUMBER = 1;
 const DEFAULT_PAGE_SIZE   = 10;
-const DEFAULT_SORT_BY     = 'createdAt';          // ← первое поле из enum
+const DEFAULT_SORT_BY     = 'createdAt';
 const ALLOWED_DIRECTIONS  = Object.values(SortDirection);
 
 export const paginationAndSortingDefault: PaginationAndSorting<string> = {

@@ -4,8 +4,7 @@ import {blogCollection} from "../../db/mongoDB";
 import {BlogViewModel} from "../output/blog-view-model";
 import {BlogQueryInput} from "../input/blog-query.input";
 import {SortDirection} from "../../core/types/sort-direction";
-import {BlogQueryOutput} from "../output/blog-query.output";
-import {mapToBlogViewModel} from "../routes/mappers/mapToBlogViewModel";
+import {PaginateQueryOutput} from "../../core/types/pagination-output-model";
 
 
 export const blogQueryRepository = {
@@ -68,7 +67,7 @@ export const blogQueryRepository = {
         pageSize: number,
         totalCount: number
 
-    ): BlogQueryOutput {
+    ): PaginateQueryOutput<BlogViewModel[]> {
         const pagesCount = Math.ceil(totalCount/ pageSize);
 
         return {
@@ -76,7 +75,7 @@ export const blogQueryRepository = {
             page:pageNumber,
             pageSize: pageSize,
             totalCount: totalCount,
-            items: items.map(mapToBlogViewModel)
+            items: items.map(this.mapToBlogViewModel)
         }
     }
 

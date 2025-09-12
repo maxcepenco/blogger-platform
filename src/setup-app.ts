@@ -2,7 +2,9 @@ import express, {Express} from 'express';
 import {blogRouter} from "./blogs/routes/blogRouter";
 import {postRouter} from "./posts/router/postRouter";
 import {testingRouter} from "./testing/testingRouter";
-import {BLOGS_PATHS, POST_PATHS, TESTING_PATHS} from "./core/paths/paths";
+import {AUTH_PATHS, BLOGS_PATHS, POST_PATHS, TESTING_PATHS, USER_PATHS} from "./core/paths/paths";
+import {authRouter} from "./auth/api/auth.router";
+import {userRouter} from "./users/routes/user-router";
 
 //-------------------------------------Crud endpoint-------------------------------------------------------
 export const setupApp = (app:Express) => {
@@ -11,6 +13,8 @@ export const setupApp = (app:Express) => {
   app.use(BLOGS_PATHS,blogRouter )
   app.use(POST_PATHS, postRouter )
   app.use(TESTING_PATHS, testingRouter);
+  app.use(AUTH_PATHS, authRouter);
+  app.use(USER_PATHS, userRouter);
   return app
 
 
