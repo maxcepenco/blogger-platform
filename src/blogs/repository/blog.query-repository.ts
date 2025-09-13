@@ -42,11 +42,12 @@ export const blogQueryRepository = {
         },
 
     async findById(id: string): Promise<WithId<Blog> | null> {
-       const  foundResult = await blogCollection.findOne({_id: new ObjectId(id)});
-        if(!foundResult) {
-            throw new Error('No blog found')
+        if (!ObjectId.isValid(id)) {
+            return null;
         }
-        return foundResult;
+       return  await blogCollection.findOne({_id: new ObjectId(id)});
+
+
     },
 
 

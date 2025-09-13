@@ -12,6 +12,7 @@ import {getBlogPostList} from "./handlers/get-blog-post-list";
 import {createPostForBlog} from "./handlers/create-post-for-blog";
 import {BlogPostInputDtoMiddleware} from "../validation/blogPostInputDataMiddleware";
 import {sanitizeQueryParams} from "../../core/midleware/validation/sanitize-qery-param";
+import {validateBlogId} from "../../core/midleware/validationInputBlogIdMiddleware";
 
 
 export const blogRouter = Router({});
@@ -19,10 +20,10 @@ export const blogRouter = Router({});
 blogRouter
     .get('', sanitizeQueryParams, getAllBlogs)
     .post('', authValidationMiddleware, blogInputDtoValidation, handlerValidationErrors, createBlog)
-    .get('/:blogId/posts',sanitizeQueryParams, getBlogPostList)
-    .post('/:blogId/posts', authValidationMiddleware, BlogPostInputDtoMiddleware, handlerValidationErrors, createPostForBlog)
+    .get('/:blogId/posts',sanitizeQueryParams,validateBlogId, getBlogPostList)
+    .post('/:blogId/posts', authValidationMiddleware,validateBlogId, BlogPostInputDtoMiddleware, handlerValidationErrors, createPostForBlog)
 
-    .get('/:id',sanitizeQueryParams, findBlogBiId)
+    .get('/:id', findBlogBiId)
     .put('/:id', authValidationMiddleware, idValidation, blogInputDtoValidation, handlerValidationErrors, updateBlog)
     .delete('/:id', authValidationMiddleware, idValidation, deleteBlog)
 

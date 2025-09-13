@@ -11,8 +11,8 @@ export const  findBlogBiId =async (req:RequestWithParams<UriParamsInputDto>, res
         const foundBlog = await blogQueryRepository.findById(id);
 
         if(!foundBlog) {
-            res.status(HttpStatuses.NotFound_404).send()
-            return
+          return   res.sendStatus(HttpStatuses.NotFound_404)
+
         }
 
         const blogVewModel = blogQueryRepository.mapToBlogViewModel(foundBlog);
