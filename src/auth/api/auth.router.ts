@@ -9,4 +9,4 @@ export const authRouter = Router();
 
 
 authRouter
-    .post('',passwordValidation, loginOrEmailValidation, handlerValidationErrors, authAccess  )
+    .post('/login',passwordValidation, loginOrEmailValidation, handlerValidationErrors, authAccess  )

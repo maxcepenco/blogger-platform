@@ -5,11 +5,12 @@ import {handlerValidationErrors} from "../../core/midleware/handlerValidationErr
 import {createNewUser} from "./handler/create.user";
 import {getListUser} from "./handler/get-list.user";
 import {deleteUser} from "./handler/delete.user";
+import {userPaginateValidation} from "../validation/middleware/user-middleware";
 
 export const userRouter = Router();
 
 
 userRouter
     .post('',passwordValidation, loginValidation, handlerValidationErrors, createNewUser )
-    .get('', getListUser)
+    .get('',userPaginateValidation, getListUser)
     .delete('/:id', deleteUser)

@@ -15,6 +15,5 @@ export const authAccess = async (req:RequestWithBody<LoginDto>, res: Response ) 
         return res.sendStatus(HttpStatuses.Unauthorized_401)
 
     }
-
     return  res.sendStatus(HttpStatuses.NoContent_204)
 }
