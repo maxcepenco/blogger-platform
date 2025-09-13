@@ -80,7 +80,7 @@ export const postQueryRepository = {
         pageSize: number,
         totalCount: number
 
-    ): PaginateQueryOutput<PostViewModel[]> {
+    ): PaginateQueryOutput<PostViewModel> {
         const pagesCount = Math.ceil(totalCount/ pageSize);
 
         return {

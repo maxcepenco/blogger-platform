@@ -18,7 +18,7 @@ export const userQueryRepository = {
     },
 
     async findMany(queryField:SortQueryFilterType, searchField: SearchQueryFieldType)
-                    : Promise<PaginateQueryOutput<UserViewModel[]>> {
+                    : Promise<PaginateQueryOutput<UserViewModel>> {
         const {
             sortBy,
             pageNumber,
@@ -70,7 +70,7 @@ export const userQueryRepository = {
         pageSize: number,
         totalCount: number
 
-    ): PaginateQueryOutput<UserViewModel[]> {
+    ): PaginateQueryOutput<UserViewModel> {
         const pagesCount = Math.ceil(totalCount/ pageSize);
 
         return {

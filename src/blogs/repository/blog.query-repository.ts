@@ -67,7 +67,7 @@ export const blogQueryRepository = {
         pageSize: number,
         totalCount: number
 
-    ): PaginateQueryOutput<BlogViewModel[]> {
+    ): PaginateQueryOutput<BlogViewModel> {
         const pagesCount = Math.ceil(totalCount/ pageSize);
 
         return {
@@ -80,3 +80,5 @@ export const blogQueryRepository = {
     }
 
 }
+
+

@@ -5,5 +5,5 @@ export type PaginateQueryOutput<I> = {
     page: number
     pageSize: number
     totalCount: number
-    items: I
+    items: I[]
 }
