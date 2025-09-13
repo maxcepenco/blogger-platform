@@ -6,11 +6,12 @@ import {createNewUser} from "./handler/create.user";
 import {getListUser} from "./handler/get-list.user";
 import {deleteUser} from "./handler/delete.user";
 import {userPaginateValidation} from "../validation/middleware/user-middleware";
+import {authValidationMiddleware} from "../../auth/api/guard/authValidationMiddleware";
 
 export const userRouter = Router();
 
 
 userRouter
-    .post('',passwordValidation, loginValidation, handlerValidationErrors, createNewUser )
-    .get('',userPaginateValidation, getListUser)
-    .delete('/:id', deleteUser)
+    .post('',authValidationMiddleware,passwordValidation, loginValidation, handlerValidationErrors, createNewUser )
+    .get('',authValidationMiddleware,userPaginateValidation, getListUser)
+    .delete('/:id',authValidationMiddleware, deleteUser)

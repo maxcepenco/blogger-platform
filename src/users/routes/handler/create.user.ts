@@ -6,6 +6,7 @@ import {HttpStatuses} from "../../../core/types/httpSatuses";
 import {Response} from "express";
 
 export const createNewUser = async (req:RequestWithBody<UserInputModel>, res: Response ) => {
+    console.log('🟢 [HANDLER] createNewUser called - auth passed!'); // ← ДОБАВИТЬ
 
     const newUserId = await userService.createUser(req.body)
     const newUser = await userQueryRepository.findById(newUserId)
