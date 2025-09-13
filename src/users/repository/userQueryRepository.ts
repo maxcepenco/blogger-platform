@@ -26,16 +26,27 @@ export const userQueryRepository = {
             sortDirection
         } = queryField;
 
-        const skip = (pageNumber - 1) * pageSize;
-        const filter: any = {};
-
         const { searchLoginTerm, searchEmailTerm } = searchField;
 
-        if(searchLoginTerm) {
-            filter.login = { $regex: searchLoginTerm, $options: "i"};
+        const skip = (pageNumber - 1) * pageSize;
+        const filter: any = {};
+        const searchConditions: any[] = [];
+
+        if (searchLoginTerm) {
+            searchConditions.push({
+                login: { $regex: searchLoginTerm, $options: "i" }
+            });
         }
-        if(searchEmailTerm) {
-            filter.email = { $regex: searchEmailTerm, $options: "i"};
+
+        if (searchEmailTerm) {
+            searchConditions.push({
+                email: { $regex: searchEmailTerm, $options: "i" }
+            });
+        }
+
+        // Если есть условия поиска, используем $or
+        if (searchConditions.length > 0) {
+            filter.$or = searchConditions;
         }
 
         const items = await userCollection
