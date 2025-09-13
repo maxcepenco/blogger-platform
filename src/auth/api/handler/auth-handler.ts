@@ -9,9 +9,12 @@ export const authAccess = async (req:RequestWithBody<LoginDto>, res: Response ) 
     const { loginOrEmail, password } = req.body;
 
     const accessToken = await authService.loginUser(loginOrEmail, password);
+
     if(!accessToken) {
-        res.status(HttpStatuses.Unauthorized_401)
+
+        return res.sendStatus(HttpStatuses.Unauthorized_401)
+
     }
 
-    return res.status(HttpStatuses.Ok_200).send({accessToken});
+    return  res.sendStatus(HttpStatuses.NoContent_204)
 }

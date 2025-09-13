@@ -3,9 +3,10 @@ import {loginValidation} from "../../users/validation/middleware/login.validatio
 import {passwordValidation} from "../../users/validation/middleware/password.validation";
 import {handlerValidationErrors} from "../../core/midleware/handlerValidationErrors";
 import {authAccess} from "./handler/auth-handler";
+import {loginOrEmailValidation} from "../../users/validation/middleware/login-or-email.validation";
 
 export const authRouter = Router();
 
 
 authRouter
-    .post('',passwordValidation, loginValidation, handlerValidationErrors, authAccess  )
+    .post('',passwordValidation, loginOrEmailValidation, handlerValidationErrors, authAccess  )

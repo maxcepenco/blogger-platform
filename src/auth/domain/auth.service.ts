@@ -14,15 +14,24 @@ export const authService = {
             loginOrEmail,
             password,
         )
+
         if(!isCorrectCredentials) {
+
             return null
         }
-            return { accessToken: 'token'}
+
+        return { accessToken: 'token'}
     },
     async checkUserCredentials( loginOrEmail: string, password: string ):Promise< boolean > {
+
         const user = await userRepository.findByLoginOrEmail(loginOrEmail)
+
         if(!user) return false
-        return bcryptService.checkPassword(password, user.passwordHash)
+
+        const result =await bcryptService.checkPassword(password, user.passwordHash)
+        console.log('🟡 [CREDENTIALS] Bcrypt result:', result); // ← Логировать результат
+
+        return result;
         }
 
 }

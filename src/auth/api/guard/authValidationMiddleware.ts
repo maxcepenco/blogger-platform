@@ -29,6 +29,6 @@ export const authValidationMiddleware = ( req:Request, res:Response, next:NextFu
         return;
     }
 
-    next(); // Успешная авторизация, продолжаем
+    next();
 
 }
