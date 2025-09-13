@@ -7,11 +7,12 @@ import {getListUser} from "./handler/get-list.user";
 import {deleteUser} from "./handler/delete.user";
 import {userPaginateValidation} from "../validation/middleware/user-middleware";
 import {authValidationMiddleware} from "../../auth/api/guard/authValidationMiddleware";
+import {emailValidation} from "../validation/middleware/emailValidation";
 
 export const userRouter = Router();
 
 
 userRouter
-    .post('',authValidationMiddleware,passwordValidation, loginValidation, handlerValidationErrors, createNewUser )
+    .post('',authValidationMiddleware,passwordValidation,emailValidation, loginValidation, handlerValidationErrors, createNewUser )
     .get('',authValidationMiddleware,userPaginateValidation, getListUser)
     .delete('/:id',authValidationMiddleware, deleteUser)

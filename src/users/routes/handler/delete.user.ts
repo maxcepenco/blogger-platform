@@ -5,8 +5,8 @@ import {HttpStatuses} from "../../../core/types/httpSatuses";
 import { Response} from "express";
 
 
-export const deleteUser = (req:RequestWithParams<UriParamsInputDto>,res:Response) => {
-    const isDeleted = userService.deleteUser(req.params.id);
+export const deleteUser = async (req:RequestWithParams<UriParamsInputDto>,res:Response) => {
+    const isDeleted = await userService.deleteUser(req.params.id);
     if(!isDeleted) {
         res.sendStatus(HttpStatuses.NotFound_404);
     }
