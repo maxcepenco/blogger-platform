@@ -6,7 +6,7 @@ import {deletePost} from "./handlers/delete-post";
 import {idValidation} from "../../core/midleware/validationInputIdMiddleware";
 import {postInputDtoMiddleware} from "../validatiion/postInputDateMiddleware";
 import {handlerValidationErrors} from "../../core/midleware/handlerValidationErrors";
-import {authValidationMiddleware} from "../../auth/api/guard/authValidationMiddleware";
+import {authValidationMiddleware} from "../../auth/routes/guard/authValidationMiddleware";
 import {createPost} from "./handlers/create-post";
 
 

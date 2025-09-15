@@ -3,7 +3,7 @@ import {blogRouter} from "./blogs/routes/blogRouter";
 import {postRouter} from "./posts/router/postRouter";
 import {testingRouter} from "./testing/testingRouter";
 import {AUTH_PATHS, BLOGS_PATHS, POST_PATHS, TESTING_PATHS, USER_PATHS} from "./core/paths/paths";
-import {authRouter} from "./auth/api/auth.router";
+import {authRouter} from "./auth/routes/auth.router";
 import {userRouter} from "./users/routes/user-router";
 
 //-------------------------------------Crud endpoint-------------------------------------------------------

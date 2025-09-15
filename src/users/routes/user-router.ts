@@ -6,7 +6,7 @@ import {createNewUser} from "./handler/create.user";
 import {getListUser} from "./handler/get-list.user";
 import {deleteUser} from "./handler/delete.user";
 import {userPaginateValidation} from "../validation/middleware/user-middleware";
-import {authValidationMiddleware} from "../../auth/api/guard/authValidationMiddleware";
+import {authValidationMiddleware} from "../../auth/routes/guard/authValidationMiddleware";
 import {emailValidation} from "../validation/middleware/emailValidation";
 
 export const userRouter = Router();
