@@ -6,8 +6,10 @@ import {deletePost} from "./handlers/delete-post";
 import {idValidation} from "../../core/midleware/validationInputIdMiddleware";
 import {postInputDtoMiddleware} from "../validatiion/postInputDateMiddleware";
 import {handlerValidationErrors} from "../../core/midleware/handlerValidationErrors";
-import {authValidationMiddleware} from "../../auth/routes/guard/authValidationMiddleware";
+import {authValidationMiddleware} from "../../auth/routes/middleware/auth-validation-middleware";
 import {createPost} from "./handlers/create-post";
+import {createCommentForPost} from "./handlers/create-comment-for-post";
+import {accessTokenGuard} from "../../auth/routes/guard/access.token.guard.ts";
 
 
 export const postRouter = Router({});
@@ -15,7 +17,8 @@ export const postRouter = Router({});
 
 postRouter
     .get('',getPostList )
-    .get('/:id',idValidation,findPostBiId)
+    .get('/:postId',idValidation,findPostBiId)
     .post('',authValidationMiddleware,postInputDtoMiddleware,handlerValidationErrors, createPost)
-    .put('/:id',authValidationMiddleware,idValidation,postInputDtoMiddleware,handlerValidationErrors, updatePost)
-    .delete('/:id',authValidationMiddleware,idValidation,deletePost)
+    .post('/:postId/comment',accessTokenGuard,createCommentForPost)
+    .put('/:postId',authValidationMiddleware,idValidation,postInputDtoMiddleware,handlerValidationErrors, updatePost)
+    .delete('/:postId',authValidationMiddleware,idValidation,deletePost)

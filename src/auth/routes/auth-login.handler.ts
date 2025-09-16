@@ -1,10 +1,10 @@
-import {RequestWithBody} from "../../../core/types/RequestInputType";
-import {LoginDto} from "../../types/login.dto";
-import {authService} from "../../domain/auth.service";
+import {RequestWithBody} from "../../core/types/RequestInputType";
+import {LoginDto} from "../dto/login.dto";
+import {authService} from "../domain/auth.service";
 import {Response} from "express";
-import {ResultStatus} from "../../../core/result/result-code";
-import {resultCodeToHttpException} from "../../../core/result/resultCodeToHttpException";
-import {HttpStatuses} from "../../../core/types/httpSatuses";
+import {ResultStatus} from "../../core/result/result-code";
+import {resultCodeToHttpException} from "../../core/result/resultCodeToHttpException";
+import {HttpStatuses} from "../../core/types/httpSatuses";
 
 
 export const authAccess = async (req:RequestWithBody<LoginDto>, res: Response ) => {

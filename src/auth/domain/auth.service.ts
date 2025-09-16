@@ -1,10 +1,10 @@
 import {bcryptService} from "../adapters/bcrypt.service";
-import {userRepository} from "../../users/repository/user-repository";
+import {userRepository} from "../../users/repository/user.repository";
 import {ResultStatus} from "../../core/result/result-code";
 import {WithId} from "mongodb";
 import {User} from "../../users/types-user/User";
 import {Result} from "../../core/result/result-type";
-import {jwtService} from "../adapters/jwt-service";
+import {jwtService} from "../adapters/jwt.service";
 
 
 export const authService = {

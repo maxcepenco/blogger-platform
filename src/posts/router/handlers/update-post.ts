@@ -1,12 +1,12 @@
 import {RequestWithParamsAndBody} from "../../../core/types/RequestInputType";
-import {UriParamsInputDto} from "../../../core/types/InputIUriParamsModel";
+import {idType} from "../../../core/types/InputIUriParamsModel";
 import {PostInputModel} from "../../input/post-input-model";
 import {HttpStatuses} from "../../../core/types/httpSatuses";
 import {Response} from "express";
 import {postService} from "../../application/post.service";
 
 
-export const updatePost = async (req:RequestWithParamsAndBody<UriParamsInputDto, PostInputModel>,res:Response) => {
+export const updatePost = async (req:RequestWithParamsAndBody<idType, PostInputModel>, res:Response) => {
 
     const updateThisPost = await postService.updatePost(req.params.id, req.body)
     if(!updateThisPost) {

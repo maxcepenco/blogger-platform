@@ -1,4 +1,4 @@
 
-export type UriParamsInputDto = {
+export type idType = {
     id:string;
 }

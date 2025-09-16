@@ -1,7 +1,7 @@
 import {RequestWithQuery} from "../../../core/types/RequestInputType";
 import {UserQueryFieldType} from "../../input-model/user-query-field.type";
 import {sortQueryFieldsUtil} from "../../../core/helpers/sort-query-fields-util";
-import {userQueryRepository} from "../../repository/userQueryRepository";
+import {userQueryRepository} from "../../repository/user.query-repository";
 import { Response} from "express";
 import {HttpStatuses} from "../../../core/types/httpSatuses";
 

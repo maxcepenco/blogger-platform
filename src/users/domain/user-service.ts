@@ -1,7 +1,7 @@
 import {UserInputModel} from "../input-model/input-model.user";
 import {bcryptService} from "../../auth/adapters/bcrypt.service";
 import {User} from "../types-user/User";
-import {userRepository} from "../repository/user-repository";
+import {userRepository} from "../repository/user.repository";
 import {UserDb} from "../types-user/user-db";
 
 

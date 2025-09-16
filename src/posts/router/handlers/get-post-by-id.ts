@@ -1,11 +1,11 @@
 import {RequestWithParams} from "../../../core/types/RequestInputType";
-import {UriParamsInputDto} from "../../../core/types/InputIUriParamsModel";
+import {idType} from "../../../core/types/InputIUriParamsModel";
 import {HttpStatuses} from "../../../core/types/httpSatuses";
 import {Response} from "express";
 import {postQueryRepository} from "../../repository/post.query-repository";
 
 
-export const  findPostBiId =  async (req:RequestWithParams<UriParamsInputDto>,res:Response) => {
+export const  findPostBiId =  async (req:RequestWithParams<idType>, res:Response) => {
     const index = req.params.id;
 
     const foundPostById = await postQueryRepository.findPostById(index);

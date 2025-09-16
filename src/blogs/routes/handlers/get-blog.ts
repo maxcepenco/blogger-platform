@@ -1,11 +1,11 @@
 import {Response} from 'express';
 import {HttpStatuses} from "../../../core/types/httpSatuses";
 import {RequestWithParams} from "../../../core/types/RequestInputType";
-import {UriParamsInputDto} from "../../../core/types/InputIUriParamsModel";
+import {idType} from "../../../core/types/InputIUriParamsModel";
 import {blogQueryRepository} from "../../repository/blog.query-repository";
 
 
-export const  findBlogBiId =async (req:RequestWithParams<UriParamsInputDto>, res:Response) => {
+export const  findBlogBiId =async (req:RequestWithParams<idType>, res:Response) => {
 
         const id = req.params.id
         const foundBlog = await blogQueryRepository.findById(id);

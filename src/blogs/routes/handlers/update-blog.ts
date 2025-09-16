@@ -1,12 +1,12 @@
 import {RequestWithParamsAndBody} from "../../../core/types/RequestInputType";
-import {UriParamsInputDto} from "../../../core/types/InputIUriParamsModel";
+import {idType} from "../../../core/types/InputIUriParamsModel";
 import {BlogInputModel} from "../../input/blog-input-model";
 import {HttpStatuses} from "../../../core/types/httpSatuses";
 import {Response} from "express";
 import {blogService} from "../../application/blog.servece";
 
 
-export const updateBlog = async (req:RequestWithParamsAndBody<UriParamsInputDto, BlogInputModel>, res:Response)  => {
+export const updateBlog = async (req:RequestWithParamsAndBody<idType, BlogInputModel>, res:Response)  => {
     const index = req.params.id
 
 
