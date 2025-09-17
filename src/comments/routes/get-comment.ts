@@ -1,7 +1,6 @@
 import {RequestWithParams} from "../../core/types/RequestInputType";
-import {IdType} from "../../core/types/id-type.user";
 import {HttpStatuses} from "../../core/types/httpSatuses";
-import { Response} from "express";
+import {Response} from "express";
 import {commentQueryRepository} from "../repository/comment-query-repository";
 import {IdComment} from "../input/id-type.comment";
 
