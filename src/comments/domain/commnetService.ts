@@ -1,5 +1,8 @@
 import {userQueryRepository} from "../../users/repository/user.query-repository";
 import {commentRepository} from "../repository/commnet-repository";
+import {CommentDbType} from "../types/comment-db-type";
+import {Result} from "../../core/result/result-type";
+import {ResultStatus} from "../../core/result/result-code";
 
 
 export const commentService = {
@@ -22,5 +25,68 @@ export const commentService = {
 
         return await commentRepository.createCommentForPost(newComment)
 
+    },
+
+    async updateComment( commentId: string, comment: string, userId:string): Promise<Result<boolean | null> > {
+
+        const foundComment = await commentRepository.findByIdDbType(commentId);
+        if(!foundComment) {
+            return{
+                status:ResultStatus.NotFound,
+                data: null,
+                extensions: []
+            }
+        }
+        if(userId !== foundComment.commentatorInfo.userId) {
+            return {
+                status:ResultStatus.Forbidden,
+                data: null,
+                extensions: []
+            };
+        }
+        const updatedComment:CommentDbType = {
+            postId:foundComment.postId,
+            content: comment,
+            commentatorInfo:foundComment.commentatorInfo,
+            createdAt:new Date().toISOString()
+        }
+
+        const result = await commentRepository.update(commentId,updatedComment)
+        return {
+            status:ResultStatus.Success,
+            data: result,
+            extensions: []
+        }
+
+    },
+
+    async deleteComment(commentId:string, userId:string): Promise<Result<boolean | null>> {
+
+        const foundComment = await commentRepository.findByIdDbType(commentId);
+        if(!foundComment) {
+            return{
+                status: ResultStatus.NotFound,
+                data: null,
+                extensions: []
+            }
+        }
+        if(userId !== foundComment.commentatorInfo.userId) {
+            return{
+                status: ResultStatus.Forbidden,
+                data: null,
+                extensions: []
+            }
+        }
+
+        const result = await commentRepository.delete(commentId)
+        return {
+            status:ResultStatus.Success,
+            data: result,
+            extensions: []
+        }
     }
+
+
+
+
 }

@@ -1,0 +1,1 @@
+export type IdComment = { id: string }
