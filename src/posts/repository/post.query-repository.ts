@@ -54,8 +54,14 @@ export const postQueryRepository = {
     },
 
     async findPostById(id: string): Promise<PostViewModel | null> {
+        console.log("➡️ findPostById called with id:", id);
+
         const result = await postCollection.findOne({_id: new ObjectId(id)});
+        console.log("➡️ Mongo result:", result);
+
         if (!result) {
+            console.log("❌ No post found in DB");
+
             return null
         }
         return postQueryRepository.mapPostToViewModel(result);
