@@ -6,10 +6,15 @@ import {HttpStatuses} from "../../core/types/httpSatuses";
 import {commentService} from "../domain/commnetService";
 import {ResultStatus} from "../../core/result/result-code";
 import {resultCodeToHttpException} from "../../core/result/resultCodeToHttpException";
+import {commentQueryRepository} from "../repository/comment-query-repository";
 
 
 export const deleteComment = async (req:ReqParamsUserId<IdComment,IdType>,res: Response) => {
     const commentId = req.params.id;
+    const foundComment = await commentQueryRepository.findById(commentId);
+    if (!foundComment) {
+        return res.sendStatus(HttpStatuses.NotFound_404)
+    }
     const userId = req.user?.id as string;
 
 
