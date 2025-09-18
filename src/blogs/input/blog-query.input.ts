@@ -1,5 +1,6 @@
-import {PaginationAndSorting} from "../../core/types/pagination-and-sorting.input";
-import {BlogSortField} from "./blog-sort-field";
-import {BlogQueryFieldsType} from "./blog-query-field-type";
+import {SortQueryFieldsType} from "../../core/types/sortQueryFields.type";
+import {SearchFieldTypeBlog} from "./search-blog-type";
 
-export type BlogQueryInput = PaginationAndSorting<BlogSortField> & BlogQueryFieldsType
+export type BlogQueryInput = SearchFieldTypeBlog  & SortQueryFieldsType
+
+

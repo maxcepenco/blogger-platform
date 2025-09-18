@@ -9,6 +9,7 @@ import {blogQueryRepository} from "../../repository/blog.query-repository";
 export const createBlog = async (req:RequestWithBody<BlogInputModel>, res: Response) => {
     try{
         const createdBlog = await blogService.create(req.body);
+
         const foundBlog = await blogQueryRepository.findById(createdBlog)
 
         if(!foundBlog) {

@@ -4,15 +4,18 @@ import {HttpStatuses} from "../../../core/types/httpSatuses";
 import {setDefaultBlogQueryParams} from "../../../core/helpers/set-default-sort-and-pagination";
 import {QueryParams} from "../../../core/types/QuareParams";
 import {blogQueryRepository} from "../../repository/blog.query-repository";
+import {BlogQueryInput} from "../../input/blog-query.input";
+import {sortQueryFieldsUtil} from "../../../core/helpers/sort-query-fields-util";
 
 
-export const getAllBlogs = async (req: RequestWithQuery<QueryParams>, res: Response) => {
+export const getAllBlogs = async (req: RequestWithQuery<BlogQueryInput>, res: Response) => {
     try {
 
 
-        const queryInput = setDefaultBlogQueryParams(req.query);
+        const queryInput = sortQueryFieldsUtil(req.query);
+        const searchQueryFiled = req.query
 
-        const result = await blogQueryRepository.findMany(queryInput);
+        const result = await blogQueryRepository.findMany(queryInput, searchQueryFiled);
         const items = result.items;
         const totalCount = result.totalCount;
 
