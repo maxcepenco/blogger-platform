@@ -10,18 +10,18 @@ import {authValidationMiddleware} from "../../auth/routes/middleware/auth-valida
 import {createPost} from "./handlers/create-post";
 import {createCommentForPost} from "./handlers/create-comment-for-post";
 import {accessTokenGuard} from "../../auth/routes/guard/access.token.guard.ts";
-import {getCommentFotPost} from "./handlers/get-comment-fot-post";
 import {commentInputMiddleware} from "../../comments/validation/comment.input-middleware";
+import {getCommentForPost} from "./handlers/get-comment-fot-post";
 
 
 export const postRouter = Router({});
 
 
 postRouter
-    .get('/:id/comment', getCommentFotPost)
+    .get('/:id/comments', getCommentForPost)
     .get('',getPostList )
     .get('/:id',idValidation,findPostBiId)
     .post('',authValidationMiddleware,postInputDtoMiddleware,handlerValidationErrors, createPost)
-    .post('/:id/comment',accessTokenGuard,commentInputMiddleware,handlerValidationErrors,createCommentForPost)
+    .post('/:id/comments',accessTokenGuard,commentInputMiddleware,handlerValidationErrors,createCommentForPost)
     .put('/:id',authValidationMiddleware,idValidation,postInputDtoMiddleware,handlerValidationErrors, updatePost)
     .delete('/:id',authValidationMiddleware,idValidation,deletePost)

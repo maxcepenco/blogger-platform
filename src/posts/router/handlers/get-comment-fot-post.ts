@@ -8,7 +8,7 @@ import {postQueryRepository} from "../../repository/post.query-repository";
 import {commentQueryRepository} from "../../../comments/repository/comment-query-repository";
 
 
-export const getCommentFotPost = async (req:RequestWithParamsAndQuery<IdType, SortQueryFieldsType>,res: Response) => {
+export const getCommentForPost = async (req:RequestWithParamsAndQuery<IdType, SortQueryFieldsType>,res: Response) => {
 
     const postId = req.params.id
     console.log("➡️ createCommentForPost, postId:", postId);

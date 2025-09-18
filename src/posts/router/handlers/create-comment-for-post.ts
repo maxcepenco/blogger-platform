@@ -30,3 +30,4 @@ export const createCommentForPost = async(req:ReqParamsBodyUserId<idType, Commen
 
     res.status(HttpStatuses.Created_201).send(createdComment)
 }
+    
