@@ -11,9 +11,7 @@ import {resultCodeToHttpException} from "../../core/result/resultCodeToHttpExcep
 export const deleteComment = async (req:ReqParamsUserId<IdComment,IdType>,res: Response) => {
     const commentId = req.params.id;
     const userId = req.user?.id as string;
-    if(!userId){
-        return res.sendStatus(HttpStatuses.Unauthorized_401)
-    }
+
 
     const deletedComment = await commentService.deleteComment(commentId,userId);
     if(deletedComment.status !== ResultStatus.Success){
