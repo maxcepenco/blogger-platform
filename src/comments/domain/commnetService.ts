@@ -48,7 +48,7 @@ export const commentService = {
             postId:foundComment.postId,
             content: comment,
             commentatorInfo:foundComment.commentatorInfo,
-            createdAt:new Date().toISOString()
+            createdAt:foundComment.createdAt
         }
 
         const result = await commentRepository.update(commentId,updatedComment)
