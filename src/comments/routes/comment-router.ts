@@ -14,4 +14,4 @@ export const commentRouter = Router()
 commentRouter
 .get('/:id',validationObjectIdParams(),getComment)
 .put('/:id', accessTokenGuard,idValidation,commentInputMiddleware,handlerValidationErrors,updateComment)
-.delete('/:id',accessTokenGuard,validationObjectIdParams(),deleteComment)
+.delete('/:id',validationObjectIdParams(),accessTokenGuard,deleteComment)
