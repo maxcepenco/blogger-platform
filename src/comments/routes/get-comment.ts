@@ -17,6 +17,6 @@ export const getComment = async (req: RequestWithParams<IdComment>, res: Respons
         return res.sendStatus(HttpStatuses.NotFound_404)
     }
 
-    res.status(HttpStatuses.Ok_200)
+    res.status(HttpStatuses.Ok_200).send(comment);
 
 }

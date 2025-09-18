@@ -21,7 +21,7 @@ export const commentRepository = {
     async update(commentId:string,dto: CommentDbType): Promise<boolean> {
         const result = await commentCollection.updateOne(
             {_id: new ObjectId(commentId)},
-            {$set:{dto}}
+            {$set:dto}
         )
         return result.matchedCount === 1
     },

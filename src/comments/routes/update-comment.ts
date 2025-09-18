@@ -7,6 +7,7 @@ import {Response} from "express";
 import {ResultStatus} from "../../core/result/result-code";
 import {resultCodeToHttpException} from "../../core/result/resultCodeToHttpException";
 import {IdComment} from "../input/id-type.comment";
+import {commentQueryRepository} from "../repository/comment-query-repository";
 
 export const updateComment = async (req:ReqParamsBodyUserId<IdComment, CommentInputModel,IdType>,res:Response) => {
 
@@ -15,7 +16,12 @@ export const updateComment = async (req:ReqParamsBodyUserId<IdComment, CommentIn
         res.sendStatus(HttpStatuses.Unauthorized_401)
         return
     }
-    const commentId = req.params.id;
+    const commentId = req.params.id
+    const existingComment = await commentQueryRepository.findById(commentId)
+    if(!existingComment) {
+        res.sendStatus(HttpStatuses.NotFound_404)
+        return
+    }
     const comment =  req.body.content;
 
 

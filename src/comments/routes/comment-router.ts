@@ -5,11 +5,13 @@ import {commentInputMiddleware} from "../validation/comment.input-middleware";
 import {handlerValidationErrors} from "../../core/midleware/handlerValidationErrors";
 import {updateComment} from "./update-comment";
 import {deleteComment} from "./delete-comment";
+import {idValidation} from "../../core/midleware/validationInputIdMiddleware";
+import {validationObjectIdParams} from "../../core/midleware/validationObjectIdParams";
 
 
 export const commentRouter = Router()
 
 commentRouter
-.get('/:id',getComment)
-.put('/:id', accessTokenGuard,commentInputMiddleware,handlerValidationErrors,updateComment)
-.delete('/:id',accessTokenGuard,deleteComment)
+.get('/:id',validationObjectIdParams(),getComment)
+.put('/:id', accessTokenGuard,idValidation,commentInputMiddleware,handlerValidationErrors,updateComment)
+.delete('/:id',accessTokenGuard,validationObjectIdParams(),deleteComment)
