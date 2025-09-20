@@ -1,4 +1,4 @@
-import {User} from "../types-user/User";
+import {UserAccountDBType} from "../types-user/UserAccountDBType";
 import {userCollection} from "../../db/mongoDB";
 import {ObjectId, WithId} from "mongodb";
 import {UserViewModel} from "../output-model/output-model.user";
@@ -66,17 +66,18 @@ export const userQueryRepository = {
 
 
 
-    mapToUserViewModel(user:WithId<User>):UserViewModel {
+    mapToUserViewModel(user:WithId<UserAccountDBType>):UserViewModel {
         return{
+
             id: user._id.toString(),
-            login: user.login,
-            email: user.email,
-            createdAt: user.createdAt
+            login: user.accountDate.login,
+            email: user.accountDate.email,
+            createdAt: user.accountDate.createdAt.toISOString(),
         }
     },
 
     mapToUserListPagination(
-        items: WithId<User>[],
+        items: WithId<UserAccountDBType>[],
         pageNumber: number,
         pageSize: number,
         totalCount: number

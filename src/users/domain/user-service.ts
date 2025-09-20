@@ -1,8 +1,7 @@
 import {UserInputModel} from "../input-model/input-model.user";
 import {bcryptService} from "../../auth/adapters/bcrypt.service";
-import {User} from "../types-user/User";
+import {UserAccountDBType} from "../types-user/UserAccountDBType";
 import {userRepository} from "../repository/user.repository";
-import {UserDb} from "../types-user/user-db";
 
 
 export const userService = {
@@ -11,11 +10,14 @@ export const userService = {
 
          const passwordHash =  await bcryptService.generateHash(password);
 
-         const newUser: User = {
-             login:userDto.login,
-             email: userDto.email,
-             passwordHash: passwordHash,
-             createdAt: new Date().toISOString(),
+         const newUser: UserAccountDBType = {
+             accountDate:{
+                 login:userDto.login,
+                 email: userDto.email,
+                 passwordHash: passwordHash,
+                 createdAt: new Date(),
+             },
+             isConfirmed: true
          }
 
          return await userRepository.create(newUser)

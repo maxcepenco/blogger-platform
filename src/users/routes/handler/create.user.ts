@@ -7,8 +7,8 @@ import {Response} from "express";
 
 export const createNewUser = async (req:RequestWithBody<UserInputModel>, res: Response ) => {
 
-    const UserId = await userService.createUser(req.body)
-    const newUser = await userQueryRepository.findById(UserId)
+    const createUserId = await userService.createUser(req.body)
+    const newUser = await userQueryRepository.findById(createUserId)
     if(!newUser) {
         return res.status(HttpStatuses.BadRequest_400).json({
             errorsMessages: [{

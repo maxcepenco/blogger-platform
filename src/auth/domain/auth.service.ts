@@ -2,7 +2,7 @@ import {bcryptService} from "../adapters/bcrypt.service";
 import {userRepository} from "../../users/repository/user.repository";
 import {ResultStatus} from "../../core/result/result-code";
 import {WithId} from "mongodb";
-import {User} from "../../users/types-user/User";
+import {UserAccountDBType} from "../../users/types-user/UserAccountDBType";
 import {Result} from "../../core/result/result-type";
 import {jwtService} from "../adapters/jwt.service";
 
@@ -32,7 +32,7 @@ export const authService = {
         }
     },
 
-    async checkUserCredentials( loginOrEmail: string, password: string ):Promise<Result<WithId<User> | null >> {
+    async checkUserCredentials( loginOrEmail: string, password: string ):Promise<Result<WithId<UserAccountDBType> | null >> {
 
         const user = await userRepository.findByLoginOrEmail(loginOrEmail)
 
@@ -45,7 +45,7 @@ export const authService = {
             }
         }
 
-        const isPassCorrect = await bcryptService.checkPassword(password, user.passwordHash)
+        const isPassCorrect = await bcryptService.checkPassword(password, user.accountDate.passwordHash)
         if(!isPassCorrect) {
             return {
                 status: ResultStatus.BadRequest,

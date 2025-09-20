@@ -11,4 +11,7 @@ export const authRouter = Router();
 
 authRouter
     .post('/login',passwordValidation, loginOrEmailValidation, handlerValidationErrors, authAccess  )
-    .get('/me',accessTokenGuard, loginOrEmailValidation, authMeHandler );
+    .get('/me',accessTokenGuard, loginOrEmailValidation, authMeHandler )
+    .post('/registration',)
+    .post('/registration-confirmation',)
+    .post('/registration-email-resending')
