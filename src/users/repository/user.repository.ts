@@ -15,11 +15,41 @@ export const userRepository = {
         return deleteResult.deletedCount === 1
     },
 
-    async findByLoginOrEmail(loginOrEmail: string): Promise<WithId<UserAccountDBType> | null> {
+    async findByLoginOrEmail(loginOrEmail: string,): Promise<WithId<UserAccountDBType> | null> {
 
         const result = await userCollection.findOne({$or:[{ email: loginOrEmail }, { login: loginOrEmail }]})
 
         return result
 
+    },
+
+    async findExistByLoginOrEmail(
+        login: string,
+        email: string
+    ): Promise<boolean> {
+        const user = await userCollection.findOne({
+            $or: [{ login }, { email }],
+        });
+
+        return user !== null;
+
+    },
+
+    async findByCode(code: string): Promise<WithId<UserAccountDBType> | null > {
+        const user = await userCollection.findOne({'emailConfirmation.confirmationCode': code});
+        if(!user) {
+            return null;
+        }
+        return user;
+    },
+
+    async updateUser(_id: ObjectId):Promise<boolean> {
+        let result = await userCollection
+                            .updateOne(
+                                {_id},
+                                {$set:{isConfirmed:true}
+                            })
+        return result.modifiedCount === 1
     }
+
 }
