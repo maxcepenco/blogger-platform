@@ -7,10 +7,9 @@ import {Result} from "../../core/result/result-type";
 import {jwtService} from "../adapters/jwt.service";
 import {UserInputModel} from "../../users/input-model/input-model.user";
 import {randomUUID} from "node:crypto";
-import { add } from "date-fns/add";
+import {add} from "date-fns/add";
 import {nodemailerService} from "../adapters/nodemailer.service";
 import {emailExamples} from "../adapters/email-example";
-import {RegistrationCodConfirmation} from "../dto/RegistrationConfirmaionCodeModel";
 
 export const authService = {
 
