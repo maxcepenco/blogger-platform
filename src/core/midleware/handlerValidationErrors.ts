@@ -1,5 +1,5 @@
-import {ValidationErrorDto} from "../../types/ValidationErrorDto";
-import {ValidationErrorType} from "../../types/ValidationError";
+import {ValidationErrorDto} from "../types/ValidationErrorDto";
+import {ValidationErrorType} from "../types/ValidationError";
 import {FieldValidationError, ValidationError, validationResult} from "express-validator";
 import {Request,Response,NextFunction} from "express";
 import {HttpStatuses} from "../types/httpSatuses";
