@@ -8,10 +8,11 @@ import {HttpStatuses} from "../../core/types/httpSatuses";
 
 
 export const confirmEmail = async (req:RequestWithBody<RegistrationCodConfirmation>, res: Response) => {
-
     const result = await authService.confirmEmail(req.body.code)
+
     if(result.status !== ResultStatus.Success) {
-        return res.status(resultCodeToHttpException(result.status))
+
+        return res.status(resultCodeToHttpException(result.status)).send(result.extensions)
     }
 
     return res.sendStatus(HttpStatuses.Created_201)

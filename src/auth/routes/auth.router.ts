@@ -10,6 +10,7 @@ import {emailValidation} from "../../users/validation/middleware/email-validatio
 import {loginValidation} from "../../users/validation/middleware/login.validation";
 import {confirmEmail} from "./auth-registration-confirmation";
 import {codeValidation} from "../../users/validation/middleware/code-validation";
+import {registrationEmailResending} from "./auth-registration-email-resending";
 
 export const authRouter = Router();
 
@@ -18,5 +19,5 @@ authRouter
     .post('/login',passwordValidation, loginOrEmailValidation, handlerValidationErrors, authAccess  )
     .get('/me',accessTokenGuard, loginOrEmailValidation, authMeHandler )
     .post('/registration',passwordValidation,emailValidation,loginValidation,handlerValidationErrors,authRegistration)
-    .post('/registration-confirmation',codeValidation, confirmEmail)
-    .post('/registration-email-resending')
+    .post('/registration-confirmation',codeValidation,handlerValidationErrors, confirmEmail)
+    .post('/registration-email-resending',emailValidation,handlerValidationErrors,registrationEmailResending)

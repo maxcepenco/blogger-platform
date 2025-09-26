@@ -1,6 +1,6 @@
 import {UserAccountDBType} from "../types-user/UserAccountDBType";
 import {userCollection} from "../../db/mongoDB";
-import {ObjectId, WithId} from "mongodb";
+import {ObjectId, Sort, WithId} from "mongodb";
 import {UserViewModel} from "../output-model/output-model.user";
 import {SearchQueryFieldType} from "../input-model/user-query-field.type";
 import {PaginateQueryOutput} from "../../core/types/pagination-output-model";
@@ -34,13 +34,13 @@ export const userQueryRepository = {
 
         if (searchLoginTerm) {
             searchConditions.push({
-                login: { $regex: searchLoginTerm, $options: "i" }
+                "accountDate.login": { $regex: searchLoginTerm, $options: "i" }
             });
         }
 
         if (searchEmailTerm) {
             searchConditions.push({
-                email: { $regex: searchEmailTerm, $options: "i" }
+                "accountDate.email": { $regex: searchEmailTerm, $options: "i" }
             });
         }
 
@@ -48,16 +48,22 @@ export const userQueryRepository = {
         if (searchConditions.length > 0) {
             filter.$or = searchConditions;
         }
+        const sortField = sortBy.includes('.') ? sortBy : `accountDate.${sortBy}`;
 
-        const items = await userCollection
+        // Исправление типизации для sort
+        const sortObject: Sort = {
+            [sortField]: sortDirection === 'desc' ? -1 : 1
+        } as Sort
+
+            const items = await userCollection
             .find(filter)
-            .sort({ [sortBy]: sortDirection })
+            .sort(sortObject)
             .skip(skip)
             .limit(pageSize)
             .toArray();
 
         const totalCount = await userCollection.countDocuments(filter);
-        const  result = this.mapToUserListPagination(items, pageNumber, pageSize, totalCount)
+        const  result = userQueryRepository.mapToUserListPagination(items, pageNumber, pageSize, totalCount)
         return result
     },
 
@@ -90,7 +96,7 @@ export const userQueryRepository = {
             page:pageNumber,
             pageSize: pageSize,
             totalCount: totalCount,
-            items: items.map(this.mapToUserViewModel)
+            items: items.map(userQueryRepository.mapToUserViewModel)
         }
     }
 

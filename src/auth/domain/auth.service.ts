@@ -67,6 +67,10 @@ export const authService = {
 
         },
 
+
+
+
+
     async registerUser(userDto:UserInputModel):Promise<Result<UserAccountDBType | null >> {
         const {login,password,email} = userDto
 
@@ -107,7 +111,7 @@ export const authService = {
             newUser.emailConfirmed!.confirmationCode,
             emailExamples.registrationEmail
         )
-           .catch(er => console.error('error in send email:', er))
+           .catch(er => console.error('error in send email:', er)) // нужно изучить
 
     return {
             status: ResultStatus.Success,
@@ -117,15 +121,7 @@ export const authService = {
 
     },
 
-    async confirmEmail(code:string) {
-        if(!code) {
-            return {
-                status: ResultStatus.BadRequest,
-                data: null,
-                errorMessage: 'Bad Request',
-                extensions: []
-            }
-        } // надо вынести в middleware
+    async confirmEmail(code:string):Promise<Result<boolean | null> > {
 
         const user = await userRepository.findByCode(code)
 
@@ -133,8 +129,8 @@ export const authService = {
             return {
                 status: ResultStatus.BadRequest,
                 data: null,
-                errorMessage: 'Bad Request',
-                extensions: []
+                errorMessage: 'User not found',
+                extensions: [{field: 'user', message: 'Not exist'}]
 
             }
         }
@@ -143,8 +139,8 @@ export const authService = {
             return {
                 status: ResultStatus.BadRequest,
                 data: null,
-                errorMessage: 'Bad Request',
-                extensions: []
+                errorMessage: 'User confirmed',
+                extensions: [{field: 'code', message: 'Пользователь уже зарегестрирован'}]
             }
         }
 
@@ -152,8 +148,8 @@ export const authService = {
             return {
                 status: ResultStatus.BadRequest,
                 data: null,
-                errorMessage: 'Bad Request',
-                extensions: []
+                errorMessage: 'code not confirmed',
+                extensions: [{field: 'code', message: 'Confirmation code is incorrect'}]
             }
         }
 
@@ -161,8 +157,8 @@ export const authService = {
             return {
                 status: ResultStatus.BadRequest,
                 data: null,
-                errorMessage: 'Bad Request',
-                extensions: []
+                errorMessage: 'Expiration code',
+                extensions: [{field: ' code', message: 'Confirmation code is expired'}]
             }
         }
 
@@ -175,6 +171,47 @@ export const authService = {
             data: result,
             extensions: []
         }
+    },
+
+    async emailResending(email:string) {
+
+        const foundUser = await userRepository.findByLoginOrEmail(email)
+        if(!foundUser) {
+            return {
+                status: ResultStatus.BadRequest,
+                data: null,
+                errorMessage: ' Not User',
+                extensions: [{field: 'email', message: 'User not found'}]
+            }
+        }
+        if(foundUser.isConfirmed) {
+            return {
+                status: ResultStatus.BadRequest,
+                data: null,
+                errorMessage: 'User isConfirmed',
+                extensions: [{field: 'email', message: 'Email is confirmed'}]
+            }
+        }
+
+        const newCode =  randomUUID();
+        const newExpirationDate = add(new Date(), {hours: 6, minutes: 6})
+
+        await userRepository.updateConfirmationData(foundUser._id, newCode, newExpirationDate)
+
+
+        const resendingCode = await nodemailerService.sendEmail(
+            foundUser.accountDate.email,
+            newCode,
+            emailExamples.registrationEmail
+        ).catch(er => console.error('error in send email:', er))
+
+
+        return {
+            status: ResultStatus.Success,
+            data: resendingCode,
+            extensions: []
+        }
+
     }
 
 }

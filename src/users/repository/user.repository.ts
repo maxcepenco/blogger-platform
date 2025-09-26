@@ -17,7 +17,9 @@ export const userRepository = {
 
     async findByLoginOrEmail(loginOrEmail: string,): Promise<WithId<UserAccountDBType> | null> {
 
-        const result = await userCollection.findOne({$or:[{ email: loginOrEmail }, { login: loginOrEmail }]})
+        const result = await userCollection.findOne({$or:[
+                { "accountDate.login": loginOrEmail },
+                { "accountDate.email": loginOrEmail }]})
 
         return result
 
@@ -28,7 +30,10 @@ export const userRepository = {
         email: string
     ): Promise<boolean> {
         const user = await userCollection.findOne({
-            $or: [{ login }, { email }],
+            $or: [
+                { 'accountDate.login': login },
+                { 'accountDate.email': email },
+            ],
         });
 
         return user !== null;
@@ -36,7 +41,9 @@ export const userRepository = {
     },
 
     async findByCode(code: string): Promise<WithId<UserAccountDBType> | null > {
-        const user = await userCollection.findOne({'emailConfirmation.confirmationCode': code});
+        const user = await userCollection.findOne({'emailConfirmed.confirmationCode': code});
+        console.log(`пойск пользователя в базе/repo ${user}`)
+
         if(!user) {
             return null;
         }
@@ -50,6 +57,18 @@ export const userRepository = {
                                 {$set:{isConfirmed:true}
                             })
         return result.modifiedCount === 1
+    },
+
+    async updateConfirmationData(_id:ObjectId, code: string, expirationDate:Date): Promise<boolean> {
+        const result = await userCollection.updateOne(
+            {_id},
+            {$set:{
+                'emailConfirmation.confirmationCode':code,
+                'emailConfirmation.expirationDate':expirationDate,
+            }})
+
+        return result.modifiedCount === 1
     }
+
 
 }

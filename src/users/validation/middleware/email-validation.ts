@@ -10,10 +10,3 @@ export const emailValidation = body('email')
     .withMessage('email is required')
     .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)
     .withMessage('email must match pattern ^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$')
-    .custom(async (email: string) => {
-        const user = await userRepository.findByLoginOrEmail(email);
-        if (user) {
-            throw new Error("email already exists");
-        }
-        return true;
-    });
