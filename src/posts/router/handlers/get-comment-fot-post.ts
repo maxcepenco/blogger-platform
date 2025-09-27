@@ -11,12 +11,10 @@ import {commentQueryRepository} from "../../../comments/repository/comment-query
 export const getCommentForPost = async (req:RequestWithParamsAndQuery<IdType, SortQueryFieldsType>,res: Response) => {
 
     const postId = req.params.id
-    console.log("➡️ createCommentForPost, postId:", postId);
-    console.log("➡️ Request body:", req.body);
+
 
     const post = await postQueryRepository.findPostById(postId)
     if(!post) {
-        console.log("❌ Post not found, sending 404");
 
         res.sendStatus(HttpStatuses.NotFound_404)
     }

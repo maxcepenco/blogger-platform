@@ -10,7 +10,7 @@ export const createBlog = async (req:RequestWithBody<BlogInputModel>, res: Respo
     try{
         const createdBlog = await blogService.create(req.body);
 
-        const foundBlog = await blogQueryRepository.findById(createdBlog)
+        const foundBlog = await blogQueryRepository.findById(createdBlog.data)
 
         if(!foundBlog) {
             return res.status(HttpStatuses.BadRequest_400).json({

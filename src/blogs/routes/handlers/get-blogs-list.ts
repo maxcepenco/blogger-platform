@@ -14,17 +14,11 @@ export const getAllBlogs = async (req: RequestWithQuery<BlogQueryInput>, res: Re
         const searchQueryFiled = req.query
 
         const result = await blogQueryRepository.findMany(queryInput, searchQueryFiled);
-        const items = result.items;
-        const totalCount = result.totalCount;
 
-        const BlogListOutput = blogQueryRepository.mapToBlogListPaginationOutput(
-            items,
-            queryInput.pageNumber,
-            queryInput.pageSize,
-            totalCount,
-        );
+        res.status(HttpStatuses.Ok_200).json(result);
 
-        res.status(HttpStatuses.Ok_200).json(BlogListOutput);
+
+
     } catch (error) {
         console.error('Error in getAllBlogs:', error);
         res.status(HttpStatuses.InternalServerError_500)

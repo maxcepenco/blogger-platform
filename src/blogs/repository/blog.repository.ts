@@ -7,11 +7,11 @@ import {BlogInputModel} from "../input/blog-input-model";
 export const blogRepository = {
 
 
-    async findById(id: string): Promise<WithId<Blog>> {
+    async findById(id: string): Promise<WithId<Blog>| null> {
 
         const result = await blogCollection.findOne({_id: new ObjectId(id)})
         if (!result) {
-            throw new Error("No blog found.");
+            return null
         }
         return result
     },

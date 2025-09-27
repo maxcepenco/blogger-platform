@@ -2,10 +2,11 @@ import {BlogInputModel} from "../input/blog-input-model";
 import {Blog} from "../domain/Blog";
 import {blogRepository} from "../repository/blog.repository";
 import {WithId} from "mongodb";
-import {BlogQueryInput} from "../input/blog-query.input";
+import {ResultStatus} from "../../core/result/result-code";
+import {Result} from "../../core/result/result-type";
 
 export const blogService = {
-    async create(blogDto: BlogInputModel):Promise<string> {
+    async create(blogDto: BlogInputModel):Promise<Result<string>> {
     const newBlog:Blog = {
         name: blogDto.name,
         description: blogDto.description,
@@ -13,24 +14,37 @@ export const blogService = {
         createdAt: new Date().toISOString(),
         isMembership: false
     }
-    return await blogRepository.createBlog(newBlog);
+    const resultCreate = await blogRepository.createBlog(newBlog);
+    return {
+        status:ResultStatus.Success,
+        data: resultCreate,
+        extensions:[]
+    }
+
 },
-    async findById(id: string): Promise<WithId<Blog>> {
-        return await blogRepository.findById(id)
+
+
+
+
+    async updateBlog(id: string, blog: BlogInputModel): Promise<Result<boolean>> {
+        const resultUpdate =  await blogRepository.updateBlog(id, blog)
+        return{
+            status:ResultStatus.Success,
+            data: resultUpdate,
+            extensions: []
+        }
 
     },
 
-    async findByIdForGet(id: string): Promise<WithId<Blog>| null> {
-        return await blogRepository.findByIdForGet(id)
-    },
 
-    async updateBlog(id: string, blog: BlogInputModel): Promise<boolean> {
-        return  await blogRepository.updateBlog(id, blog)
-    },
+    async deleteBlog(id: string): Promise<Result<boolean>> {
 
-
-    async deleteBlog(id: string): Promise<boolean> {
-        return await  blogRepository.deleteBlog(id)
+      const resultDelete = await  blogRepository.deleteBlog(id)
+        return{
+          status:ResultStatus.Success,
+            data: resultDelete,
+            extensions: []
+        }
     },
 
 

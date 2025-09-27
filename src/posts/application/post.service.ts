@@ -3,10 +3,21 @@ import {blogRepository} from "../../blogs/repository/blog.repository";
 import {Post} from "../domain/Post";
 import {postRepository} from "../repository/post.repository";
 import {blogPostInput} from "../../blogs/input/blog-post-input-model";
+import {Result} from "../../core/result/result-type";
+import {ResultStatus} from "../../core/result/result-code";
 
 export const postService = {
-    async createPost(dto:PostInputModel): Promise<string> {
+    async createPost(dto:PostInputModel): Promise<Result<string | null >> {
         const blogData = await blogRepository.findById(dto.blogId)
+        if(!blogData){
+            return {
+                status:ResultStatus.BadRequest,
+                errorMessage:"Bad Request",
+                extensions:[{field: 'blogId', message: 'No blog ID'}],
+                data:null,
+
+            }
+        }  
         const newPost:Post = {
             title:dto.title,
             shortDescription:dto.shortDescription,
@@ -15,7 +26,12 @@ export const postService = {
             blogName:blogData.name,
             createdAt: new Date().toISOString()
         };
-        return await postRepository.createPost(newPost);
+        const resultCreate =  await postRepository.createPost(newPost);
+        return {
+            status:ResultStatus.Success,
+            data: resultCreate,
+            extensions:[]
+        }
     },
 
 
@@ -31,6 +47,8 @@ export const postService = {
 
 
     async createPostForBlog(blogIdData:string, blogName:string, postData: blogPostInput):Promise<string> {
+
+
 
 
         const newPost:Post = {

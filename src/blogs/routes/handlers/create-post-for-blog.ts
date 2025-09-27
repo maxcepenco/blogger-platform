@@ -7,7 +7,7 @@ import {blogQueryRepository} from "../../repository/blog.query-repository";
 import {postQueryRepository} from "../../../posts/repository/post.query-repository";
 
 
-export const createPostForBlog = async (req:RequestWithParamsAndBody<{ blogId:string }, blogPostInput>,res:Response) => {
+export const createPostForBlog = async(req:RequestWithParamsAndBody<{ blogId:string }, blogPostInput>,res:Response) => {
     try{
         const   blogId = req.params.blogId;
 

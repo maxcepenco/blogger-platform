@@ -9,7 +9,7 @@ import {SortQueryFilterType} from "../../core/types/sortQueryFilter.type";
 
 export const blogQueryRepository = {
 
-    async findMany(inputParams:SortQueryFilterType, searchType: SearchFieldTypeBlog): Promise<{ items: WithId<Blog>[]; totalCount: number }> {
+    async findMany(inputParams:SortQueryFilterType, searchType: SearchFieldTypeBlog): Promise<PaginateQueryOutput<BlogViewModel>> {
             const {
 
                 pageNumber,
@@ -31,17 +31,17 @@ export const blogQueryRepository = {
 
 
 
-            const [items, totalCount] = await Promise.all([
-                blogCollection
+            const items = await blogCollection
                     .find(filter)
                     .sort({ [sortBy]: sortDirection })
                     .skip(skip)
                     .limit(pageSize)
-                    .toArray(),
-                blogCollection.countDocuments(filter)
-            ]);
+                    .toArray()
 
-            return {items, totalCount};
+
+            const totalCount = await blogCollection.countDocuments(filter);
+            const result = this.mapToBlogListPaginationOutput(items, pageNumber, pageSize, totalCount)
+            return result
         },
 
     async findById(id: string): Promise<WithId<Blog> | null> {

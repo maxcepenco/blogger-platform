@@ -10,7 +10,6 @@ import {commentQueryRepository} from "../../../comments/repository/comment-query
 
 export const createCommentForPost = async(req:ReqParamsBodyUserId<idType, CommentInputModel,IdType>, res:Response) => {
     const userId = req.user?.id as string;
-    if(!userId) return res.sendStatus(HttpStatuses.Unauthorized_401)
 
     const postId = req.params.id
     const existingPost = await postQueryRepository.findPostById(postId)

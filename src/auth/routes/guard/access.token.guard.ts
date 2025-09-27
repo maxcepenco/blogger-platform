@@ -13,8 +13,8 @@ export const accessTokenGuard = async (req:Request, res:Response, next: NextFunc
 
     const payload = await jwtService.verifyToken(token)
     if(!payload) {
-        res.sendStatus(HttpStatuses.Unauthorized_401)
-        return
+       return  res.sendStatus(HttpStatuses.Unauthorized_401)
+
 
     }
     const {userId} = payload;
