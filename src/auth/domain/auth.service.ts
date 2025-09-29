@@ -72,13 +72,27 @@ export const authService = {
     async registerUser(userDto:UserInputModel):Promise<Result<UserAccountDBType | null >> {
         const {login,password,email} = userDto
 
-        const user = await userRepository.findExistByLoginOrEmail(login,email)
-        if(user) {
-            return {
-                status: ResultStatus.BadRequest,
-                data: null,
-                errorMessage: 'Bad Request',
-                extensions:{errorsMessages:[{message: 'login or email existed',field: 'loginOrEmail' }]}
+        const existingUser = await userRepository.findExistByLoginOrEmail(login, email);
+
+        if (existingUser) {
+            // Проверяем что именно совпало
+            if (existingUser.accountDate.login === login) {
+                return {
+                    status: ResultStatus.BadRequest,
+                    data: null,
+                    errorMessage: 'Bad Request',
+                    extensions: {errorsMessages: [{message: 'User with this login already exists', field: 'login'}]
+                    }
+                }
+            }
+
+            if (existingUser.accountDate.email === email) {
+                return {
+                    status: ResultStatus.BadRequest,
+                    data: null,
+                    errorMessage: 'Bad Request',
+                    extensions: { errorsMessages: [{message: 'User with this email already exists',field: 'email'}] }
+                }
             }
         }
 
@@ -103,15 +117,18 @@ export const authService = {
 
           await userRepository.create(newUser)
 
-       await nodemailerService
-            .sendEmail(
-            newUser.accountDate.email,
-            newUser.emailConfirmed!.confirmationCode,
-            emailExamples.registrationEmail
-        )
-           .catch(er => console.error('error in send email:', er)) // нужно изучить
+        try {
+            await nodemailerService.sendEmail(
+                newUser.accountDate.email,
+                newUser.emailConfirmed!.confirmationCode,
+                emailExamples.registrationEmail
+            )
+        } catch (error) {
+            console.error('Error sending confirmation email:', error)
+        }
 
-    return {
+
+        return {
             status: ResultStatus.Success,
             data: newUser,
     }

@@ -28,7 +28,7 @@ export const userRepository = {
     async findExistByLoginOrEmail(
         login: string,
         email: string
-    ): Promise<boolean> {
+    ): Promise<WithId<UserAccountDBType> | null> {
         const user = await userCollection.findOne({
             $or: [
                 { 'accountDate.login': login },
@@ -36,13 +36,12 @@ export const userRepository = {
             ],
         });
 
-        return user !== null;
+        return user;
 
     },
 
     async findByCode(code: string): Promise<WithId<UserAccountDBType> | null > {
         const user = await userCollection.findOne({'emailConfirmed.confirmationCode': code});
-        console.log(`пойск пользователя в базе/repo ${user}`)
 
         if(!user) {
             return null;
@@ -63,8 +62,8 @@ export const userRepository = {
         const result = await userCollection.updateOne(
             {_id},
             {$set:{
-                'emailConfirmation.confirmationCode':code,
-                'emailConfirmation.expirationDate':expirationDate,
+                'emailConfirmed.confirmationCode':code,
+                'emailConfirmed.expirationDate':expirationDate,
             }})
 
         return result.modifiedCount === 1

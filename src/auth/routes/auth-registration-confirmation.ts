@@ -15,6 +15,6 @@ export const confirmEmail = async (req:RequestWithBody<RegistrationCodConfirmati
         return res.status(resultCodeToHttpException(result.status)).send(result.extensions)
     }
 
-    return res.sendStatus(HttpStatuses.Created_201)
+    return res.sendStatus(HttpStatuses.NoContent_204)
 
 }
