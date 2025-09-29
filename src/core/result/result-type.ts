@@ -1,15 +1,17 @@
 import {ResultStatus} from "./result-code";
 
 
-type ExtensionType = {
-    field: string | null
-    message: string
-}
+type ErrorExtensions = {
+    errorsMessages: Array<{
+        message: string;
+        field: string;
+    }>;
+};
 
 
 export type Result<T = null> = {
     status: ResultStatus
     errorMessage?: string
-    extensions: ExtensionType[]
+    extensions?: ErrorExtensions
     data: T
 }

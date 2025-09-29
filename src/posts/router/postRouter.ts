@@ -9,7 +9,7 @@ import {handlerValidationErrors} from "../../core/midleware/handlerValidationErr
 import {authValidationMiddleware} from "../../auth/routes/middleware/auth-validation-middleware";
 import {createPost} from "./handlers/create-post";
 import {createCommentForPost} from "./handlers/create-comment-for-post";
-import {accessTokenGuard} from "../../auth/routes/guard/access.token.guard.ts";
+import {accessTokenGuard} from "../../auth/routes/guard/access.token.guard";
 import {commentInputMiddleware} from "../../comments/validation/comment.input-middleware";
 import {getCommentForPost} from "./handlers/get-comment-fot-post";
 

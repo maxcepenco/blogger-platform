@@ -18,7 +18,6 @@ export const blogService = {
     return {
         status:ResultStatus.Success,
         data: resultCreate,
-        extensions:[]
     }
 
 },
@@ -31,7 +30,6 @@ export const blogService = {
         return{
             status:ResultStatus.Success,
             data: resultUpdate,
-            extensions: []
         }
 
     },
@@ -43,7 +41,6 @@ export const blogService = {
         return{
           status:ResultStatus.Success,
             data: resultDelete,
-            extensions: []
         }
     },
 

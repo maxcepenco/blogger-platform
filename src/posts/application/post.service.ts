@@ -13,7 +13,12 @@ export const postService = {
             return {
                 status:ResultStatus.BadRequest,
                 errorMessage:"Bad Request",
-                extensions:[{field: 'blogId', message: 'No blog ID'}],
+                extensions:{
+                    errorsMessages: [{
+                        field: 'blog',
+                        message: 'no blog id'
+                    }]
+                },
                 data:null,
 
             }
@@ -30,7 +35,6 @@ export const postService = {
         return {
             status:ResultStatus.Success,
             data: resultCreate,
-            extensions:[]
         }
     },
 

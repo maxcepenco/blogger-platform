@@ -34,14 +34,12 @@ export const commentService = {
             return{
                 status:ResultStatus.NotFound,
                 data: null,
-                extensions: []
             }
         }
         if(userId !== foundComment.commentatorInfo.userId) {
             return {
                 status:ResultStatus.Forbidden,
                 data: null,
-                extensions: []
             };
         }
         const updatedComment:CommentDbType = {
@@ -55,7 +53,6 @@ export const commentService = {
         return {
             status:ResultStatus.Success,
             data: result,
-            extensions: []
         }
 
     },
@@ -67,14 +64,12 @@ export const commentService = {
             return{
                 status: ResultStatus.NotFound,
                 data: null,
-                extensions: []
             }
         }
         if(userId !== foundComment.commentatorInfo.userId) {
             return{
                 status: ResultStatus.Forbidden,
                 data: null,
-                extensions: []
             }
         }
 
@@ -82,7 +77,6 @@ export const commentService = {
         return {
             status:ResultStatus.Success,
             data: result,
-            extensions: []
         }
     }
 

@@ -24,7 +24,7 @@ export const authService = {
                 status: ResultStatus.Unauthorized,
                 data: null,
                 errorMessage: 'Unauthorized',
-                extensions: [{ field: 'LoginOrEmail', message: 'Wrong credentials'}]
+                // extensions: [{ field: 'LoginOrEmail', message: 'Wrong credentials'}]
 
             }
         }
@@ -32,7 +32,6 @@ export const authService = {
         return {
             status: ResultStatus.Success,
             data: { accessToken },
-            extensions:[]
         }
     },
 
@@ -45,7 +44,7 @@ export const authService = {
                 status: ResultStatus.NotFound,
                 data:null,
                 errorMessage: 'Not Found',
-                extensions: [{field: 'loginOrEmail', message: 'Not Found'}]
+                // extensions: {errorsMessages:[{message: 'NotFound',field: 'loginOrEmail' }]}
             }
         }
 
@@ -55,14 +54,13 @@ export const authService = {
                 status: ResultStatus.BadRequest,
                 data: null,
                 errorMessage: 'Bad Request',
-                extensions: [{field: 'password', message: 'Wrong password'}]
+                extensions: {errorsMessages:[{message: 'Wrong password',field: 'password' }]}
             }
         }
 
         return {
             status: ResultStatus.Success,
             data: user,
-            extensions: []
         }
 
         },
@@ -80,7 +78,7 @@ export const authService = {
                 status: ResultStatus.BadRequest,
                 data: null,
                 errorMessage: 'Bad Request',
-                extensions: [{field: 'LoginOrEmail', message: 'Already registered'}]
+                extensions:{errorsMessages:[{message: 'login or email existed',field: 'loginOrEmail' }]}
             }
         }
 
@@ -116,7 +114,6 @@ export const authService = {
     return {
             status: ResultStatus.Success,
             data: newUser,
-            extensions: []
     }
 
     },
@@ -130,7 +127,12 @@ export const authService = {
                 status: ResultStatus.BadRequest,
                 data: null,
                 errorMessage: 'User not found',
-                extensions: [{field: 'user', message: 'Not exist'}]
+                extensions: {
+                    errorsMessages: [{
+                        field: 'code',
+                        message: 'Confirmation code not found'
+                    }]
+                }
 
             }
         }
@@ -140,7 +142,12 @@ export const authService = {
                 status: ResultStatus.BadRequest,
                 data: null,
                 errorMessage: 'User confirmed',
-                extensions: [{field: 'code', message: 'Пользователь уже зарегестрирован'}]
+                extensions:  {
+                    errorsMessages: [{
+                        field: 'code',
+                        message: 'Email is already confirmed'
+                    }]
+                }
             }
         }
 
@@ -149,7 +156,12 @@ export const authService = {
                 status: ResultStatus.BadRequest,
                 data: null,
                 errorMessage: 'code not confirmed',
-                extensions: [{field: 'code', message: 'Confirmation code is incorrect'}]
+                extensions:{
+                    errorsMessages: [{
+                        field: 'code',
+                        message: 'Confirmation code is incorrect'
+                    }]
+                }
             }
         }
 
@@ -158,7 +170,12 @@ export const authService = {
                 status: ResultStatus.BadRequest,
                 data: null,
                 errorMessage: 'Expiration code',
-                extensions: [{field: ' code', message: 'Confirmation code is expired'}]
+                extensions: {
+                    errorsMessages: [{
+                        field: 'code',
+                        message: 'Confirmation code has expired'
+                    }]
+                }
             }
         }
 
@@ -169,7 +186,6 @@ export const authService = {
         return {
             status: ResultStatus.Success,
             data: result,
-            extensions: []
         }
     },
 
@@ -181,7 +197,7 @@ export const authService = {
                 status: ResultStatus.BadRequest,
                 data: null,
                 errorMessage: ' Not User',
-                extensions: [{field: 'email', message: 'User not found'}]
+                extensions:{errorsMessages:[{message: 'User not found',field: 'email' }]}
             }
         }
         if(foundUser.isConfirmed) {
@@ -189,7 +205,12 @@ export const authService = {
                 status: ResultStatus.BadRequest,
                 data: null,
                 errorMessage: 'User isConfirmed',
-                extensions: [{field: 'email', message: 'Email is confirmed'}]
+                extensions:{
+                    errorsMessages: [{
+                        field: 'email',
+                        message: 'Email is already confirmed'
+                    }]
+                }
             }
         }
 
@@ -209,7 +230,6 @@ export const authService = {
         return {
             status: ResultStatus.Success,
             data: resendingCode,
-            extensions: []
         }
 
     }

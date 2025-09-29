@@ -1,6 +1,6 @@
 import {Router} from "express";
 import {getComment} from "./get-comment";
-import {accessTokenGuard} from "../../auth/routes/guard/access.token.guard.ts";
+import {accessTokenGuard} from "../../auth/routes/guard/access.token.guard";
 import {commentInputMiddleware} from "../validation/comment.input-middleware";
 import {handlerValidationErrors} from "../../core/midleware/handlerValidationErrors";
 import {updateComment} from "./update-comment";

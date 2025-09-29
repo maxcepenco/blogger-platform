@@ -11,7 +11,7 @@ export const authRegistration = async (req:RequestWithBody<UserInputModel>, res:
     const userData = req.body;
     const result = await authService.registerUser(userData);
     if(result.status !== ResultStatus.Success) {
-       return  res.status(resultCodeToHttpException(result.status))
+       return  res.status(resultCodeToHttpException(result.status)).send(result.extensions)
     }
-    return res.sendStatus(HttpStatuses.Created_201)
+    return res.sendStatus(HttpStatuses.NoContent_204)
 }

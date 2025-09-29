@@ -3,7 +3,7 @@ import {passwordValidation} from "../../users/validation/middleware/password.val
 import {handlerValidationErrors} from "../../core/midleware/handlerValidationErrors";
 import {authAccess} from "./auth-login.handler";
 import {loginOrEmailValidation} from "../../users/validation/middleware/login-or-email.validation";
-import {accessTokenGuard} from "./guard/access.token.guard.ts";
+import {accessTokenGuard} from "./guard/access.token.guard";
 import {authMeHandler} from "./auth-me.handler";
 import {authRegistration} from "./auth-registration";
 import {emailValidation} from "../../users/validation/middleware/email-validation";

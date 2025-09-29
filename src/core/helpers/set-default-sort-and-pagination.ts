@@ -5,15 +5,6 @@ import {PostQueryInput} from "../../posts/input/post-query.input";
 import {PostSortField} from "../../posts/input/post-sort-field";
 
 
-export function setDefaultBlogQueryParams(query: any): BlogQueryInput {
-    return {
-        pageNumber: parseInt(query.pageNumber, 10) || 1,
-        pageSize: parseInt(query.pageSize, 10) || 10,
-        sortBy: (query.sortBy as BlogSortField) || BlogSortField.CreatedAt,
-        sortDirection: query.sortDirection || SortDirection.Desc,
-        searchNameTerm: query.searchNameTerm || undefined
-    };
-}
 
 export function setDefaultPostQueryParams(query: any): PostQueryInput {
     return {

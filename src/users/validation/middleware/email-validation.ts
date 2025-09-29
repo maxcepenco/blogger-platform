@@ -1,6 +1,4 @@
 import {body} from "express-validator";
-import {userQueryRepository} from "../../repository/user.query-repository";
-import {userRepository} from "../../repository/user.repository";
 
 export const emailValidation = body('email')
     .isString()
@@ -8,5 +6,5 @@ export const emailValidation = body('email')
     .trim()
     .isLength({min: 1})
     .withMessage('email is required')
-    .matches(/^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/)
-    .withMessage('email must match pattern ^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$')
+    .matches(/^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/)
+    .withMessage('email must match pattern /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$/')
