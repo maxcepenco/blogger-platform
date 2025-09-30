@@ -67,15 +67,12 @@ export const authService = {
 
 
 
-
-
     async registerUser(userDto:UserInputModel):Promise<Result<UserAccountDBType | null >> {
         const {login,password,email} = userDto
 
         const existingUser = await userRepository.findExistByLoginOrEmail(login, email);
 
         if (existingUser) {
-            // Проверяем что именно совпало
             if (existingUser.accountDate.login === login) {
                 return {
                     status: ResultStatus.BadRequest,
@@ -206,7 +203,7 @@ export const authService = {
         }
     },
 
-    async emailResending(email:string) {
+    async emailResending(email:string):Promise<Result<boolean | null>> {
 
         const foundUser = await userRepository.findByLoginOrEmail(email)
         if(!foundUser) {
@@ -246,7 +243,7 @@ export const authService = {
 
         return {
             status: ResultStatus.Success,
-            data: resendingCode,
+            data: resendingCode || null,
         }
 
     }
