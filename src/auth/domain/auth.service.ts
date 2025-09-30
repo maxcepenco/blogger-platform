@@ -133,9 +133,10 @@ export const authService = {
     },
 
     async confirmEmail(code:string):Promise<Result<boolean | null> > {
+        console.log('Searching for code:', code);
 
         const user = await userRepository.findByCode(code)
-
+        console.log(`user:${user}`)
         if(!user) {
             return {
                 status: ResultStatus.BadRequest,
@@ -206,6 +207,7 @@ export const authService = {
     async emailResending(email:string):Promise<Result<boolean | null>> {
 
         const foundUser = await userRepository.findByLoginOrEmail(email)
+        console.log('found user:',foundUser)
         if(!foundUser) {
             return {
                 status: ResultStatus.BadRequest,

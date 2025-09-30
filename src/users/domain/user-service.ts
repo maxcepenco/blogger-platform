@@ -17,6 +17,7 @@ export const userService = {
                  passwordHash: passwordHash,
                  createdAt: new Date(),
              },
+             emailConfirmed: null,
              isConfirmed: true
          }
 

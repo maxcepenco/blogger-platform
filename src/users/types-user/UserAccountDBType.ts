@@ -2,7 +2,7 @@
 
 export type UserAccountDBType = {
     accountDate: AccountData,
-    emailConfirmed?: EmailConfirmation,
+    emailConfirmed: EmailConfirmation | null,
     isConfirmed: boolean
 }
 

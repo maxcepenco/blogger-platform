@@ -41,9 +41,16 @@ export const userRepository = {
     },
 
     async findByCode(code: string): Promise<WithId<UserAccountDBType> | null > {
-        const user = await userCollection.findOne({'emailConfirmed.confirmationCode': code});
+        console.log('Searching for code:', code);
+
+        const user = await userCollection.findOne({
+            'emailConfirmed.confirmationCode': code,
+            'emailConfirmed': {$ne: null}
+        });
+        console.log('Searching for user:', user);
 
         if(!user) {
+            console.log(' user found?:', user);
             return null;
         }
         return user;
