@@ -6,10 +6,12 @@ import {AUTH_PATHS, BLOGS_PATHS, COMMENT_PATHS, POST_PATHS, TESTING_PATHS, USER_
 import {authRouter} from "./auth/routes/auth.router";
 import {userRouter} from "./users/routes/user-router";
 import {commentRouter} from "./comments/routes/comment-router";
+import cookieParser from "cookie-parser";
 
 //-------------------------------------Crud endpoint-------------------------------------------------------
 export const setupApp = (app:Express) => {
   app.use(express.json());
+  app.use(cookieParser())
 
   app.use(BLOGS_PATHS,blogRouter )
   app.use(POST_PATHS, postRouter )
