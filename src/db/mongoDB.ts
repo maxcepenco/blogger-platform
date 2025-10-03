@@ -4,18 +4,21 @@ import {Blog} from "../blogs/domain/Blog";
 import {SETTINGS} from "../core/settings/settings";
 import {UserAccountDBType} from "../users/types-user/UserAccountDBType";
 import {CommentDbType} from "../comments/types/comment-db-type";
+import {RefreshTokenDbType} from "../auth/dto/refresh-token";
 
 
 const BLOG_COLLECTIONS_NAME =  'blogs'
 const POST_COLLECTIONS_NAME = 'posts'
 const USER_COLLECTIONS_NANE = 'users'
 const COMMENT_COLLECTIONS_NAME =  'comments'
+const REFRESH_TOKEN_COLLECTIONS_NAME =  'refresh_token'
 
 export let client: MongoClient;
 export let blogCollection: Collection<Blog>
 export let postCollection: Collection<Post>
 export let userCollection: Collection<UserAccountDBType>
 export let commentCollection: Collection<CommentDbType>
+export let refreshTokenCollection: Collection<RefreshTokenDbType>
 
 export const runDB = async (url: string): Promise<void> => {
     client = new MongoClient(url)
@@ -25,6 +28,8 @@ export const runDB = async (url: string): Promise<void> => {
     postCollection = db.collection<Post>(POST_COLLECTIONS_NAME)
     userCollection = db.collection<UserAccountDBType>(USER_COLLECTIONS_NANE)
     commentCollection = db.collection<CommentDbType>(COMMENT_COLLECTIONS_NAME)
+    refreshTokenCollection = db.collection<RefreshTokenDbType>(REFRESH_TOKEN_COLLECTIONS_NAME)
+
 
 
     try{

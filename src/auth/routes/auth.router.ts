@@ -1,7 +1,7 @@
 import {Router} from "express";
 import {passwordValidation} from "../../users/validation/middleware/password.validation";
 import {handlerValidationErrors} from "../../core/midleware/handlerValidationErrors";
-import {authAccess} from "./auth-login.handler";
+import {authLoginAccess} from "./auth-login.handler";
 import {loginOrEmailValidation} from "../../users/validation/middleware/login-or-email.validation";
 import {accessTokenGuard} from "./guard/access.token.guard";
 import {authMeHandler} from "./auth-me.handler";
@@ -16,8 +16,9 @@ export const authRouter = Router();
 
 
 authRouter
-    .post('/login',passwordValidation, loginOrEmailValidation, handlerValidationErrors, authAccess  )
+    .post('/login',passwordValidation, loginOrEmailValidation, handlerValidationErrors, authLoginAccess  )
     .get('/me',accessTokenGuard, loginOrEmailValidation, authMeHandler )
     .post('/registration',passwordValidation,emailValidation,loginValidation,handlerValidationErrors,authRegistration)
     .post('/registration-confirmation',codeValidation,handlerValidationErrors, confirmEmail)
     .post('/registration-email-resending',emailValidation,handlerValidationErrors,registrationEmailResending)
+    .post('/refresh-token')

@@ -10,15 +10,16 @@ import {randomUUID} from "node:crypto";
 import {add} from "date-fns/add";
 import {nodemailerService} from "../adapters/nodemailer.service";
 import {emailExamples} from "../adapters/email-example";
+import {RefreshTokenDbType} from "../dto/refresh-token";
 
 export const authService = {
 
     async loginUser(
         loginOrEmail: string,
         password: string,
-    ): Promise <Result<{accessToken: string} | null>>  {
+    ): Promise <Result<{accessToken: string, refreshToken: string} | null>>  {
 
-        const result = await this.checkUserCredentials(loginOrEmail, password)
+        const result = await this._checkUserCredentials(loginOrEmail, password)
         if(result.status !== ResultStatus.Success) {
             return {
                 status: ResultStatus.Unauthorized,
@@ -28,14 +29,18 @@ export const authService = {
 
             }
         }
-    const accessToken = await jwtService.createToken(result.data!._id.toString())
+
+    let accessToken = await jwtService.createAccessToken(result.data!._id.toString())
+    let refreshToken = await jwtService.createRefreshToken(result.data!._id.toString())
+
         return {
             status: ResultStatus.Success,
-            data: { accessToken },
+            data: { accessToken, refreshToken },
         }
     },
 
-    async checkUserCredentials( loginOrEmail: string, password: string ):Promise<Result<WithId<UserAccountDBType> | null >> {
+    async _checkUserCredentials( loginOrEmail: string, password: string ):
+                                Promise<Result<WithId<UserAccountDBType> | null >> {
 
         const user = await userRepository.findByLoginOrEmail(loginOrEmail)
 
@@ -65,7 +70,36 @@ export const authService = {
 
         },
 
+    async createRefreshAndAccessToken(refreshToken:string, userId:string):
+                                     Promise<Result<{newAccessToken:string,newRefreshToken:string} | null>>{
 
+        // 1)Проверка есть ли токен в BlackList
+        const oldRefreshToken = await userRepository.findOldRefreshToken(refreshToken, userId)
+        if(oldRefreshToken) {
+        return{
+            status:ResultStatus.Unauthorized,
+            data: null,
+            errorMessage: 'Unauthorized',
+             }
+        }
+        // 2) Создаем обьекта для BlackList
+        const createOldToken:RefreshTokenDbType = {
+            token: refreshToken,
+            userId
+        }
+
+        // 3)Сохраняем старый токен в BlackList
+        await userRepository.saveOlsRefreshToken(createOldToken)
+
+        // 4) Создаем новый accessToken and RefreshToken
+        let newAccessToken = await jwtService.createAccessToken(userId.toString())
+        let newRefreshToken = await jwtService.createRefreshToken(userId.toString())
+
+        return {
+            status: ResultStatus.Success,
+            data: { newAccessToken, newRefreshToken },
+        }
+    },
 
     async registerUser(userDto:UserInputModel):Promise<Result<UserAccountDBType | null >> {
         const {login,password,email} = userDto

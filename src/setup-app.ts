@@ -8,7 +8,6 @@ import {userRouter} from "./users/routes/user-router";
 import {commentRouter} from "./comments/routes/comment-router";
 import cookieParser from "cookie-parser";
 
-//-------------------------------------Crud endpoint-------------------------------------------------------
 export const setupApp = (app:Express) => {
   app.use(express.json());
   app.use(cookieParser())

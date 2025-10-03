@@ -1,6 +1,7 @@
 import {UserAccountDBType} from "../types-user/UserAccountDBType";
-import {userCollection} from "../../db/mongoDB";
+import {refreshTokenCollection, userCollection} from "../../db/mongoDB";
 import {ObjectId, WithId} from "mongodb";
+import {RefreshTokenDbType} from "../../auth/dto/refresh-token";
 
 
 export const userRepository = {
@@ -74,7 +75,14 @@ export const userRepository = {
             }})
 
         return result.modifiedCount === 1
+    },
+
+    async findOldRefreshToken(refreshToken:string, userId:string):Promise<boolean> {
+        const oldToken = await refreshTokenCollection.findOne({token: refreshToken, userId: userId});
+        return !!oldToken;
+    },
+    async saveOlsRefreshToken(tokenObj: RefreshTokenDbType):Promise<void> {
+         await refreshTokenCollection.insertOne(tokenObj);
+
     }
-
-
 }
