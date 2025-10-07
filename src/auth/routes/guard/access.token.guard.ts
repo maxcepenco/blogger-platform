@@ -11,7 +11,7 @@ export const accessTokenGuard = async (req:Request, res:Response, next: NextFunc
 
     if(authType !== 'Bearer') return res.sendStatus(HttpStatuses.Unauthorized_401)
 
-    const payload = await jwtService.verifyToken(token)
+    const payload = await jwtService.verifyAccessToken(token)
     if(!payload) {
        return  res.sendStatus(HttpStatuses.Unauthorized_401)
 
@@ -22,6 +22,5 @@ export const accessTokenGuard = async (req:Request, res:Response, next: NextFunc
     req.user = {id: userId} as IdType
 
     next()
-
 
 }

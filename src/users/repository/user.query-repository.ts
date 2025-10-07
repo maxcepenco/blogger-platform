@@ -1,7 +1,7 @@
 import {UserAccountDBType} from "../types-user/UserAccountDBType";
 import {userCollection} from "../../db/mongoDB";
 import {ObjectId, Sort, WithId} from "mongodb";
-import {UserViewModel} from "../output-model/output-model.user";
+import {UserViewAuthMe, UserViewModel} from "../output-model/output-model.user";
 import {SearchQueryFieldType} from "../input-model/user-query-field.type";
 import {PaginateQueryOutput} from "../../core/types/pagination-output-model";
 import {SortQueryFilterType} from "../../core/types/sortQueryFilter.type";
@@ -15,7 +15,23 @@ export const userQueryRepository = {
             return null;
         }
         return this.mapToUserViewModel(user);
+
+
     },
+
+    async findByIdForMe(userId: string ): Promise< UserViewAuthMe  | null> {
+        console.log(`fidnUserForId: ${userId}`);
+
+        const user = await userCollection.findOne({ _id:new ObjectId(userId) });
+        console.log(`foundUser: ${user}`);
+
+        if (!user) {
+            return null;
+        }
+        return this.mapToAuthMeView(user);
+    },
+
+
 
     async findMany(queryField:SortQueryFilterType, searchField: SearchQueryFieldType)
                     : Promise<PaginateQueryOutput<UserViewModel>> {
@@ -81,6 +97,18 @@ export const userQueryRepository = {
             createdAt: user.accountDate.createdAt.toISOString(),
         }
     },
+
+
+    mapToAuthMeView(user:WithId<UserAccountDBType>):UserViewAuthMe {
+        return{
+
+            userId: user._id.toString(),
+            login: user.accountDate.login,
+            email: user.accountDate.email,
+        }
+    },
+
+
 
     mapToUserListPagination(
         items: WithId<UserAccountDBType>[],

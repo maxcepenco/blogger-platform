@@ -16,13 +16,23 @@ export const jwtService = {
     },
 
 
-    async verifyToken(token: string): Promise<{ userId: string} | null> {
+    async verifyAccessToken(token: string): Promise<{ userId: string} | null> {
     try{
         return jwt.verify(token, SETTINGS.AC_SECRET) as { userId: string }
     }catch (error) {
         console.error('Token verification failed')
         return null;
         }
+    },
+
+    async verifyRefreshToken(token: string): Promise<{ userId: string} | null> {
+        try{
+            return jwt.verify(token, SETTINGS.RT_SECRET) as { userId: string }
+        }catch (error) {
+            console.error('Token verification failed')
+            return null;
+        }
     }
+
 
 }

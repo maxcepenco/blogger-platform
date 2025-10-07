@@ -5,3 +5,9 @@ export type UserViewModel = {
     email: string
     createdAt: string
 }
+
+export type UserViewAuthMe = {
+    userId: string
+    login: string
+    email: string
+}

@@ -11,6 +11,9 @@ import {loginValidation} from "../../users/validation/middleware/login.validatio
 import {confirmEmail} from "./auth-registration-confirmation";
 import {codeValidation} from "../../users/validation/middleware/code-validation";
 import {registrationEmailResending} from "./auth-registration-email-resending";
+import {refreshTokenGuard} from "./guard/refresh.token.guard";
+import {authRefreshToken} from "./auth-refresh-token";
+import {logout} from "./logout";
 
 export const authRouter = Router();
 
@@ -21,4 +24,5 @@ authRouter
     .post('/registration',passwordValidation,emailValidation,loginValidation,handlerValidationErrors,authRegistration)
     .post('/registration-confirmation',codeValidation,handlerValidationErrors, confirmEmail)
     .post('/registration-email-resending',emailValidation,handlerValidationErrors,registrationEmailResending)
-    .post('/refresh-token')
+    .post('/refresh-token',refreshTokenGuard,authRefreshToken)
+    .post('/logout',refreshTokenGuard, logout)

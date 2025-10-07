@@ -77,12 +77,19 @@ export const userRepository = {
         return result.modifiedCount === 1
     },
 
+
+
     async findOldRefreshToken(refreshToken:string, userId:string):Promise<boolean> {
-        const oldToken = await refreshTokenCollection.findOne({token: refreshToken, userId: userId});
+        const oldToken = await refreshTokenCollection.findOne({token: refreshToken, userId: userId.toString()});
         return !!oldToken;
     },
     async saveOlsRefreshToken(tokenObj: RefreshTokenDbType):Promise<void> {
          await refreshTokenCollection.insertOne(tokenObj);
 
+    },
+
+    async clearAllRefreshTokens(): Promise<boolean> {
+        await refreshTokenCollection.deleteMany({});
+        return true;
     }
 }

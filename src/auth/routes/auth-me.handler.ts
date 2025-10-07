@@ -8,7 +8,7 @@ import {Response} from "express";
 export const authMeHandler = async (req:RequestWithUserId<IdType>, res: Response) =>{
     const userId = req.user?.id as string;
     if(!userId) return res.sendStatus(HttpStatuses.Unauthorized_401)
-    const me = await userQueryRepository.findById(userId);
-
+    const me = await userQueryRepository.findByIdForMe(userId);
+    console.log(`AuthMeViewModel: ${me}`);
     return res.status(HttpStatuses.Ok_200).send(me)
 }

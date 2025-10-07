@@ -70,7 +70,7 @@ export const authService = {
 
         },
 
-    async createRefreshAndAccessToken(refreshToken:string, userId:string):
+    async createRefreshAndAccessToken( userId:string,refreshToken:string):
                                      Promise<Result<{newAccessToken:string,newRefreshToken:string} | null>>{
 
         // 1)Проверка есть ли токен в BlackList
@@ -85,7 +85,7 @@ export const authService = {
         // 2) Создаем обьекта для BlackList
         const createOldToken:RefreshTokenDbType = {
             token: refreshToken,
-            userId
+            userId:userId.toString()
         }
 
         // 3)Сохраняем старый токен в BlackList
@@ -99,6 +99,16 @@ export const authService = {
             status: ResultStatus.Success,
             data: { newAccessToken, newRefreshToken },
         }
+    },
+
+    async addOlTokenBlackList(userId:string, refreshToken:string){
+        const createOldToken:RefreshTokenDbType = {
+            token: refreshToken,
+            userId:userId.toString()
+        }
+
+        // 3)Сохраняем старый токен в BlackList
+        await userRepository.saveOlsRefreshToken(createOldToken)
     },
 
     async registerUser(userDto:UserInputModel):Promise<Result<UserAccountDBType | null >> {
