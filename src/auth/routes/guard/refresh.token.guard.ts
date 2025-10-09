@@ -1,7 +1,7 @@
 import {NextFunction, Request, Response} from "express";
 import {HttpStatuses} from "../../../core/types/httpSatuses";
 import {jwtService} from "../../adapters/jwt.service";
-import {userRepository} from "../../../users/repository/user.repository";
+import {IdType} from "../../../core/types/id-type.user";
 
 
 export const refreshTokenGuard = async (req:Request, res:Response, next: NextFunction) => {
@@ -12,16 +12,15 @@ export const refreshTokenGuard = async (req:Request, res:Response, next: NextFun
 
 
     const payload = await jwtService.verifyRefreshToken(refreshToken)
+    console.log('payload---',payload)
     if(!payload) {
        return  res.sendStatus(HttpStatuses.Unauthorized_401)
     }
 
-    const isInBlackList = await userRepository.findOldRefreshToken(refreshToken, payload.userId)
-    if(isInBlackList) {
-        return res.sendStatus(HttpStatuses.Unauthorized_401)
-    }
+    const {userId} = payload;
 
-    req.user = payload.userId
+    req.user = {id: userId} as IdType
+
     req.refreshToken = refreshToken
 
 

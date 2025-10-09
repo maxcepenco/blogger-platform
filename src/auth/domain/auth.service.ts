@@ -10,13 +10,15 @@ import {randomUUID} from "node:crypto";
 import {add} from "date-fns/add";
 import {nodemailerService} from "../adapters/nodemailer.service";
 import {emailExamples} from "../adapters/email-example";
-import {RefreshTokenDbType} from "../dto/refresh-token";
+import {sessionRepository} from "../repository/session-repository";
 
 export const authService = {
 
     async loginUser(
         loginOrEmail: string,
         password: string,
+        deviceName: string,
+        ip: string,
     ): Promise <Result<{accessToken: string, refreshToken: string} | null>>  {
 
         const result = await this._checkUserCredentials(loginOrEmail, password)
@@ -25,13 +27,30 @@ export const authService = {
                 status: ResultStatus.Unauthorized,
                 data: null,
                 errorMessage: 'Unauthorized',
-                // extensions: [{ field: 'LoginOrEmail', message: 'Wrong credentials'}]
 
             }
         }
 
+        // Генерируем deviceId
+    const deviceId = crypto.randomUUID()
+
     let accessToken = await jwtService.createAccessToken(result.data!._id.toString())
-    let refreshToken = await jwtService.createRefreshToken(result.data!._id.toString())
+    let refreshToken = await jwtService.createRefreshToken(result.data!._id.toString(),deviceId)
+
+        let decoded = await jwtService.verifyRefreshToken(refreshToken)
+
+        const newSession = {
+            userId: result.data!._id.toString(),
+            deviceId: deviceId,
+            iat: new Date(decoded!.iat * 1000),
+            deviceName: deviceName,
+            ip:ip,
+            exp: new Date(decoded!.exp * 1000),
+
+        }
+
+        await sessionRepository.createSession(newSession);
+
 
         return {
             status: ResultStatus.Success,
@@ -39,61 +58,60 @@ export const authService = {
         }
     },
 
-    async _checkUserCredentials( loginOrEmail: string, password: string ):
-                                Promise<Result<WithId<UserAccountDBType> | null >> {
 
-        const user = await userRepository.findByLoginOrEmail(loginOrEmail)
 
-        if(!user) {
-            return {
-                status: ResultStatus.NotFound,
-                data:null,
-                errorMessage: 'Not Found',
-                // extensions: {errorsMessages:[{message: 'NotFound',field: 'loginOrEmail' }]}
-            }
-        }
 
-        const isPassCorrect = await bcryptService.checkPassword(password, user.accountDate.passwordHash)
-        if(!isPassCorrect) {
-            return {
-                status: ResultStatus.BadRequest,
-                data: null,
-                errorMessage: 'Bad Request',
-                extensions: {errorsMessages:[{message: 'Wrong password',field: 'password' }]}
-            }
-        }
-
-        return {
-            status: ResultStatus.Success,
-            data: user,
-        }
-
-        },
-
-    async createRefreshAndAccessToken( userId:string,refreshToken:string):
+    async createRefreshAndAccessToken( refreshToken:string):
                                      Promise<Result<{newAccessToken:string,newRefreshToken:string} | null>>{
 
-        // 1)Проверка есть ли токен в BlackList
-        const oldRefreshToken = await userRepository.findOldRefreshToken(refreshToken, userId)
-        if(oldRefreshToken) {
-        return{
-            status:ResultStatus.Unauthorized,
+
+        // Достаем данные из refreshToken токена
+        let decoded = await jwtService.verifyRefreshToken(refreshToken)
+
+        if(!decoded) {
+            return {
+                status:ResultStatus.Unauthorized,
+                data: null,
+                errorMessage: 'Refresh token failed',
+            }
+        }
+        // Достаем сессию по userId и deviceId из базы
+        const foundSession = await sessionRepository.findSession(decoded.userId, decoded.deviceId)
+        if(!foundSession) {
+            return {
+                status: ResultStatus.Unauthorized,
+                data: null,
+                errorMessage: 'Session not found',
+            }
+        }
+
+    const tokenIat = new Date(decoded.iat * 1000)
+    const sessionIat = foundSession.iat
+
+    // Проверяем если токен не прострочен
+    if(tokenIat.getTime() !== sessionIat.getTime()) {
+        return {
+            status: ResultStatus.Unauthorized,
             data: null,
-            errorMessage: 'Unauthorized',
-             }
+            errorMessage: 'Session expired',
         }
-        // 2) Создаем обьекта для BlackList
-        const createOldToken:RefreshTokenDbType = {
-            token: refreshToken,
-            userId:userId.toString()
-        }
+    }
 
-        // 3)Сохраняем старый токен в BlackList
-        await userRepository.saveOlsRefreshToken(createOldToken)
+        let newAccessToken = await jwtService.createAccessToken(foundSession.userId.toString())
 
-        // 4) Создаем новый accessToken and RefreshToken
-        let newAccessToken = await jwtService.createAccessToken(userId.toString())
-        let newRefreshToken = await jwtService.createRefreshToken(userId.toString())
+        let newRefreshToken = await jwtService.createRefreshToken(foundSession.userId.toString(),foundSession.deviceId)
+
+        // Достаем новые даты
+        let iatAndExp = await jwtService.verifyRefreshToken(newRefreshToken)
+
+        const newIat = new Date (iatAndExp!.iat * 1000)
+        const newExp = new Date (iatAndExp!.exp * 1000)
+
+        // Обновляем даты
+        await sessionRepository.updateSession(foundSession.deviceId,newIat, newExp)
+
+
+
 
         return {
             status: ResultStatus.Success,
@@ -101,15 +119,38 @@ export const authService = {
         }
     },
 
-    async addOlTokenBlackList(userId:string, refreshToken:string){
-        const createOldToken:RefreshTokenDbType = {
-            token: refreshToken,
-            userId:userId.toString()
+    async deleteThisSession(userId:string, refreshToken:string):Promise<Result<boolean | null >> {
+        let decoded = await jwtService.verifyRefreshToken(refreshToken)
+
+        if(!decoded) {
+            return {
+                status:ResultStatus.Unauthorized,
+                data: null,
+                errorMessage: 'Refresh token failed',
+            }
+        }
+        // Достаем сессию по userId и deviceId из базы
+        const session = await sessionRepository.findSession(decoded.userId, decoded.deviceId)
+
+        const result = await sessionRepository.deleteUserSession(decoded.userId, decoded.deviceId)
+        if(!result) {
+            return {
+                status: ResultStatus.Unauthorized,
+                data: null,
+                errorMessage: 'Session not found',
+            }
         }
 
-        // 3)Сохраняем старый токен в BlackList
-        await userRepository.saveOlsRefreshToken(createOldToken)
+        return {
+            status:ResultStatus.Success,
+            data: result
+        }
     },
+
+
+
+
+
 
     async registerUser(userDto:UserInputModel):Promise<Result<UserAccountDBType | null >> {
         const {login,password,email} = userDto
@@ -177,7 +218,6 @@ export const authService = {
     },
 
     async confirmEmail(code:string):Promise<Result<boolean | null> > {
-        console.log('Searching for code:', code);
 
         const user = await userRepository.findByCode(code)
         console.log(`user:${user}`)
@@ -292,6 +332,38 @@ export const authService = {
             data: resendingCode || null,
         }
 
-    }
+    },
+
+    async _checkUserCredentials( loginOrEmail: string, password: string ):
+        Promise<Result<WithId<UserAccountDBType> | null >> {
+
+        const user = await userRepository.findByLoginOrEmail(loginOrEmail)
+
+        if(!user) {
+            return {
+                status: ResultStatus.NotFound,
+                data:null,
+                errorMessage: 'Not Found',
+                // extensions: {errorsMessages:[{message: 'NotFound',field: 'loginOrEmail' }]}
+            }
+        }
+
+        const isPassCorrect = await bcryptService.checkPassword(password, user.accountDate.passwordHash)
+        if(!isPassCorrect) {
+            return {
+                status: ResultStatus.BadRequest,
+                data: null,
+                errorMessage: 'Bad Request',
+                extensions: {errorsMessages:[{message: 'Wrong password',field: 'password' }]}
+            }
+        }
+
+        return {
+            status: ResultStatus.Success,
+            data: user,
+        }
+
+    },
+
 
 }

@@ -5,6 +5,7 @@ import {SETTINGS} from "../core/settings/settings";
 import {UserAccountDBType} from "../users/types-user/UserAccountDBType";
 import {CommentDbType} from "../comments/types/comment-db-type";
 import {RefreshTokenDbType} from "../auth/dto/refresh-token";
+import {CreateSessionDto} from "../auth/dto/session-DB-type";
 
 
 const BLOG_COLLECTIONS_NAME =  'blogs'
@@ -18,7 +19,7 @@ export let blogCollection: Collection<Blog>
 export let postCollection: Collection<Post>
 export let userCollection: Collection<UserAccountDBType>
 export let commentCollection: Collection<CommentDbType>
-export let refreshTokenCollection: Collection<RefreshTokenDbType>
+export let refreshTokenCollection: Collection<CreateSessionDto>
 
 export const runDB = async (url: string): Promise<void> => {
     client = new MongoClient(url)
@@ -28,7 +29,7 @@ export const runDB = async (url: string): Promise<void> => {
     postCollection = db.collection<Post>(POST_COLLECTIONS_NAME)
     userCollection = db.collection<UserAccountDBType>(USER_COLLECTIONS_NANE)
     commentCollection = db.collection<CommentDbType>(COMMENT_COLLECTIONS_NAME)
-    refreshTokenCollection = db.collection<RefreshTokenDbType>(REFRESH_TOKEN_COLLECTIONS_NAME)
+    refreshTokenCollection = db.collection<CreateSessionDto>(REFRESH_TOKEN_COLLECTIONS_NAME)
 
 
 

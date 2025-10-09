@@ -2,6 +2,7 @@ import {UserAccountDBType} from "../types-user/UserAccountDBType";
 import {refreshTokenCollection, userCollection} from "../../db/mongoDB";
 import {ObjectId, WithId} from "mongodb";
 import {RefreshTokenDbType} from "../../auth/dto/refresh-token";
+import {CreateSessionDto} from "../../auth/dto/session-DB-type";
 
 
 export const userRepository = {
@@ -79,17 +80,8 @@ export const userRepository = {
 
 
 
-    async findOldRefreshToken(refreshToken:string, userId:string):Promise<boolean> {
-        const oldToken = await refreshTokenCollection.findOne({token: refreshToken, userId: userId.toString()});
-        return !!oldToken;
-    },
-    async saveOlsRefreshToken(tokenObj: RefreshTokenDbType):Promise<void> {
-         await refreshTokenCollection.insertOne(tokenObj);
 
-    },
 
-    async clearAllRefreshTokens(): Promise<boolean> {
-        await refreshTokenCollection.deleteMany({});
-        return true;
-    }
+
+
 }
