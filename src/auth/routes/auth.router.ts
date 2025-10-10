@@ -25,5 +25,5 @@ authRouter
     .post('/registration',passwordValidation,emailValidation,loginValidation,handlerValidationErrors,userRequestRateLimiter,authRegistration)
     .post('/registration-confirmation',codeValidation,handlerValidationErrors,userRequestRateLimiter, confirmEmail)
     .post('/registration-email-resending',emailValidation,handlerValidationErrors,userRequestRateLimiter,registrationEmailResending)
-    .post('/refresh-token',refreshTokenGuard,userRequestRateLimiter,authRefreshToken)
+    .post('/refresh-token',refreshTokenGuard,authRefreshToken)
     .post('/logout',refreshTokenGuard, logout)

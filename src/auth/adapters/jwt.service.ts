@@ -11,13 +11,13 @@ interface RefreshTokenPayload {
 export const jwtService = {
 
     async createAccessToken(userId: string): Promise< string > {
-        return jwt.sign({ userId }, SETTINGS.AC_SECRET!, { expiresIn:"10s" })
+        return jwt.sign({ userId }, SETTINGS.AC_SECRET!, { expiresIn:SETTINGS.AC_TIME as any })
     },
 
 
     async createRefreshToken(userId: string,deviceId:string): Promise< string > {
 
-        const token = jwt.sign({ userId,deviceId }, SETTINGS.RT_SECRET!, { expiresIn: "10s"})
+        const token = jwt.sign({ userId,deviceId }, SETTINGS.RT_SECRET!, { expiresIn: SETTINGS.RT_TIME! as any})
 
         return  token
     },
