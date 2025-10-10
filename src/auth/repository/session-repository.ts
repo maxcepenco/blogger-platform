@@ -66,7 +66,7 @@ export const sessionRepository = {
         return{
             ip:session.ip,
             title: session.deviceName,
-            lastActiveDate: session.iat.toString(),
+            lastActiveDate: session.iat.toISOString(),
             deviceId:session.deviceId
         }
     },
