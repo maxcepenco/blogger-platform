@@ -3,8 +3,10 @@ import {IdType} from "./id";
 declare global {
     declare namespace Express {
         export interface Request {
-            user: IdType | undefined;
+            user: string | undefined;
             refreshToken:string
+            deviceId:string
+
         }
     }
 }

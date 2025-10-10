@@ -14,15 +14,16 @@ import {registrationEmailResending} from "./auth-registration-email-resending";
 import {refreshTokenGuard} from "./guard/refresh.token.guard";
 import {authRefreshToken} from "./auth-refresh-token";
 import {logout} from "./logout";
+import {userRequestRateLimiter} from "../../core/midleware/rateLimit";
 
 export const authRouter = Router();
 
 
 authRouter
-    .post('/login',passwordValidation, loginOrEmailValidation, handlerValidationErrors, authLoginAccess  )
-    .get('/me',accessTokenGuard, loginOrEmailValidation, authMeHandler )
-    .post('/registration',passwordValidation,emailValidation,loginValidation,handlerValidationErrors,authRegistration)
-    .post('/registration-confirmation',codeValidation,handlerValidationErrors, confirmEmail)
-    .post('/registration-email-resending',emailValidation,handlerValidationErrors,registrationEmailResending)
-    .post('/refresh-token',refreshTokenGuard,authRefreshToken)
+    .post('/login',passwordValidation, loginOrEmailValidation, handlerValidationErrors,userRequestRateLimiter, authLoginAccess  )
+    .get('/me',accessTokenGuard, loginOrEmailValidation,userRequestRateLimiter, authMeHandler )
+    .post('/registration',passwordValidation,emailValidation,loginValidation,handlerValidationErrors,userRequestRateLimiter,authRegistration)
+    .post('/registration-confirmation',codeValidation,handlerValidationErrors,userRequestRateLimiter, confirmEmail)
+    .post('/registration-email-resending',emailValidation,handlerValidationErrors,userRequestRateLimiter,registrationEmailResending)
+    .post('/refresh-token',refreshTokenGuard,userRequestRateLimiter,authRefreshToken)
     .post('/logout',refreshTokenGuard, logout)

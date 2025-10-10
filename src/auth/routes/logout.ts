@@ -19,7 +19,7 @@ export const logout = async (req: Request, res: Response) => {
         secure: false,
     });
 
-    const result = await authService.deleteThisSession(userId, refreshToken)
+    const result = await authService.deleteThisSession(userId!, refreshToken)
     console.log(result)
     if(result.status !== ResultStatus.Success)  {
         return  res.sendStatus(resultCodeToHttpException(result.status))

@@ -1,7 +1,7 @@
 import {NextFunction, Request, Response} from "express";
 import {HttpStatuses} from "../../../core/types/httpSatuses";
 import {jwtService} from "../../adapters/jwt.service";
-import {IdType} from "../../../core/types/id-type.user";
+import {sessionRepository} from "../../repository/session-repository";
 
 
 export const refreshTokenGuard = async (req:Request, res:Response, next: NextFunction) => {
@@ -12,19 +12,35 @@ export const refreshTokenGuard = async (req:Request, res:Response, next: NextFun
 
 
     const payload = await jwtService.verifyRefreshToken(refreshToken)
-    console.log('payload---',payload)
     if(!payload) {
        return  res.sendStatus(HttpStatuses.Unauthorized_401)
     }
+       //----------------надо обсудить--------------------------------------//
+    const {userId,deviceId,iat,} = payload;
 
-    const {userId} = payload;
+    const session = await sessionRepository.findSession(userId,deviceId)
+    if(!session) {
+        return  res.sendStatus(HttpStatuses.Unauthorized_401)
+    }
+    const tokenIat = new Date(iat * 1000)
+    const sessionIat = session.iat
 
-    req.user = {id: userId} as IdType
+     // Проверяем если это старый токе
+    if(tokenIat.getTime() !== sessionIat.getTime()) {
+        return res.sendStatus(HttpStatuses.Unauthorized_401)
+    }
+    // Проверка если токен не просрочен
+    if(session.exp < new Date()){
+        return res.sendStatus(HttpStatuses.Unauthorized_401)
+    }
+    //-----------------------------------------------------------------------//
+
+    req.user = userId
 
     req.refreshToken = refreshToken
 
+    req.deviceId = deviceId
+
 
     next()
-
-
 }

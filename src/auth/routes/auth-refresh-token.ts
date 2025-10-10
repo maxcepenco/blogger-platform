@@ -7,12 +7,11 @@ import {HttpStatuses} from "../../core/types/httpSatuses";
 
 export const authRefreshToken = async(req: Request, res: Response) => {
 
-    const refreshToken = req.refreshToken;
-    console.log(refreshToken );
+    const userId = req.user
+    const deviceId = req.deviceId
 
 
-
-  const result = await authService.createRefreshAndAccessToken( refreshToken);
+  const result = await authService.createRefreshAndAccessToken( userId!, deviceId);
   if(result.status !== ResultStatus.Success) {
 
       return  res.sendStatus(resultCodeToHttpException(result.status))

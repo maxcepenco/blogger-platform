@@ -11,7 +11,7 @@ import {commentQueryRepository} from "../repository/comment-query-repository";
 
 export const updateComment = async (req:ReqParamsBodyUserId<IdComment, CommentInputModel,IdType>,res:Response) => {
 
-    const userId = req.user?.id as string;
+    const userId = req.user;
     if(!userId) {
         res.sendStatus(HttpStatuses.Unauthorized_401)
         return

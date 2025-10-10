@@ -19,7 +19,7 @@ export const accessTokenGuard = async (req:Request, res:Response, next: NextFunc
     }
     const {userId} = payload;
 
-    req.user = {id: userId} as IdType
+    req.user = userId
 
     next()
 

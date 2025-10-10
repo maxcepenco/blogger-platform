@@ -22,8 +22,8 @@ export const authLoginAccess = async (req:RequestWithBody<LoginDto>, res: Respon
     }
 
     res.cookie("refreshToken", result.data!.refreshToken, {
-        httpOnly: false,
-        secure: false,
+        httpOnly: true,
+        secure: true,
         maxAge: (7 * 24 * 60 * 60 * 1000) + (10 * 60 * 1000)
     })
 

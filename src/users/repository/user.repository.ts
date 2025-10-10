@@ -1,8 +1,6 @@
 import {UserAccountDBType} from "../types-user/UserAccountDBType";
-import {refreshTokenCollection, userCollection} from "../../db/mongoDB";
+import {userCollection} from "../../db/mongoDB";
 import {ObjectId, WithId} from "mongodb";
-import {RefreshTokenDbType} from "../../auth/dto/refresh-token";
-import {CreateSessionDto} from "../../auth/dto/session-DB-type";
 
 
 export const userRepository = {

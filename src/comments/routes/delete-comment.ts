@@ -15,7 +15,7 @@ export const deleteComment = async (req:ReqParamsUserId<IdComment,IdType>,res: R
     if (!foundComment) {
         return res.sendStatus(HttpStatuses.NotFound_404)
     }
-    const userId = req.user?.id as string;
+    const userId = req.user as string;
 
 
     const deletedComment = await commentService.deleteComment(commentId,userId);

@@ -61,45 +61,45 @@ export const authService = {
 
 
 
-    async createRefreshAndAccessToken( refreshToken:string):
+    async createRefreshAndAccessToken( userId:string, deviceId: string):
                                      Promise<Result<{newAccessToken:string,newRefreshToken:string} | null>>{
 
 
         // Достаем данные из refreshToken токена
-        let decoded = await jwtService.verifyRefreshToken(refreshToken)
+    //     let decoded = await jwtService.verifyRefreshToken(refreshToken)
+    //
+    //     if(!decoded) {
+    //         return {
+    //             status:ResultStatus.Unauthorized,
+    //             data: null,
+    //             errorMessage: 'Refresh token failed',
+    //         }
+    //     }
+    //     // Достаем сессию по userId и deviceId из базы
+    //     const foundSession = await sessionRepository.findSession(decoded.userId, decoded.deviceId)
+    //     if(!foundSession) {
+    //         return {
+    //             status: ResultStatus.Unauthorized,
+    //             data: null,
+    //             errorMessage: 'Session not found',
+    //         }
+    //     }
+    //
+    // const tokenIat = new Date(decoded.iat * 1000)
+    // const sessionIat = foundSession.iat
+    //
+    // // Проверяем если токен не просрочен
+    // if(tokenIat.getTime() !== sessionIat.getTime()) {
+    //     return {
+    //         status: ResultStatus.Unauthorized,
+    //         data: null,
+    //         errorMessage: 'Session expired',
+    //     }
+    // }
 
-        if(!decoded) {
-            return {
-                status:ResultStatus.Unauthorized,
-                data: null,
-                errorMessage: 'Refresh token failed',
-            }
-        }
-        // Достаем сессию по userId и deviceId из базы
-        const foundSession = await sessionRepository.findSession(decoded.userId, decoded.deviceId)
-        if(!foundSession) {
-            return {
-                status: ResultStatus.Unauthorized,
-                data: null,
-                errorMessage: 'Session not found',
-            }
-        }
+        let newAccessToken = await jwtService.createAccessToken(userId.toString())
 
-    const tokenIat = new Date(decoded.iat * 1000)
-    const sessionIat = foundSession.iat
-
-    // Проверяем если токен не прострочен
-    if(tokenIat.getTime() !== sessionIat.getTime()) {
-        return {
-            status: ResultStatus.Unauthorized,
-            data: null,
-            errorMessage: 'Session expired',
-        }
-    }
-
-        let newAccessToken = await jwtService.createAccessToken(foundSession.userId.toString())
-
-        let newRefreshToken = await jwtService.createRefreshToken(foundSession.userId.toString(),foundSession.deviceId)
+        let newRefreshToken = await jwtService.createRefreshToken(userId.toString(),deviceId)
 
         // Достаем новые даты
         let iatAndExp = await jwtService.verifyRefreshToken(newRefreshToken)
@@ -108,7 +108,7 @@ export const authService = {
         const newExp = new Date (iatAndExp!.exp * 1000)
 
         // Обновляем даты
-        await sessionRepository.updateSession(foundSession.deviceId,newIat, newExp)
+        await sessionRepository.updateSession(deviceId, newIat, newExp)
 
 
 
@@ -146,11 +146,6 @@ export const authService = {
             data: result
         }
     },
-
-
-
-
-
 
     async registerUser(userDto:UserInputModel):Promise<Result<UserAccountDBType | null >> {
         const {login,password,email} = userDto

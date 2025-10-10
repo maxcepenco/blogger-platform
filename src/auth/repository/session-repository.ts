@@ -1,5 +1,5 @@
 import {CreateSessionDto} from "../dto/session-DB-type";
-import {refreshTokenCollection} from "../../db/mongoDB";
+import {refreshTokenCollection, requestLogsCollection} from "../../db/mongoDB";
 import {DeviceViewModel} from "../../security/dto/device-view-model";
 
 export const sessionRepository = {
@@ -69,7 +69,31 @@ export const sessionRepository = {
             lastActiveDate: session.iat.toString(),
             deviceId:session.deviceId
         }
-    }
+    },
 
+    async findRequest(ip: string, url:string, windowStart:Date): Promise<number> {
+
+        const requestCount = await requestLogsCollection.countDocuments(
+            {
+                ip:ip,
+                url:url,
+                date: {$gte: windowStart}
+            }
+        )
+
+        return requestCount
+    },
+
+    async saveRequest(ip: string, url:string, now:Date) {
+
+        await requestLogsCollection.insertOne(
+            {
+                ip:ip,
+                url:url,
+                date:now
+            }
+        )
+
+    },
 
 }

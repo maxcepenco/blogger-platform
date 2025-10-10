@@ -6,7 +6,11 @@ import {SETTINGS} from "./core/settings/settings";
 
 const bootstrap = async () => {
   const app = express();
+
+  app.set('trust proxy', true);
+
   setupApp(app);
+
   const PORT = SETTINGS.PORT
 
   await runDB(SETTINGS.MONGO_URL)

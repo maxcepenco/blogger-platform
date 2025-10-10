@@ -4,9 +4,9 @@ import {HttpStatuses} from "../../core/types/httpSatuses";
 
  export const getAllDevices = async( req:Request, res: Response ) => {
 
-   const  userId = req.user.id
+   const  userId = req.user
 
-    const resultGetDevices = await deviceService.findAllSession(userId)
+    const resultGetDevices = await deviceService.findAllSession(userId!)
 
      return res.status(HttpStatuses.Ok_200).json(resultGetDevices.data)
 }

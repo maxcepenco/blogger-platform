@@ -9,7 +9,7 @@ import {commentService} from "../../../comments/domain/commnetService";
 import {commentQueryRepository} from "../../../comments/repository/comment-query-repository";
 
 export const createCommentForPost = async(req:ReqParamsBodyUserId<idType, CommentInputModel,IdType>, res:Response) => {
-    const userId = req.user?.id as string;
+    const userId = req.user as string;
 
     const postId = req.params.id
     const existingPost = await postQueryRepository.findPostById(postId)
