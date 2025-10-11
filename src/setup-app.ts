@@ -18,7 +18,8 @@ import cookieParser from "cookie-parser";
 import {devicesRouter} from "./security/router/deviceRouter";
 
 export const setupApp = (app:Express) => {
-  app.use(express.json());
+    app.set('trust proxy', true)
+    app.use(express.json());
   app.use(cookieParser())
 
   app.use(BLOGS_PATHS,blogRouter )

@@ -6,9 +6,11 @@ const WINDOW_SIZE = 10 // ОКНО ЗАПРОССОВ
 const MAX_COUNT_REQUEST = 5 // лимит запросов
 
  export async function userRequestRateLimiter(req:Request, res:Response, next:NextFunction) {
-    const ip = req.ip || 'unknown'
+     const ip = req.ip || req.socket?.remoteAddress || 'unknown'
     const url =  req.originalUrl
     const now = new Date()
+
+     console.log('Rate limiter - IP:', ip, 'URL:', url) // для дебага
 
     const windowsStart = new Date(now.getTime() - WINDOW_SIZE * 1000)
 

@@ -23,6 +23,7 @@ export let commentCollection: Collection<CommentDbType>
 export let refreshTokenCollection: Collection<CreateSessionDto>
 export let requestLogsCollection: Collection<UserRequest>
 
+
 export const runDB = async (url: string): Promise<void> => {
     client = new MongoClient(url)
     const db: Db = client.db(SETTINGS.DB_NAME)
@@ -54,5 +55,19 @@ export async function stopDb() {
         throw new Error(`Mongo client not connected`)
     }
     await client.close()
+}
+
+  export async function drop() {
+    try {
+        const db: Db = client.db(SETTINGS.DB_NAME)
+        const collections = await db.listCollections().toArray();
+
+        for (const collection of collections) {
+            const collectionName = collection.name;
+            await db.collection(collectionName).deleteMany({});
+        }
+    } catch (e: unknown) {
+        console.error('Error in drop db:', e);
+    }
 }
 
