@@ -57,17 +57,27 @@ export async function stopDb() {
     await client.close()
 }
 
-  export async function drop() {
+export async function drop(): Promise<void> {
     try {
-        const db: Db = client.db(SETTINGS.DB_NAME)
+        if (!client) {
+            throw new Error('Mongo client not connected');
+        }
+
+        const db: Db = client.db(SETTINGS.DB_NAME);
         const collections = await db.listCollections().toArray();
 
-        for (const collection of collections) {
-            const collectionName = collection.name;
-            await db.collection(collectionName).deleteMany({});
-        }
+        // Используем Promise.all для параллельного удаления
+        await Promise.all(
+            collections.map(collection =>
+                db.collection(collection.name).drop()
+            )
+        );
+
+        console.log('All collections dropped successfully');
     } catch (e: unknown) {
-        console.error('Error in drop db:', e);
+        const errorMessage = e instanceof Error ? e.message : 'Unknown error';
+        console.error('Error in drop db:', errorMessage);
+        throw e; // Пробрасываем ошибку дальше
     }
 }
 

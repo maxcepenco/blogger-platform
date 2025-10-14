@@ -4,7 +4,7 @@ import {blogCollection} from "../../db/mongoDB";
 import {BlogInputModel} from "../input/blog-input-model";
 
 
-export const blogRepository = {
+class BlogRepository  {
 
 
     async findById(id: string): Promise<WithId<Blog>| null> {
@@ -14,18 +14,13 @@ export const blogRepository = {
             return null
         }
         return result
-    },
-
-    async findByIdForGet(id: string): Promise<WithId<Blog> | null> {
-
-        return await blogCollection.findOne({_id: new ObjectId(id)})
-    },
+    }
 
     async createBlog(newBlog: Blog): Promise<string> {
         const insertResult = await blogCollection.insertOne(newBlog);
         return insertResult.insertedId.toString();
 
-    },
+    }
 
     async updateBlog(id: string, blog: BlogInputModel): Promise<boolean> {
         const updatedResult = await blogCollection.updateOne(
@@ -40,15 +35,13 @@ export const blogRepository = {
         )
 
         return updatedResult.matchedCount === 1
-    },
+    }
 
     async deleteBlog(id: string): Promise<boolean> {
         const deleteResult = await blogCollection.deleteOne({_id: new ObjectId(id)});
         return deleteResult.deletedCount === 1
-    },
-
-
-
-
+    }
 
 }
+
+export const blogRepository = new BlogRepository();

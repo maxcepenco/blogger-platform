@@ -34,8 +34,8 @@ export const authService = {
         // Генерируем deviceId
     const deviceId = crypto.randomUUID()
 
-    let accessToken = await jwtService.createAccessToken(result.data!._id.toString())
-    let refreshToken = await jwtService.createRefreshToken(result.data!._id.toString(),deviceId)
+    const accessToken = await jwtService.createAccessToken(result.data!._id.toString())
+    const refreshToken = await jwtService.createRefreshToken(result.data!._id.toString(),deviceId)
 
         let decoded = await jwtService.verifyRefreshToken(refreshToken)
 
@@ -130,7 +130,7 @@ export const authService = {
             }
         }
         // Достаем сессию по userId и deviceId из базы
-        const session = await sessionRepository.findSession(decoded.userId, decoded.deviceId)
+         await sessionRepository.findSession(decoded.userId, decoded.deviceId)
 
         const result = await sessionRepository.deleteUserSession(decoded.userId, decoded.deviceId)
         if(!result) {

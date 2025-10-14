@@ -28,7 +28,7 @@ describe('USERS_TEST', () => {
         console.log('🔄 Starting beforeEach - cleaning database...');
 
         try {
-            const results = await Promise.all([
+              await Promise.all([
                 blogCollection.deleteMany({}),
                 postCollection.deleteMany({}),
                 userCollection.deleteMany({}),
@@ -37,21 +37,12 @@ describe('USERS_TEST', () => {
                 requestLogsCollection.deleteMany({}),
             ]);
 
-            console.log('✅ Database cleaned:', {
-                blogs: results[0].deletedCount,
-                posts: results[1].deletedCount,
-                users: results[2].deletedCount,
-                comments: results[3].deletedCount,
-                refreshTokens: results[4].deletedCount,
-                requestLogs: results[5].deletedCount,
-            });
+
 
             // Проверим, что действительно пусто
-            const userCount = await userCollection.countDocuments({});
-            console.log('📊 Users in DB after cleanup:', userCount);
+             await userCollection.countDocuments({});
 
         } catch (error) {
-            console.error('❌ Error cleaning database:', error);
             throw error;
         }
     })
