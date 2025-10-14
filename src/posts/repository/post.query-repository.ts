@@ -6,10 +6,8 @@ import {SortDirection} from "../../core/types/sort-direction";
 import {PostViewModel} from "../output/PostViewModel";
 import {PaginateQueryOutput} from "../../core/types/pagination-output-model";
 
-export const postQueryRepository = {
-    async findByIdForGet(id: string): Promise<WithId<Post> | null> {
-        return await postCollection.findOne({_id: new ObjectId(id)})
-    },
+ class PostQueryRepository {
+
     async findMany(inputParams: PostQueryInput): Promise<{ items: WithId<Post>[]; totalCount: number }> {
         const {
             pageNumber,
@@ -31,7 +29,7 @@ export const postQueryRepository = {
                 .countDocuments(filter)
         ])
         return {items, totalCount}
-    },
+    }
 
     async findPostByBlog(queryDto:PostQueryInput, blogId: string): Promise< {items: WithId<Post>[]; totalCount: number}> {
 
@@ -51,7 +49,7 @@ export const postQueryRepository = {
             postCollection.countDocuments(filter),
         ]);
         return { items, totalCount };
-    },
+    }
 
     async findPostById(id: string): Promise<PostViewModel | null> {
 
@@ -61,8 +59,8 @@ export const postQueryRepository = {
 
             return null
         }
-        return postQueryRepository.mapPostToViewModel(result);
-    },
+        return this.mapPostToViewModel(result);
+    }
 
 
     mapPostToViewModel(post: WithId<Post>): PostViewModel {
@@ -75,7 +73,7 @@ export const postQueryRepository = {
             blogName: post.blogName,
             createdAt: post.createdAt,
         }
-    },
+    }
 
     mapToPostListPaginationOutput(
         items: WithId<Post>[],
@@ -95,3 +93,5 @@ export const postQueryRepository = {
         }
     }
 }
+
+export const postQueryRepository = new PostQueryRepository()
