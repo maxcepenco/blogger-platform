@@ -4,10 +4,11 @@ import {blogRepository} from "../repository/blog.repository";
 import {ResultStatus} from "../../core/result/result-code";
 import {Result} from "../../core/result/result-type";
 
-export const blogService = {
+class BlogService {
 
     async create(blogDto: BlogInputModel):Promise<Result<string>> {
 
+        //class Blog
         const newBlog = new Blog(
             blogDto.name,
             blogDto.description,
@@ -22,9 +23,7 @@ export const blogService = {
         data: resultCreate,
     }
 
-},
-
-
+}
 
 
     async updateBlog(id: string, blog: BlogInputModel): Promise<Result<boolean>> {
@@ -35,7 +34,7 @@ export const blogService = {
             data: resultUpdate,
         }
 
-    },
+    }
 
 
     async deleteBlog(id: string): Promise<Result<boolean>> {
@@ -45,9 +44,8 @@ export const blogService = {
           status:ResultStatus.Success,
             data: resultDelete,
         }
-    },
-
-
-
+    }
 
 }
+
+export const blogService = new BlogService();
