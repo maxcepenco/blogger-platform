@@ -1,29 +1,56 @@
 import {Router} from "express";
-import {getAllBlogs} from "./handlers/get-blogs-list";
-import {createBlog} from "./handlers/create-blog";
-import {findBlogBiId} from "./handlers/get-blog";
-import {updateBlog} from "./handlers/update-blog";
-import {deleteBlog} from "./handlers/delete-blog";
 import {idValidation} from "../../core/midleware/validationInputIdMiddleware";
 import {blogInputDtoValidation} from "../validation/blogInputDateMidlleware";
 import {authValidationMiddleware} from "../../auth/routes/middleware/auth-validation-middleware";
 import {handlerValidationErrors} from "../../core/midleware/handlerValidationErrors";
-import {getBlogPostList} from "./handlers/get-blog-post-list";
-import {createPostForBlog} from "./handlers/create-post-for-blog";
 import {BlogPostInputDtoMiddleware} from "../validation/blogPostInputDataMiddleware";
 import {sanitizeQueryParams} from "../../core/midleware/validation/sanitize-qery-param";
 import {validateBlogId} from "../../core/midleware/validationInputBlogIdMiddleware";
+import {blogController} from "./blog-controller";
 
 
 export const blogRouter = Router({});
 
 blogRouter
-    .get('', sanitizeQueryParams, getAllBlogs)
-    .post('', authValidationMiddleware, blogInputDtoValidation, handlerValidationErrors, createBlog)
-    .get('/:blogId/posts',sanitizeQueryParams,validateBlogId, getBlogPostList)
-    .post('/:blogId/posts', authValidationMiddleware,validateBlogId, BlogPostInputDtoMiddleware, handlerValidationErrors, createPostForBlog)
+    .get('',
+        sanitizeQueryParams,
+        blogController.getAllBlogs
+    )
 
-    .get('/:id', findBlogBiId)
-    .put('/:id', authValidationMiddleware, idValidation, blogInputDtoValidation, handlerValidationErrors, updateBlog)
-    .delete('/:id', authValidationMiddleware, idValidation, deleteBlog)
+    .post('',
+        authValidationMiddleware,
+        blogInputDtoValidation,
+        handlerValidationErrors,
+        blogController.createBlog
+    )
+
+    .get('/:blogId/posts',
+        sanitizeQueryParams,
+        validateBlogId,
+        blogController.getBlogPostList
+    )
+
+    .post('/:blogId/posts',
+        authValidationMiddleware,
+        validateBlogId,
+        BlogPostInputDtoMiddleware,
+        handlerValidationErrors,
+        blogController.createPostForBlog)
+
+    .get('/:id',
+        blogController.findBlogBiId
+    )
+
+    .put('/:id',
+        authValidationMiddleware,
+        idValidation,
+        blogInputDtoValidation,
+        handlerValidationErrors,
+        blogController.updateBlog
+    )
+
+    .delete('/:id',
+        authValidationMiddleware,
+        idValidation,
+        blogController.deleteBlog)
 
