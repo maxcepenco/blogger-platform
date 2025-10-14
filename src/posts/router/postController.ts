@@ -1,0 +1,147 @@
+import {
+    ReqParamsBodyUserId,
+    RequestWithBody,
+    RequestWithParams, RequestWithParamsAndBody,
+    RequestWithParamsAndQuery,
+    RequestWithQuery
+} from "../../core/types/RequestInputType";
+import {PostInputModel} from "../input/post-input-model";
+import {postService} from "../application/post.service";
+import {ResultStatus} from "../../core/result/result-code";
+import {resultCodeToHttpException} from "../../core/result/resultCodeToHttpException";
+import {postQueryRepository} from "../repository/post.query-repository";
+import {HttpStatuses} from "../../core/types/httpSatuses"
+import {Response} from "express";
+import {IdType} from "../../core/types/id-type.user";
+import {idType} from "../../core/types/InputIUriParamsModel";
+import {CommentInputModel} from "../../comments/input/comment.input-model";
+import {commentService} from "../../comments/domain/commnetService";
+import {commentQueryRepository} from "../../comments/repository/comment-query-repository";
+import {SortQueryFieldsType} from "../../core/types/sortQueryFields.type";
+import {sortQueryFieldsUtil} from "../../core/helpers/sort-query-fields-util";
+import {PostQueryInput} from "../input/post-query.input";
+import {setDefaultPostQueryParams} from "../../core/helpers/set-default-sort-and-pagination";
+
+
+class PostController {
+
+    async createPost(req: RequestWithBody<PostInputModel>, res: Response) {
+        try {
+            const result = await postService.createPost(req.body)
+            if (result.status !== ResultStatus.Success || result.data === null) {
+                return res.sendStatus(resultCodeToHttpException(result.status))
+            }
+            const createdPost = await postQueryRepository.findPostById(result.data)
+            if (!createdPost) {
+
+                return res.status(HttpStatuses.BadRequest_400).json({
+                    errorsMessages: [{
+                        message: "Failed to retrieve created post",
+                        field: "server"
+                    }]
+                });
+            }
+            res.status(HttpStatuses.Created_201).send(createdPost)
+
+        } catch (error) {
+            res.status(HttpStatuses.BadRequest_400).send({
+                errorsMessages: [{
+                    message: "Failed to create post",
+                    field: "general"
+                }]
+            });
+        }
+
+    }
+
+    async createCommentForPost(req: ReqParamsBodyUserId<idType, CommentInputModel, IdType>, res: Response) {
+        const userId = req.user as string;
+
+        const postId = req.params.id
+        const existingPost = await postQueryRepository.findPostById(postId)
+        if (!existingPost) {
+            res.sendStatus(HttpStatuses.NotFound_404)
+            return
+        }
+
+        const createdIdComment = await commentService.createComment(postId, userId, req.body.content)
+        if (!createdIdComment) {
+            return res.sendStatus(HttpStatuses.BadRequest_400)
+        }
+
+        const createdComment = await commentQueryRepository.findById(createdIdComment)
+
+        if (!createdComment) {
+            return res.sendStatus(HttpStatuses.NotFound_404)
+        }
+
+        res.status(HttpStatuses.Created_201).send(createdComment)
+    }
+
+    async getCommentForPost(req: RequestWithParamsAndQuery<IdType, SortQueryFieldsType>, res: Response) {
+
+        const postId = req.params.id
+
+
+        const post = await postQueryRepository.findPostById(postId)
+        if (!post) {
+
+            res.sendStatus(HttpStatuses.NotFound_404)
+        }
+
+        const inputQuery = sortQueryFieldsUtil(req.query);
+
+        const foundCommentForPost = await commentQueryRepository.findCommentByPost(inputQuery, postId);
+
+        res.status(HttpStatuses.Ok_200).json(foundCommentForPost);
+
+    }
+
+    async findPostBiId(req: RequestWithParams<idType>, res: Response) {
+
+        const index = req.params.id;
+        const foundPostById = await postQueryRepository.findPostById(index);
+
+        if (!foundPostById) {
+            return res.sendStatus(HttpStatuses.NotFound_404)
+        }
+
+        res.status(HttpStatuses.Ok_200).send(foundPostById);
+
+    }
+
+    async getPostList(req: RequestWithQuery<PostQueryInput>, res: Response) {
+        const queryInput = setDefaultPostQueryParams(req.query)
+
+        const {items, totalCount} = await postQueryRepository.findMany(queryInput)
+
+        const postListOutput = postQueryRepository.mapToPostListPaginationOutput(
+            items,
+            queryInput.pageNumber,
+            queryInput.pageSize,
+            totalCount,
+        )
+        res.status(HttpStatuses.Ok_200).send(postListOutput)
+    }
+
+    async updatePost(req: RequestWithParamsAndBody<idType, PostInputModel>, res: Response) {
+
+        const updateThisPost = await postService.updatePost(req.params.id, req.body)
+        if (!updateThisPost) {
+            res.sendStatus(HttpStatuses.NotFound_404)
+            return
+        }
+        res.sendStatus(HttpStatuses.NoContent_204)
+    }
+
+    async deletePost(req: RequestWithParams<idType>, res: Response) {
+        const deleteIndex = await postService.deletePost(req.params.id)
+        if (!deleteIndex) {
+            res.sendStatus(HttpStatuses.NotFound_404)
+            return
+        }
+        res.sendStatus(HttpStatuses.NoContent_204)
+    }
+}
+
+    export const postController = new PostController()
