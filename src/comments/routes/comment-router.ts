@@ -1,17 +1,15 @@
 import {Router} from "express";
-import {getComment} from "./get-comment";
 import {accessTokenGuard} from "../../auth/routes/guard/access.token.guard";
 import {commentInputMiddleware} from "../validation/comment.input-middleware";
 import {handlerValidationErrors} from "../../core/midleware/handlerValidationErrors";
-import {updateComment} from "./update-comment";
-import {deleteComment} from "./delete-comment";
 import {idValidation} from "../../core/midleware/validationInputIdMiddleware";
 import {validationObjectIdParams} from "../../core/midleware/validationObjectIdParams";
+import {commentController} from "./comment-controller";
 
 
 export const commentRouter = Router()
 
 commentRouter
-.get('/:id',validationObjectIdParams(),getComment)
-.put('/:id', accessTokenGuard,idValidation,commentInputMiddleware,handlerValidationErrors,updateComment)
-.delete('/:id',validationObjectIdParams(),accessTokenGuard,deleteComment)
+    .get('/:id', validationObjectIdParams(), commentController.getComment)
+    .put('/:id', accessTokenGuard, idValidation, commentInputMiddleware, handlerValidationErrors, commentController.updateComment)
+    .delete('/:id', validationObjectIdParams(), accessTokenGuard, commentController.deleteComment)
