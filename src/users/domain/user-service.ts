@@ -4,7 +4,7 @@ import {UserAccountDBType} from "../types-user/UserAccountDBType";
 import {userRepository} from "../repository/user.repository";
 
 
-export const userService = {
+class UserService {
     async createUser(userDto:UserInputModel):Promise< string> {
           const { password } = userDto;
 
@@ -22,9 +22,11 @@ export const userService = {
          }
 
          return await userRepository.create(newUser)
-    },
+    }
 
     async deleteUser(id: string):Promise< boolean> {
         return userRepository.delete(id)
     }
 }
+
+export const userService = new UserService()

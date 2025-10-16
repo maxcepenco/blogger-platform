@@ -7,34 +7,33 @@ import {PaginateQueryOutput} from "../../core/types/pagination-output-model";
 import {SortQueryFilterType} from "../../core/types/sortQueryFilter.type";
 
 
-export const userQueryRepository = {
+class UserQueryRepository {
 
-    async findById(userId: string ): Promise< UserViewModel  | null> {
-        const user = await userCollection.findOne({ _id:new ObjectId(userId) });
+    async findById(userId: string): Promise<UserViewModel | null> {
+        const user = await userCollection.findOne({_id: new ObjectId(userId)});
         if (!user) {
             return null;
         }
         return this.mapToUserViewModel(user);
 
 
-    },
+    }
 
-    async findByIdForMe(userId: string ): Promise< UserViewAuthMe  | null> {
+    async findByIdForMe(userId: string): Promise<UserViewAuthMe | null> {
         console.log(`fidnUserForId: ${userId}`);
 
-        const user = await userCollection.findOne({ _id:new ObjectId(userId) });
+        const user = await userCollection.findOne({_id: new ObjectId(userId)});
         console.log(`foundUser: ${user}`);
 
         if (!user) {
             return null;
         }
         return this.mapToAuthMeView(user);
-    },
+    }
 
 
-
-    async findMany(queryField:SortQueryFilterType, searchField: SearchQueryFieldType)
-                    : Promise<PaginateQueryOutput<UserViewModel>> {
+    async findMany(queryField: SortQueryFilterType, searchField: SearchQueryFieldType)
+        : Promise<PaginateQueryOutput<UserViewModel>> {
         const {
             sortBy,
             pageNumber,
@@ -42,7 +41,7 @@ export const userQueryRepository = {
             sortDirection
         } = queryField;
 
-        const { searchLoginTerm, searchEmailTerm } = searchField;
+        const {searchLoginTerm, searchEmailTerm} = searchField;
 
         const skip = (pageNumber - 1) * pageSize;
         const filter: any = {};
@@ -50,13 +49,13 @@ export const userQueryRepository = {
 
         if (searchLoginTerm) {
             searchConditions.push({
-                "accountDate.login": { $regex: searchLoginTerm, $options: "i" }
+                "accountDate.login": {$regex: searchLoginTerm, $options: "i"}
             });
         }
 
         if (searchEmailTerm) {
             searchConditions.push({
-                "accountDate.email": { $regex: searchEmailTerm, $options: "i" }
+                "accountDate.email": {$regex: searchEmailTerm, $options: "i"}
             });
         }
 
@@ -71,7 +70,7 @@ export const userQueryRepository = {
             [sortField]: sortDirection === 'desc' ? -1 : 1
         } as Sort
 
-            const items = await userCollection
+        const items = await userCollection
             .find(filter)
             .sort(sortObject)
             .skip(skip)
@@ -79,35 +78,30 @@ export const userQueryRepository = {
             .toArray();
 
         const totalCount = await userCollection.countDocuments(filter);
-        const  result = userQueryRepository.mapToUserListPagination(items, pageNumber, pageSize, totalCount)
+        const result = this.mapToUserListPagination(items, pageNumber, pageSize, totalCount)
         return result
-    },
+    }
 
 
-
-
-
-
-    mapToUserViewModel(user:WithId<UserAccountDBType>):UserViewModel {
-        return{
+    mapToUserViewModel(user: WithId<UserAccountDBType>): UserViewModel {
+        return {
 
             id: user._id.toString(),
             login: user.accountDate.login,
             email: user.accountDate.email,
             createdAt: user.accountDate.createdAt.toISOString(),
         }
-    },
+    }
 
 
-    mapToAuthMeView(user:WithId<UserAccountDBType>):UserViewAuthMe {
-        return{
+    mapToAuthMeView(user: WithId<UserAccountDBType>): UserViewAuthMe {
+        return {
 
             userId: user._id.toString(),
             login: user.accountDate.login,
             email: user.accountDate.email,
         }
-    },
-
+    }
 
 
     mapToUserListPagination(
@@ -115,17 +109,18 @@ export const userQueryRepository = {
         pageNumber: number,
         pageSize: number,
         totalCount: number
-
     ): PaginateQueryOutput<UserViewModel> {
-        const pagesCount = Math.ceil(totalCount/ pageSize);
+        const pagesCount = Math.ceil(totalCount / pageSize);
 
         return {
             pagesCount,
-            page:pageNumber,
+            page: pageNumber,
             pageSize: pageSize,
             totalCount: totalCount,
-            items: items.map(userQueryRepository.mapToUserViewModel)
+            items: items.map(this.mapToUserViewModel)
         }
     }
 
 }
+
+export const userQueryRepository = new UserQueryRepository();
