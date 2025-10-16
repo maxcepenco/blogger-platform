@@ -14,20 +14,20 @@ export const blogRouter = Router({});
 blogRouter
     .get('',
         sanitizeQueryParams,
-        blogController.getAllBlogs
+        blogController.getAllBlogs.bind(blogController),
     )
 
     .post('',
         authValidationMiddleware,
         blogInputDtoValidation,
         handlerValidationErrors,
-        blogController.createBlog
+        blogController.createBlog.bind(blogController),
     )
 
     .get('/:blogId/posts',
         sanitizeQueryParams,
         validateBlogId,
-        blogController.getBlogPostList
+        blogController.getBlogPostList.bind(blogController)
     )
 
     .post('/:blogId/posts',
@@ -35,10 +35,11 @@ blogRouter
         validateBlogId,
         BlogPostInputDtoMiddleware,
         handlerValidationErrors,
-        blogController.createPostForBlog)
+        blogController.createPostForBlog.bind(blogController),
+    )
 
     .get('/:id',
-        blogController.findBlogBiId
+        blogController.findBlogBiId.bind(blogController),
     )
 
     .put('/:id',
@@ -46,11 +47,12 @@ blogRouter
         idValidation,
         blogInputDtoValidation,
         handlerValidationErrors,
-        blogController.updateBlog
+        blogController.updateBlog.bind(blogController),
     )
 
     .delete('/:id',
         authValidationMiddleware,
         idValidation,
-        blogController.deleteBlog)
+        blogController.deleteBlog.bind(blogController),
+    )
 

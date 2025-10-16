@@ -4,7 +4,7 @@ import {blogCollection} from "../../db/mongoDB";
 import {BlogInputModel} from "../input/blog-input-model";
 
 
-class BlogRepository  {
+export class BlogRepository  {
 
 
     async findById(id: string): Promise<WithId<Blog>| null> {

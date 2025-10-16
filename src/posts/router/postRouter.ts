@@ -13,30 +13,30 @@ export const postRouter = Router({});
 
 postRouter
     .get('/:id/comments',
-        postController.getCommentForPost
+        postController.getCommentForPost.bind(postController),
     )
 
     .get('',
-        postController.getPostList
+        postController.getPostList.bind(postController),
     )
 
     .get('/:id',
         idValidation,
-        postController.findPostBiId
+        postController.findPostBiId.bind(postController),
     )
 
     .post('',
         authValidationMiddleware,
         postInputDtoMiddleware,
         handlerValidationErrors,
-        postController.createPost
+        postController.createPost.bind(postController),
     )
 
     .post('/:id/comments',
         accessTokenGuard,
         commentInputMiddleware,
         handlerValidationErrors,
-        postController.createCommentForPost
+        postController.createCommentForPost.bind(postController),
     )
 
     .put('/:id',
@@ -44,11 +44,11 @@ postRouter
         idValidation,
         postInputDtoMiddleware,
         handlerValidationErrors,
-        postController.updatePost
+        postController.updatePost.bind(postController),
     )
 
     .delete('/:id',
         authValidationMiddleware,
         idValidation,
-        postController.deletePost
+        postController.deletePost.bind(postController),
     )

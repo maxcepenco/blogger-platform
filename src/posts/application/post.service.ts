@@ -1,16 +1,24 @@
-import {PostInputModel} from "../input/post-input-model";
-import {blogRepository} from "../../blogs/repository/blog.repository";
 import {Post} from "../domain/Post";
-import {postRepository} from "../repository/post.repository";
 import {blogPostInput} from "../../blogs/input/blog-post-input-model";
+import {PostInputModel} from "../input/post-input-model"; // добавьте этот импорт
 import {Result} from "../../core/result/result-type";
 import {ResultStatus} from "../../core/result/result-code";
+import {PostRepository} from "../repository/post.repository";
+import {BlogRepository} from "../../blogs/repository/blog.repository";
 
-class PostService {
+export class PostService {
+    private blogRepository: BlogRepository;
+    private postRepository: PostRepository
+
+    constructor() {
+        this.blogRepository = new BlogRepository()
+        this.postRepository = new PostRepository()
+    }
+
 
     async createPost(dto: PostInputModel): Promise<Result<string | null>> {
 
-        const blogData = await blogRepository.findById(dto.blogId)
+        const blogData = await this.blogRepository.findById(dto.blogId)
         if (!blogData) {
             return {
                 status: ResultStatus.BadRequest,
@@ -25,15 +33,15 @@ class PostService {
 
             }
         }
-        const newPost: Post = {
-            title: dto.title,
-            shortDescription: dto.shortDescription,
-            content: dto.content,
-            blogId: blogData._id.toString(),
-            blogName: blogData.name,
-            createdAt: new Date().toISOString()
-        };
-        const resultCreate = await postRepository.createPost(newPost);
+        const newPost = new Post(dto.title,
+            dto.shortDescription,
+            dto.content,
+            blogData._id.toString(),
+            blogData.name,
+            new Date().toISOString())
+
+
+        const resultCreate = await this.postRepository.createPost(newPost);
         return {
             status: ResultStatus.Success,
             data: resultCreate,
@@ -42,12 +50,12 @@ class PostService {
 
     async updatePost(id: string, dto: PostInputModel): Promise<boolean> {
 
-        return await postRepository.updatePost(id, dto)
+        return await this.postRepository.updatePost(id, dto)
     }
 
     async deletePost(id: string): Promise<boolean> {
 
-        return await postRepository.deletePost(id)
+        return await this.postRepository.deletePost(id)
     }
 
     async createPostForBlog(blogIdData: string, blogName: string, postData: blogPostInput): Promise<string> {
@@ -61,9 +69,8 @@ class PostService {
             createdAt: new Date().toISOString()
         }
 
-        return await postRepository.createPost(newPost)
+        return await this.postRepository.createPost(newPost)
     }
 
 }
 
-export const postService = new PostService()

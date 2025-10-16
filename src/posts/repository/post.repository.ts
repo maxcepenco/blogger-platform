@@ -4,7 +4,7 @@ import {ObjectId} from "mongodb";
 import {postCollection} from "../../db/mongoDB";
 
 
-class PostRepository {
+export class PostRepository {
 
 
     async createPost(newPost: Post): Promise<string> {
@@ -27,5 +27,3 @@ class PostRepository {
     }
 
 }
-
-export const postRepository = new PostRepository()

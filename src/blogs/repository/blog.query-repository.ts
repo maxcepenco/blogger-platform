@@ -7,7 +7,7 @@ import {SearchFieldTypeBlog} from "../input/search-blog-type";
 import {SortQueryFilterType} from "../../core/types/sortQueryFilter.type";
 
 
-export const blogQueryRepository = {
+export class BlogQueryRepository {
 
     async findMany(inputParams:SortQueryFilterType, searchType: SearchFieldTypeBlog): Promise<PaginateQueryOutput<BlogViewModel>> {
             const {
@@ -42,7 +42,7 @@ export const blogQueryRepository = {
             const totalCount = await blogCollection.countDocuments(filter);
             const result = this.mapToBlogListPaginationOutput(items, pageNumber, pageSize, totalCount)
             return result
-        },
+        }
 
     async findById(id: string): Promise<WithId<Blog> | null> {
         if (!ObjectId.isValid(id)) {
@@ -51,7 +51,7 @@ export const blogQueryRepository = {
        return  await blogCollection.findOne({_id: new ObjectId(id)});
 
 
-    },
+    }
 
 
     mapToBlogViewModel(blog: WithId<Blog>): BlogViewModel {
@@ -63,7 +63,7 @@ export const blogQueryRepository = {
             createdAt: blog.createdAt,
             isMembership: false
         }
-    },
+    }
 
     mapToBlogListPaginationOutput(
         items: WithId<Blog>[],

@@ -6,26 +6,38 @@ import {
 } from "../../core/types/RequestInputType";
 import {BlogInputModel} from "../input/blog-input-model";
 import {Response} from "express";
-import {blogService} from "../application/blog.servece";
-import {blogQueryRepository} from "../repository/blog.query-repository";
 import {HttpStatuses} from "../../core/types/httpSatuses";
 import {blogPostInput} from "../input/blog-post-input-model";
-import {postService} from "../../posts/application/post.service";
-import {postQueryRepository} from "../../posts/repository/post.query-repository";
+import {PostService} from "../../posts/application/post.service";
+import {PostQueryRepository} from "../../posts/repository/post.query-repository";
 import {idType} from "../../core/types/InputIUriParamsModel";
 import {PostQueryInput} from "../../posts/input/post-query.input";
 import {setDefaultPostQueryParams} from "../../core/helpers/set-default-sort-and-pagination";
 import {BlogQueryInput} from "../input/blog-query.input";
 import {sortQueryFieldsUtil} from "../../core/helpers/sort-query-fields-util";
+import {BlogService} from "../application/blog.servece";
+import {BlogQueryRepository} from "../repository/blog.query-repository";
 
 
 class BlogController {
 
+    private blogService: BlogService
+    private blogQueryRepository: BlogQueryRepository
+    private postService: PostService
+    private postQueryRepository: PostQueryRepository
+
+    constructor() {
+        this.blogService = new BlogService();
+        this.blogQueryRepository = new BlogQueryRepository()
+        this.postService = new PostService
+        this.postQueryRepository = new PostQueryRepository()
+    }
+
     async createBlog(req: RequestWithBody<BlogInputModel>, res: Response) {
         try {
-            const createdBlog = await blogService.create(req.body);
+            const createdBlog = await this.blogService.create(req.body);
 
-            const foundBlog = await blogQueryRepository.findById(createdBlog.data)
+            const foundBlog = await this.blogQueryRepository.findById(createdBlog.data)
 
             if (!foundBlog) {
                 return res.status(HttpStatuses.BadRequest_400).json({
@@ -35,7 +47,7 @@ class BlogController {
                     }]
                 });
             }
-            const blogViewModel = blogQueryRepository.mapToBlogViewModel(foundBlog)
+            const blogViewModel = this.blogQueryRepository.mapToBlogViewModel(foundBlog)
 
             res
                 .status(HttpStatuses.Created_201)
@@ -55,7 +67,7 @@ class BlogController {
         try {
             const blogId = req.params.blogId;
 
-            const existingBlog = await blogQueryRepository.findById(blogId);
+            const existingBlog = await this.blogQueryRepository.findById(blogId);
 
             if (!existingBlog) {
                 res.sendStatus(HttpStatuses.NotFound_404);
@@ -63,9 +75,9 @@ class BlogController {
             }
 
 
-            const createdPostForId = await postService.createPostForBlog(blogId, existingBlog.name, req.body);
+            const createdPostForId = await this.postService.createPostForBlog(blogId, existingBlog.name, req.body);
 
-            const createdPost = await postQueryRepository.findPostById(createdPostForId)
+            const createdPost = await this.postQueryRepository.findPostById(createdPostForId)
             if (!createdPost) {
                 return res.sendStatus(HttpStatuses.NotFound_404);
             }
@@ -80,14 +92,14 @@ class BlogController {
     async findBlogBiId(req: RequestWithParams<idType>, res: Response) {
 
         const id = req.params.id
-        const foundBlog = await blogQueryRepository.findById(id);
+        const foundBlog = await this.blogQueryRepository.findById(id);
 
         if (!foundBlog) {
             return res.sendStatus(HttpStatuses.NotFound_404)
 
         }
 
-        const blogVewModel = blogQueryRepository.mapToBlogViewModel(foundBlog);
+        const blogVewModel = this.blogQueryRepository.mapToBlogViewModel(foundBlog);
 
         res.status(HttpStatuses.Ok_200).send(blogVewModel)
 
@@ -97,18 +109,18 @@ class BlogController {
         const query = req.query as unknown as PostQueryInput
         const blogId = req.params.blogId;
 
-        const blogExists = await blogQueryRepository.findById(blogId);
+        const blogExists = await this.blogQueryRepository.findById(blogId);
         if (!blogExists) {
             res.sendStatus(HttpStatuses.NotFound_404)
             return
         }
         const queryInput = setDefaultPostQueryParams(query)
 
-        const {items, totalCount} = await postQueryRepository.findPostByBlog(
+        const {items, totalCount} = await this.postQueryRepository.findPostByBlog(
             queryInput,
             blogId,
         );
-        const postListOutput = postQueryRepository.mapToPostListPaginationOutput(
+        const postListOutput = this.postQueryRepository.mapToPostListPaginationOutput(
             items,
             queryInput.pageNumber,
             queryInput.pageSize,
@@ -126,7 +138,7 @@ class BlogController {
             const queryInput = sortQueryFieldsUtil(req.query);
             const searchQueryFiled = req.query
 
-            const result = await blogQueryRepository.findMany(queryInput, searchQueryFiled);
+            const result = await this.blogQueryRepository.findMany(queryInput, searchQueryFiled);
 
             res.status(HttpStatuses.Ok_200).json(result);
 
@@ -142,7 +154,7 @@ class BlogController {
         const index = req.params.id
 
 
-        const isUpdateBlog = await blogService.updateBlog(index, req.body)
+        const isUpdateBlog = await this.blogService.updateBlog(index, req.body)
         if (!isUpdateBlog) {
             res.sendStatus(HttpStatuses.NotFound_404)
             return
@@ -152,7 +164,7 @@ class BlogController {
     }
 
     async deleteBlog(req: RequestWithParams<idType>, res: Response) {
-        const isDeleted = await blogService.deleteBlog(req.params.id)
+        const isDeleted = await this.blogService.deleteBlog(req.params.id)
         if (!isDeleted) {
             res.sendStatus(HttpStatuses.NotFound_404);
         }
@@ -162,4 +174,4 @@ class BlogController {
     }
 }
 
-    export const blogController = new BlogController()
+export const blogController = new BlogController()

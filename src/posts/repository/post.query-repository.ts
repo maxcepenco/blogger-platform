@@ -6,7 +6,7 @@ import {SortDirection} from "../../core/types/sort-direction";
 import {PostViewModel} from "../output/PostViewModel";
 import {PaginateQueryOutput} from "../../core/types/pagination-output-model";
 
- class PostQueryRepository {
+export class PostQueryRepository {
 
     async findMany(inputParams: PostQueryInput): Promise<{ items: WithId<Post>[]; totalCount: number }> {
         const {
@@ -94,4 +94,3 @@ import {PaginateQueryOutput} from "../../core/types/pagination-output-model";
     }
 }
 
-export const postQueryRepository = new PostQueryRepository()

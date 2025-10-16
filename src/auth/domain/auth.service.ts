@@ -12,17 +12,17 @@ import {nodemailerService} from "../adapters/nodemailer.service";
 import {emailExamples} from "../adapters/email-example";
 import {sessionRepository} from "../repository/session-repository";
 
-export const authService = {
+class AuthService {
 
     async loginUser(
         loginOrEmail: string,
         password: string,
         deviceName: string,
         ip: string,
-    ): Promise <Result<{accessToken: string, refreshToken: string} | null>>  {
+    ): Promise<Result<{ accessToken: string, refreshToken: string } | null>> {
 
         const result = await this._checkUserCredentials(loginOrEmail, password)
-        if(result.status !== ResultStatus.Success) {
+        if (result.status !== ResultStatus.Success) {
             return {
                 status: ResultStatus.Unauthorized,
                 data: null,
@@ -32,10 +32,10 @@ export const authService = {
         }
 
         // Генерируем deviceId
-    const deviceId = crypto.randomUUID()
+        const deviceId = crypto.randomUUID()
 
-    const accessToken = await jwtService.createAccessToken(result.data!._id.toString())
-    const refreshToken = await jwtService.createRefreshToken(result.data!._id.toString(),deviceId)
+        const accessToken = await jwtService.createAccessToken(result.data!._id.toString())
+        const refreshToken = await jwtService.createRefreshToken(result.data!._id.toString(), deviceId)
 
         let decoded = await jwtService.verifyRefreshToken(refreshToken)
 
@@ -44,7 +44,7 @@ export const authService = {
             deviceId: deviceId,
             iat: new Date(decoded!.iat * 1000),
             deviceName: deviceName,
-            ip:ip,
+            ip: ip,
             exp: new Date(decoded!.exp * 1000),
 
         }
@@ -54,56 +54,50 @@ export const authService = {
 
         return {
             status: ResultStatus.Success,
-            data: { accessToken, refreshToken },
+            data: {accessToken, refreshToken},
         }
-    },
+    }
 
 
-
-
-    async createRefreshAndAccessToken( userId:string, deviceId: string):
-                                     Promise<Result<{newAccessToken:string,newRefreshToken:string} | null>>{
-
-
+    async createRefreshAndAccessToken(userId: string, deviceId: string):
+        Promise<Result<{ newAccessToken: string, newRefreshToken: string } | null>> {
 
 
         let newAccessToken = await jwtService.createAccessToken(userId.toString())
 
-        let newRefreshToken = await jwtService.createRefreshToken(userId.toString(),deviceId)
+        let newRefreshToken = await jwtService.createRefreshToken(userId.toString(), deviceId)
 
         // Достаем новые даты
         let iatAndExp = await jwtService.verifyRefreshToken(newRefreshToken)
 
-        const newIat = new Date (iatAndExp!.iat * 1000)
-        const newExp = new Date (iatAndExp!.exp * 1000)
+        const newIat = new Date(iatAndExp!.iat * 1000)
+        const newExp = new Date(iatAndExp!.exp * 1000)
 
         // Обновляем даты
         await sessionRepository.updateSession(deviceId, newIat, newExp)
 
 
-
-
         return {
             status: ResultStatus.Success,
-            data: { newAccessToken, newRefreshToken },
+            data: {newAccessToken, newRefreshToken},
         }
-    },
+    }
 
-    async deleteThisSession(userId:string, refreshToken:string):Promise<Result<boolean | null >> {
+    async deleteThisSession(userId: string, refreshToken: string): Promise<Result<boolean | null>> {
         let decoded = await jwtService.verifyRefreshToken(refreshToken)
 
-        if(!decoded) {
+        if (!decoded) {
             return {
-                status:ResultStatus.Unauthorized,
+                status: ResultStatus.Unauthorized,
                 data: null,
                 errorMessage: 'Refresh token failed',
             }
         }
         // Достаем сессию по userId и deviceId из базы
-         await sessionRepository.findSession(decoded.userId, decoded.deviceId)
+        await sessionRepository.findSession(decoded.userId, decoded.deviceId)
 
         const result = await sessionRepository.deleteUserSession(decoded.userId, decoded.deviceId)
-        if(!result) {
+        if (!result) {
             return {
                 status: ResultStatus.Unauthorized,
                 data: null,
@@ -112,13 +106,13 @@ export const authService = {
         }
 
         return {
-            status:ResultStatus.Success,
+            status: ResultStatus.Success,
             data: result
         }
-    },
+    }
 
-    async registerUser(userDto:UserInputModel):Promise<Result<UserAccountDBType | null >> {
-        const {login,password,email} = userDto
+    async registerUser(userDto: UserInputModel): Promise<Result<UserAccountDBType | null>> {
+        const {login, password, email} = userDto
 
         const existingUser = await userRepository.findExistByLoginOrEmail(login, email);
 
@@ -128,7 +122,8 @@ export const authService = {
                     status: ResultStatus.BadRequest,
                     data: null,
                     errorMessage: 'Bad Request',
-                    extensions: {errorsMessages: [{message: 'User with this login already exists', field: 'login'}]
+                    extensions: {
+                        errorsMessages: [{message: 'User with this login already exists', field: 'login'}]
                     }
                 }
             }
@@ -138,31 +133,31 @@ export const authService = {
                     status: ResultStatus.BadRequest,
                     data: null,
                     errorMessage: 'Bad Request',
-                    extensions: { errorsMessages: [{message: 'User with this email already exists',field: 'email'}] }
+                    extensions: {errorsMessages: [{message: 'User with this email already exists', field: 'email'}]}
                 }
             }
         }
 
-            const passwordHash = await bcryptService.generateHash(password)
+        const passwordHash = await bcryptService.generateHash(password)
 
-           const newUser: UserAccountDBType = {
-                accountDate: {
-                    login,
-                     email,
-                     passwordHash,
-                    createdAt: new Date(),
-                },
-               emailConfirmed:{
-                    confirmationCode: randomUUID(),
-                     expirationDate: add( new Date(), {
-                        hours: 6,
-                         minutes: 6,
-                     })
-               },
-               isConfirmed: false,
-           }
+        const newUser: UserAccountDBType = {
+            accountDate: {
+                login,
+                email,
+                passwordHash,
+                createdAt: new Date(),
+            },
+            emailConfirmed: {
+                confirmationCode: randomUUID(),
+                expirationDate: add(new Date(), {
+                    hours: 6,
+                    minutes: 6,
+                })
+            },
+            isConfirmed: false,
+        }
 
-          await userRepository.create(newUser)
+        await userRepository.create(newUser)
 
         try {
             await nodemailerService.sendEmail(
@@ -178,15 +173,15 @@ export const authService = {
         return {
             status: ResultStatus.Success,
             data: newUser,
+        }
+
     }
 
-    },
-
-    async confirmEmail(code:string):Promise<Result<boolean | null> > {
+    async confirmEmail(code: string): Promise<Result<boolean | null>> {
 
         const user = await userRepository.findByCode(code)
         console.log(`user:${user}`)
-        if(!user) {
+        if (!user) {
             return {
                 status: ResultStatus.BadRequest,
                 data: null,
@@ -201,12 +196,12 @@ export const authService = {
             }
         }
 
-        if(user.isConfirmed ) {
+        if (user.isConfirmed) {
             return {
                 status: ResultStatus.BadRequest,
                 data: null,
                 errorMessage: 'User confirmed',
-                extensions:  {
+                extensions: {
                     errorsMessages: [{
                         field: 'code',
                         message: 'Email is already confirmed'
@@ -215,12 +210,12 @@ export const authService = {
             }
         }
 
-        if(user.emailConfirmed!.confirmationCode !== code) {
+        if (user.emailConfirmed!.confirmationCode !== code) {
             return {
                 status: ResultStatus.BadRequest,
                 data: null,
                 errorMessage: 'code not confirmed',
-                extensions:{
+                extensions: {
                     errorsMessages: [{
                         field: 'code',
                         message: 'Confirmation code is incorrect'
@@ -229,7 +224,7 @@ export const authService = {
             }
         }
 
-        if(user.emailConfirmed!.expirationDate! < new Date()) {
+        if (user.emailConfirmed!.expirationDate! < new Date()) {
             return {
                 status: ResultStatus.BadRequest,
                 data: null,
@@ -244,33 +239,32 @@ export const authService = {
         }
 
 
-
         let result = await userRepository.updateUser(user._id)
 
         return {
             status: ResultStatus.Success,
             data: result,
         }
-    },
+    }
 
-    async emailResending(email:string):Promise<Result<boolean | null>> {
+    async emailResending(email: string): Promise<Result<boolean | null>> {
 
         const foundUser = await userRepository.findByLoginOrEmail(email)
-        console.log('found user:',foundUser)
-        if(!foundUser) {
+        console.log('found user:', foundUser)
+        if (!foundUser) {
             return {
                 status: ResultStatus.BadRequest,
                 data: null,
                 errorMessage: ' Not User',
-                extensions:{errorsMessages:[{message: 'User not found',field: 'email' }]}
+                extensions: {errorsMessages: [{message: 'User not found', field: 'email'}]}
             }
         }
-        if(foundUser.isConfirmed) {
+        if (foundUser.isConfirmed) {
             return {
                 status: ResultStatus.BadRequest,
                 data: null,
                 errorMessage: 'User isConfirmed',
-                extensions:{
+                extensions: {
                     errorsMessages: [{
                         field: 'email',
                         message: 'Email is already confirmed'
@@ -279,7 +273,7 @@ export const authService = {
             }
         }
 
-        const newCode =  randomUUID();
+        const newCode = randomUUID();
         const newExpirationDate = add(new Date(), {hours: 6, minutes: 6})
 
         await userRepository.updateConfirmationData(foundUser._id, newCode, newExpirationDate)
@@ -297,29 +291,29 @@ export const authService = {
             data: resendingCode || null,
         }
 
-    },
+    }
 
-    async _checkUserCredentials( loginOrEmail: string, password: string ):
-        Promise<Result<WithId<UserAccountDBType> | null >> {
+    async _checkUserCredentials(loginOrEmail: string, password: string):
+        Promise<Result<WithId<UserAccountDBType> | null>> {
 
         const user = await userRepository.findByLoginOrEmail(loginOrEmail)
 
-        if(!user) {
+        if (!user) {
             return {
                 status: ResultStatus.NotFound,
-                data:null,
+                data: null,
                 errorMessage: 'Not Found',
                 // extensions: {errorsMessages:[{message: 'NotFound',field: 'loginOrEmail' }]}
             }
         }
 
         const isPassCorrect = await bcryptService.checkPassword(password, user.accountDate.passwordHash)
-        if(!isPassCorrect) {
+        if (!isPassCorrect) {
             return {
                 status: ResultStatus.BadRequest,
                 data: null,
                 errorMessage: 'Bad Request',
-                extensions: {errorsMessages:[{message: 'Wrong password',field: 'password' }]}
+                extensions: {errorsMessages: [{message: 'Wrong password', field: 'password'}]}
             }
         }
 
@@ -328,7 +322,8 @@ export const authService = {
             data: user,
         }
 
-    },
-
+    }
 
 }
+
+export const authService = new AuthService();

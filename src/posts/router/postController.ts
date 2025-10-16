@@ -1,15 +1,16 @@
 import {
     ReqParamsBodyUserId,
     RequestWithBody,
-    RequestWithParams, RequestWithParamsAndBody,
+    RequestWithParams,
+    RequestWithParamsAndBody,
     RequestWithParamsAndQuery,
     RequestWithQuery
 } from "../../core/types/RequestInputType";
 import {PostInputModel} from "../input/post-input-model";
-import {postService} from "../application/post.service";
+import {PostService} from "../application/post.service";
 import {ResultStatus} from "../../core/result/result-code";
 import {resultCodeToHttpException} from "../../core/result/resultCodeToHttpException";
-import {postQueryRepository} from "../repository/post.query-repository";
+import {PostQueryRepository} from "../repository/post.query-repository";
 import {HttpStatuses} from "../../core/types/httpSatuses"
 import {Response} from "express";
 import {IdType} from "../../core/types/id-type.user";
@@ -24,14 +25,21 @@ import {setDefaultPostQueryParams} from "../../core/helpers/set-default-sort-and
 
 
 class PostController {
+    private postService: PostService;
+    private postQueryRepository: PostQueryRepository;
+
+    constructor() {
+        this.postService = new PostService();
+        this.postQueryRepository = new PostQueryRepository();
+    }
 
     async createPost(req: RequestWithBody<PostInputModel>, res: Response) {
         try {
-            const result = await postService.createPost(req.body)
+            const result = await this.postService.createPost(req.body)
             if (result.status !== ResultStatus.Success || result.data === null) {
                 return res.sendStatus(resultCodeToHttpException(result.status))
             }
-            const createdPost = await postQueryRepository.findPostById(result.data)
+            const createdPost = await this.postQueryRepository.findPostById(result.data)
             if (!createdPost) {
 
                 return res.status(HttpStatuses.BadRequest_400).json({
@@ -58,7 +66,7 @@ class PostController {
         const userId = req.user as string;
 
         const postId = req.params.id
-        const existingPost = await postQueryRepository.findPostById(postId)
+        const existingPost = await this.postQueryRepository.findPostById(postId)
         if (!existingPost) {
             res.sendStatus(HttpStatuses.NotFound_404)
             return
@@ -83,7 +91,7 @@ class PostController {
         const postId = req.params.id
 
 
-        const post = await postQueryRepository.findPostById(postId)
+        const post = await this.postQueryRepository.findPostById(postId)
         if (!post) {
 
             res.sendStatus(HttpStatuses.NotFound_404)
@@ -100,7 +108,7 @@ class PostController {
     async findPostBiId(req: RequestWithParams<idType>, res: Response) {
 
         const index = req.params.id;
-        const foundPostById = await postQueryRepository.findPostById(index);
+        const foundPostById = await this.postQueryRepository.findPostById(index);
 
         if (!foundPostById) {
             return res.sendStatus(HttpStatuses.NotFound_404)
@@ -113,9 +121,9 @@ class PostController {
     async getPostList(req: RequestWithQuery<PostQueryInput>, res: Response) {
         const queryInput = setDefaultPostQueryParams(req.query)
 
-        const {items, totalCount} = await postQueryRepository.findMany(queryInput)
+        const {items, totalCount} = await this.postQueryRepository.findMany(queryInput)
 
-        const postListOutput = postQueryRepository.mapToPostListPaginationOutput(
+        const postListOutput = this.postQueryRepository.mapToPostListPaginationOutput(
             items,
             queryInput.pageNumber,
             queryInput.pageSize,
@@ -126,7 +134,7 @@ class PostController {
 
     async updatePost(req: RequestWithParamsAndBody<idType, PostInputModel>, res: Response) {
 
-        const updateThisPost = await postService.updatePost(req.params.id, req.body)
+        const updateThisPost = await this.postService.updatePost(req.params.id, req.body)
         if (!updateThisPost) {
             res.sendStatus(HttpStatuses.NotFound_404)
             return
@@ -135,7 +143,7 @@ class PostController {
     }
 
     async deletePost(req: RequestWithParams<idType>, res: Response) {
-        const deleteIndex = await postService.deletePost(req.params.id)
+        const deleteIndex = await this.postService.deletePost(req.params.id)
         if (!deleteIndex) {
             res.sendStatus(HttpStatuses.NotFound_404)
             return
@@ -144,4 +152,4 @@ class PostController {
     }
 }
 
-    export const postController = new PostController()
+export const postController = new PostController()
