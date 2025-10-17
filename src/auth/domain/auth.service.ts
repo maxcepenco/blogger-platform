@@ -1,5 +1,5 @@
 import {bcryptService} from "../adapters/bcrypt.service";
-import {userRepository} from "../../users/repository/user.repository";
+import {UserRepository} from "../../users/repository/user.repository";
 import {ResultStatus} from "../../core/result/result-code";
 import {WithId} from "mongodb";
 import {UserAccountDBType} from "../../users/types-user/UserAccountDBType";
@@ -10,9 +10,16 @@ import {randomUUID} from "node:crypto";
 import {add} from "date-fns/add";
 import {nodemailerService} from "../adapters/nodemailer.service";
 import {emailExamples} from "../adapters/email-example";
-import {sessionRepository} from "../repository/session-repository";
+import {SessionRepository} from "../repository/session-repository";
 
-class AuthService {
+export class AuthService {
+    sessionRepository: SessionRepository
+    userRepository: UserRepository
+
+    constructor() {
+        this.sessionRepository = new SessionRepository
+        this.userRepository = new UserRepository
+    }
 
     async loginUser(
         loginOrEmail: string,
@@ -49,7 +56,7 @@ class AuthService {
 
         }
 
-        await sessionRepository.createSession(newSession);
+        await this.sessionRepository.createSession(newSession);
 
 
         return {
@@ -74,7 +81,7 @@ class AuthService {
         const newExp = new Date(iatAndExp!.exp * 1000)
 
         // Обновляем даты
-        await sessionRepository.updateSession(deviceId, newIat, newExp)
+        await this.sessionRepository.updateSession(deviceId, newIat, newExp)
 
 
         return {
@@ -94,9 +101,9 @@ class AuthService {
             }
         }
         // Достаем сессию по userId и deviceId из базы
-        await sessionRepository.findSession(decoded.userId, decoded.deviceId)
+        await this.sessionRepository.findSession(decoded.userId, decoded.deviceId)
 
-        const result = await sessionRepository.deleteUserSession(decoded.userId, decoded.deviceId)
+        const result = await this.sessionRepository.deleteUserSession(decoded.userId, decoded.deviceId)
         if (!result) {
             return {
                 status: ResultStatus.Unauthorized,
@@ -114,7 +121,7 @@ class AuthService {
     async registerUser(userDto: UserInputModel): Promise<Result<UserAccountDBType | null>> {
         const {login, password, email} = userDto
 
-        const existingUser = await userRepository.findExistByLoginOrEmail(login, email);
+        const existingUser = await this.userRepository.findExistByLoginOrEmail(login, email);
 
         if (existingUser) {
             if (existingUser.accountDate.login === login) {
@@ -157,7 +164,7 @@ class AuthService {
             isConfirmed: false,
         }
 
-        await userRepository.create(newUser)
+        await this.userRepository.create(newUser)
 
         try {
             await nodemailerService.sendEmail(
@@ -179,7 +186,7 @@ class AuthService {
 
     async confirmEmail(code: string): Promise<Result<boolean | null>> {
 
-        const user = await userRepository.findByCode(code)
+        const user = await this.userRepository.findByCode(code)
         console.log(`user:${user}`)
         if (!user) {
             return {
@@ -239,7 +246,7 @@ class AuthService {
         }
 
 
-        let result = await userRepository.updateUser(user._id)
+        let result = await this.userRepository.updateUser(user._id)
 
         return {
             status: ResultStatus.Success,
@@ -249,7 +256,7 @@ class AuthService {
 
     async emailResending(email: string): Promise<Result<boolean | null>> {
 
-        const foundUser = await userRepository.findByLoginOrEmail(email)
+        const foundUser = await this.userRepository.findByLoginOrEmail(email)
         console.log('found user:', foundUser)
         if (!foundUser) {
             return {
@@ -276,7 +283,7 @@ class AuthService {
         const newCode = randomUUID();
         const newExpirationDate = add(new Date(), {hours: 6, minutes: 6})
 
-        await userRepository.updateConfirmationData(foundUser._id, newCode, newExpirationDate)
+        await this.userRepository.updateConfirmationData(foundUser._id, newCode, newExpirationDate)
 
 
         const resendingCode = await nodemailerService.sendEmail(
@@ -296,7 +303,7 @@ class AuthService {
     async _checkUserCredentials(loginOrEmail: string, password: string):
         Promise<Result<WithId<UserAccountDBType> | null>> {
 
-        const user = await userRepository.findByLoginOrEmail(loginOrEmail)
+        const user = await this.userRepository.findByLoginOrEmail(loginOrEmail)
 
         if (!user) {
             return {
@@ -326,4 +333,3 @@ class AuthService {
 
 }
 
-export const authService = new AuthService();

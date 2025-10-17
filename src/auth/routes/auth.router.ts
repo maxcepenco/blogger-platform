@@ -14,10 +14,40 @@ export const authRouter = Router();
 
 
 authRouter
-    .post('/login',userRequestRateLimiter,passwordValidation, loginOrEmailValidation, handlerValidationErrors, authController.authLoginAccess  )
-    .get('/me',accessTokenGuard, loginOrEmailValidation,userRequestRateLimiter, authController.authMeHandler )
-    .post('/registration',userRequestRateLimiter,passwordValidation,emailValidation,loginValidation,handlerValidationErrors,authController.authRegistration)
-    .post('/registration-confirmation',userRequestRateLimiter,codeValidation,handlerValidationErrors, authController.confirmEmail)
-    .post('/registration-email-resending',userRequestRateLimiter,emailValidation,handlerValidationErrors,authController.registrationEmailResending)
-    .post('/refresh-token',refreshTokenGuard,authController.authRefreshToken)
-    .post('/logout',refreshTokenGuard, authController.logout)
+    .post('/login',
+        userRequestRateLimiter,
+        passwordValidation, loginOrEmailValidation,
+        handlerValidationErrors,
+        authController.authLoginAccess.bind(authController))
+
+    .get('/me', accessTokenGuard,
+        loginOrEmailValidation,
+        userRequestRateLimiter,
+        authController.authMeHandler.bind(authController))
+
+    .post('/registration',
+        userRequestRateLimiter,
+        passwordValidation,
+        emailValidation,
+        loginValidation,
+        handlerValidationErrors,
+        authController.authRegistration.bind(authController))
+
+    .post('/registration-confirmation',
+        userRequestRateLimiter,
+        codeValidation,
+        handlerValidationErrors,
+        authController.confirmEmail.bind(authController))
+
+    .post('/registration-email-resending',
+        userRequestRateLimiter,
+        emailValidation,
+        handlerValidationErrors,
+        authController.registrationEmailResending.bind(authController))
+
+    .post('/refresh-token',
+        refreshTokenGuard,
+        authController.authRefreshToken.bind(authController))
+
+    .post('/logout', refreshTokenGuard,
+        authController.logout.bind(authController))

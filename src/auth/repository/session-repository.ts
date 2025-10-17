@@ -2,7 +2,7 @@ import {CreateSessionDto} from "../dto/session-DB-type";
 import {refreshTokenCollection, requestLogsCollection} from "../../db/mongoDB";
 import {DeviceViewModel} from "../../security/dto/device-view-model";
 
-class SessionRepository {
+export class SessionRepository {
 
     async createSession(newSession: CreateSessionDto): Promise<any> {
         const result = await refreshTokenCollection.insertOne(newSession);
@@ -98,4 +98,3 @@ class SessionRepository {
 
 }
 
-export const sessionRepository = new SessionRepository()
