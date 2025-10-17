@@ -7,7 +7,7 @@ import {PaginateQueryOutput} from "../../core/types/pagination-output-model";
 import {SortQueryFilterType} from "../../core/types/sortQueryFilter.type";
 
 
-class UserQueryRepository {
+export class UserQueryRepository {
 
     async findById(userId: string): Promise<UserViewModel | null> {
         const user = await userCollection.findOne({_id: new ObjectId(userId)});
@@ -123,4 +123,3 @@ class UserQueryRepository {
 
 }
 
-export const userQueryRepository = new UserQueryRepository();

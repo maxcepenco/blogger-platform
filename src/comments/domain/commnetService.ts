@@ -1,15 +1,25 @@
-import {userQueryRepository} from "../../users/repository/user.query-repository";
-import {commentRepository} from "../repository/commnet-repository";
+import {UserQueryRepository} from "../../users/repository/user.query-repository";
+import {CommentRepository} from "../repository/commnet-repository";
 import {CommentDbType} from "../types/comment-db-type";
 import {Result} from "../../core/result/result-type";
 import {ResultStatus} from "../../core/result/result-code";
+import {CommentQueryRepository} from "../repository/comment-query-repository";
 
 
-class CommentService {
+export class CommentService {
+    commentRepository: CommentRepository;
+    commentQuery: CommentQueryRepository
+    userQueryRepository: UserQueryRepository
+
+    constructor() {
+        this.commentRepository = new CommentRepository()
+        this.commentQuery = new CommentQueryRepository()
+        this.userQueryRepository = new UserQueryRepository()
+    }
 
     async createComment(postId: string, userId: string, content: string): Promise<string | null> {
 
-        const user = await userQueryRepository.findById(userId!);
+        const user = await this.userQueryRepository.findById(userId!);
         if (!user) {
             return null
         }
@@ -23,13 +33,13 @@ class CommentService {
             createdAt: new Date().toISOString()
         }
 
-        return await commentRepository.createCommentForPost(newComment)
+        return await this.commentRepository.createCommentForPost(newComment)
 
     }
 
     async updateComment(commentId: string, comment: string, userId: string): Promise<Result<boolean | null>> {
 
-        const foundComment = await commentRepository.findByIdDbType(commentId);
+        const foundComment = await this.commentRepository.findByIdDbType(commentId);
         if (!foundComment) {
             return {
                 status: ResultStatus.NotFound,
@@ -49,7 +59,7 @@ class CommentService {
             createdAt: foundComment.createdAt
         }
 
-        const result = await commentRepository.update(commentId, updatedComment)
+        const result = await this.commentRepository.update(commentId, updatedComment)
         return {
             status: ResultStatus.Success,
             data: result,
@@ -59,7 +69,7 @@ class CommentService {
 
     async deleteComment(commentId: string, userId: string): Promise<Result<boolean | null>> {
 
-        const foundComment = await commentRepository.findByIdDbType(commentId);
+        const foundComment = await this.commentRepository.findByIdDbType(commentId);
         if (!foundComment) {
             return {
                 status: ResultStatus.NotFound,
@@ -73,7 +83,7 @@ class CommentService {
             }
         }
 
-        const result = await commentRepository.delete(commentId)
+        const result = await this.commentRepository.delete(commentId)
         return {
             status: ResultStatus.Success,
             data: result,
@@ -83,4 +93,3 @@ class CommentService {
 
 }
 
-export const commentService = new CommentService()

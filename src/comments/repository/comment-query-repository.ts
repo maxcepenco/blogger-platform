@@ -6,7 +6,7 @@ import {SortQueryFilterType} from "../../core/types/sortQueryFilter.type";
 import {PaginateQueryOutput} from "../../core/types/pagination-output-model";
 
 
-class CommentQueryRepository {
+export class CommentQueryRepository {
 
     async findById(commentId: string): Promise<CommentViewModel | null> {
         const result = await commentCollection.findOne({_id: new ObjectId(commentId)});
@@ -71,4 +71,3 @@ class CommentQueryRepository {
 }
 
 
-export const commentQueryRepository = new CommentQueryRepository();

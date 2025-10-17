@@ -3,7 +3,7 @@ import {userCollection} from "../../db/mongoDB";
 import {ObjectId, WithId} from "mongodb";
 
 
-class UserRepository {
+export class UserRepository {
 
     async create(user: UserAccountDBType): Promise<string> {
         const newUser = await userCollection.insertOne(user)
@@ -83,4 +83,3 @@ class UserRepository {
 
 }
 
-export const userRepository = new UserRepository();

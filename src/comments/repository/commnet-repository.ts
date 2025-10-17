@@ -3,7 +3,7 @@ import {commentCollection} from "../../db/mongoDB";
 import {ObjectId} from "mongodb";
 
 
-class CommentRepository {
+export class CommentRepository {
 
     async createCommentForPost(comment: CommentDbType): Promise<string> {
         const insertResult = await commentCollection.insertOne(comment);
@@ -33,4 +33,3 @@ class CommentRepository {
 
 }
 
-export const commentRepository = new CommentRepository()

@@ -11,6 +11,16 @@ export const userRouter = Router();
 
 
 userRouter
-    .post('',authValidationMiddleware,passwordValidation,emailValidation, loginValidation, handlerValidationErrors, userController.createNewUser )
-    .get('',authValidationMiddleware,userPaginateValidation, userController.getListUser)
-    .delete('/:id',authValidationMiddleware, userController.deleteUser)
+    .post('', authValidationMiddleware,
+        passwordValidation,
+        emailValidation,
+        loginValidation,
+        handlerValidationErrors,
+        userController.createNewUser.bind(userController))
+    .get('',
+        authValidationMiddleware,
+        userPaginateValidation,
+        userController.getListUser.bind(userController))
+    .delete('/:id',
+        authValidationMiddleware,
+        userController.deleteUser.bind(userController))

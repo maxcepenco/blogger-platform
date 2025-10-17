@@ -10,6 +10,19 @@ import {commentController} from "./comment-controller";
 export const commentRouter = Router()
 
 commentRouter
-    .get('/:id', validationObjectIdParams(), commentController.getComment)
-    .put('/:id', accessTokenGuard, idValidation, commentInputMiddleware, handlerValidationErrors, commentController.updateComment)
-    .delete('/:id', validationObjectIdParams(), accessTokenGuard, commentController.deleteComment)
+    .get('/:id',
+        validationObjectIdParams(),
+        commentController.getComment.bind(commentController)
+    )
+    .put('/:id',
+        accessTokenGuard,
+        idValidation,
+        commentInputMiddleware,
+        handlerValidationErrors,
+        commentController.updateComment.bind(commentController)
+    )
+    .delete('/:id',
+        validationObjectIdParams(),
+        accessTokenGuard,
+        commentController.deleteComment.bind(commentController)
+    )

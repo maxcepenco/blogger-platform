@@ -1,10 +1,14 @@
 import {UserInputModel} from "../input-model/input-model.user";
 import {bcryptService} from "../../auth/adapters/bcrypt.service";
 import {UserAccountDBType} from "../types-user/UserAccountDBType";
-import {userRepository} from "../repository/user.repository";
+import {UserRepository} from "../repository/user.repository";
 
 
-class UserService {
+export class UserService {
+    userRepository: UserRepository
+    constructor(){
+        this.userRepository = new UserRepository();
+    }
     async createUser(userDto:UserInputModel):Promise< string> {
           const { password } = userDto;
 
@@ -21,12 +25,11 @@ class UserService {
              isConfirmed: true
          }
 
-         return await userRepository.create(newUser)
+         return await this.userRepository.create(newUser)
     }
 
     async deleteUser(id: string):Promise< boolean> {
-        return userRepository.delete(id)
+        return this.userRepository.delete(id)
     }
 }
 
-export const userService = new UserService()

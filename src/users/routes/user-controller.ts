@@ -1,7 +1,7 @@
 import {RequestWithBody, RequestWithParams, RequestWithQuery} from "../../core/types/RequestInputType";
 import {UserInputModel} from "../input-model/input-model.user";
-import {userService} from "../domain/user-service";
-import {userQueryRepository} from "../repository/user.query-repository";
+import {UserService} from "../domain/user-service";
+import {UserQueryRepository} from "../repository/user.query-repository";
 import {HttpStatuses} from "../../core/types/httpSatuses";
 import {Response} from "express";
 import {sortQueryFieldsUtil} from "../../core/helpers/sort-query-fields-util";
@@ -9,11 +9,17 @@ import {UserQueryFieldType} from "../input-model/user-query-field.type";
 import {idType} from "../../core/types/InputIUriParamsModel";
 
 class UserController {
+    userService: UserService
+    userQueryRepository: UserQueryRepository;
+    constructor(){
+        this.userService = new UserService();
+        this.userQueryRepository = new UserQueryRepository();
+    }
 
     async createNewUser(req: RequestWithBody<UserInputModel>, res: Response) {
 
-        const createUserId = await userService.createUser(req.body)
-        const newUser = await userQueryRepository.findById(createUserId)
+        const createUserId = await this.userService.createUser(req.body)
+        const newUser = await this.userQueryRepository.findById(createUserId)
         if (!newUser) {
             return res.status(HttpStatuses.BadRequest_400).json({
                 errorsMessages: [{
@@ -32,13 +38,13 @@ class UserController {
         const inputQuery = sortQueryFieldsUtil(req.query);
         const searchQueryField = req.query
 
-        const foundListUser = await userQueryRepository.findMany(inputQuery, searchQueryField);
+        const foundListUser = await this.userQueryRepository.findMany(inputQuery, searchQueryField);
 
         res.status(HttpStatuses.Ok_200).json(foundListUser);
     }
 
     async deleteUser(req: RequestWithParams<idType>, res: Response) {
-        const isDeleted = await userService.deleteUser(req.params.id);
+        const isDeleted = await this.userService.deleteUser(req.params.id);
         if (!isDeleted) {
             res.sendStatus(HttpStatuses.NotFound_404);
         }
