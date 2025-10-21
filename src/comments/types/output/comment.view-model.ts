@@ -1,4 +1,4 @@
-import {CommentatorInfo} from "../types/commentator-info";
+import {CommentatorInfo} from "../commentator-info";
 
 
 export type CommentViewModel = {

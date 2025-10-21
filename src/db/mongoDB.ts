@@ -1,6 +1,6 @@
 import {Collection, Db, MongoClient} from "mongodb";
-import {Post} from "../posts/domain/Post";
-import {Blog} from "../blogs/domain/Blog";
+import {Post} from "../posts/dto/Post";
+import {Blog} from "../blogs/dto/Blog";
 import {SETTINGS} from "../core/settings/settings";
 import {UserAccountDBType} from "../users/types-user/UserAccountDBType";
 import {CommentDbType} from "../comments/types/comment-db-type";

@@ -7,15 +7,16 @@ import {resultCodeToHttpException} from "../../core/result/resultCodeToHttpExcep
 import {HttpStatuses} from "../../core/types/httpSatuses";
 import {IdType} from "../../core/types/id-type.user";
 import {UserQueryRepository} from "../../users/repository/user.query-repository";
-import {UserInputModel} from "../../users/input-model/input-model.user";
+import {UserInputModel} from "../../users/routes/input-model/input-model.user";
 import {RegistrationCodConfirmation} from "../dto/RegistrationConfirmaionCodeModel";
 import {Request, Response} from "express";
+import {inject, injectable} from "inversify";
 
-
+@injectable()
 export class AuthController {
 
-    constructor(protected userQueryRepository: UserQueryRepository,
-                protected authService: AuthService) {
+    constructor(@inject(UserQueryRepository) protected userQueryRepository: UserQueryRepository,
+                @inject(AuthService) protected authService: AuthService) {
     }
 
     async authLoginAccess(req: RequestWithBody<LoginDto>, res: Response) {

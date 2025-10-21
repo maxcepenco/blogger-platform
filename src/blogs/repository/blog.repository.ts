@@ -1,9 +1,10 @@
-import {Blog} from "../domain/Blog";
+import {Blog} from "../dto/Blog";
 import {ObjectId, WithId} from "mongodb";
 import {blogCollection} from "../../db/mongoDB";
-import {BlogInputModel} from "../input/blog-input-model";
+import {BlogInputModel} from "../types/input/blog-input-model";
+import {injectable} from "inversify";
 
-
+@injectable()
 export class BlogRepository  {
 
 

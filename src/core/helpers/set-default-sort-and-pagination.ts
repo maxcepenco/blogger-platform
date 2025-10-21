@@ -1,8 +1,8 @@
 import {SortDirection} from "../types/sort-direction";
-import {BlogSortField} from "../../blogs/input/blog-sort-field";
-import {BlogQueryInput} from "../../blogs/input/blog-query.input";
-import {PostQueryInput} from "../../posts/input/post-query.input";
-import {PostSortField} from "../../posts/input/post-sort-field";
+import {BlogSortField} from "../../blogs/types/input/blog-sort-field";
+import {BlogQueryInput} from "../../blogs/types/input/blog-query.input";
+import {PostQueryInput} from "../../posts/types/input/post-query.input";
+import {PostSortField} from "../../posts/types/input/post-sort-field";
 
 
 

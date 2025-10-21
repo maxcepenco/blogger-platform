@@ -1,11 +1,13 @@
 import {ObjectId, WithId} from "mongodb";
-import {Post} from "../domain/Post";
+import {Post} from "../dto/Post";
 import {postCollection} from "../../db/mongoDB";
-import {PostQueryInput} from "../input/post-query.input";
+import {PostQueryInput} from "../types/input/post-query.input";
 import {SortDirection} from "../../core/types/sort-direction";
-import {PostViewModel} from "../output/PostViewModel";
+import {PostViewModel} from "../types/output/PostViewModel";
 import {PaginateQueryOutput} from "../../core/types/pagination-output-model";
+import {injectable} from "inversify";
 
+@injectable()
 export class PostQueryRepository {
 
     async findMany(inputParams: PostQueryInput): Promise<{ items: WithId<Post>[]; totalCount: number }> {

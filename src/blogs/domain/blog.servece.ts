@@ -1,13 +1,16 @@
-import {BlogInputModel} from "../input/blog-input-model";
+import {BlogInputModel} from "../types/input/blog-input-model";
 
-import {Blog} from "../domain/Blog";
+import {Blog} from "../dto/Blog";
 import {ResultStatus} from "../../core/result/result-code";
 import {Result} from "../../core/result/result-type";
 import {BlogRepository} from "../repository/blog.repository";
+import {inject, injectable} from "inversify";
 
+
+@injectable()
 export class BlogService {
 
-    constructor(protected blogRepository: BlogRepository) {}
+    constructor(@inject(BlogRepository)protected blogRepository: BlogRepository) {}
 
     async create(blogDto: BlogInputModel): Promise<Result<string>> {
 

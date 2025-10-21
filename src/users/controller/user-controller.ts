@@ -1,19 +1,23 @@
 import {RequestWithBody, RequestWithParams, RequestWithQuery} from "../../core/types/RequestInputType";
-import {UserInputModel} from "../input-model/input-model.user";
+import {UserInputModel} from "../routes/input-model/input-model.user";
 import {UserService} from "../domain/user-service";
 import {UserQueryRepository} from "../repository/user.query-repository";
 import {HttpStatuses} from "../../core/types/httpSatuses";
 import {Response} from "express";
 import {sortQueryFieldsUtil} from "../../core/helpers/sort-query-fields-util";
-import {UserQueryFieldType} from "../input-model/user-query-field.type";
+import {UserQueryFieldType} from "../routes/input-model/user-query-field.type";
 import {idType} from "../../core/types/InputIUriParamsModel";
+import {inject, injectable} from "inversify";
 
+
+@injectable()
 export class UserController {
 
     constructor(
-        protected userService: UserService,
-         protected userQueryRepository: UserQueryRepository,
-    ){}
+       @inject(UserService) protected userService: UserService,
+       @inject(UserQueryRepository) protected userQueryRepository: UserQueryRepository,
+    ) {
+    }
 
     async createNewUser(req: RequestWithBody<UserInputModel>, res: Response) {
 

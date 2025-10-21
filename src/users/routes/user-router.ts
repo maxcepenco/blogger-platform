@@ -5,10 +5,13 @@ import {handlerValidationErrors} from "../../core/midleware/handlerValidationErr
 import {userPaginateValidation} from "../validation/middleware/user-middleware";
 import {authValidationMiddleware} from "../../auth/routes/middleware/auth-validation-middleware";
 import {emailValidation} from "../validation/middleware/email-validation";
-import {userController} from "../../composition-root";
+import {container} from "../../composition-root";
+import {UserController} from "../controller/user-controller";
+
+
+const userController = container.get(UserController);
 
 export const userRouter = Router();
-
 
 userRouter
     .post('', authValidationMiddleware,

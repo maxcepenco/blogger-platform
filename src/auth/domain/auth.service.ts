@@ -5,18 +5,21 @@ import {WithId} from "mongodb";
 import {UserAccountDBType} from "../../users/types-user/UserAccountDBType";
 import {Result} from "../../core/result/result-type";
 import {jwtService} from "../adapters/jwt.service";
-import {UserInputModel} from "../../users/input-model/input-model.user";
+import {UserInputModel} from "../../users/routes/input-model/input-model.user";
 import {randomUUID} from "node:crypto";
 import {add} from "date-fns/add";
 import {nodemailerService} from "../adapters/nodemailer.service";
 import {emailExamples} from "../adapters/email-example";
 import {SessionRepository} from "../repository/session-repository";
+import {inject, injectable} from "inversify";
 
+
+@injectable()
 export class AuthService {
 
-
-    constructor(protected sessionRepository: SessionRepository,
-                protected userRepository: UserRepository) {}
+    constructor(@inject(SessionRepository) protected sessionRepository: SessionRepository,
+                @inject(UserRepository) protected userRepository: UserRepository) {
+    }
 
     async loginUser(
         loginOrEmail: string,

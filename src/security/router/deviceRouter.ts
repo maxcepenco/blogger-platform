@@ -1,8 +1,9 @@
 import {Router} from "express";
 import {refreshTokenGuard} from "../../auth/routes/guard/refresh.token.guard";
-import {deviceController} from "../../composition-root";
+import {DeviceController} from "../controller/deviceController";
+import {container} from "../../composition-root";
 
-
+const deviceController = container.get(DeviceController)
 export const devicesRouter = Router();
 
 

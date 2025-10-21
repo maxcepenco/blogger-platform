@@ -6,8 +6,8 @@ import {
     RequestWithParamsAndQuery,
     RequestWithQuery
 } from "../../core/types/RequestInputType";
-import {PostInputModel} from "../input/post-input-model";
-import {PostService} from "../application/post.service";
+import {PostInputModel} from "../types/input/post-input-model";
+import {PostService} from "../domain/post.service";
 import {ResultStatus} from "../../core/result/result-code";
 import {resultCodeToHttpException} from "../../core/result/resultCodeToHttpException";
 import {PostQueryRepository} from "../repository/post.query-repository";
@@ -15,22 +15,23 @@ import {HttpStatuses} from "../../core/types/httpSatuses"
 import {Response} from "express";
 import {IdType} from "../../core/types/id-type.user";
 import {idType} from "../../core/types/InputIUriParamsModel";
-import {CommentInputModel} from "../../comments/input/comment.input-model";
+import {CommentInputModel} from "../../comments/types/input/comment.input-model";
 import {CommentService} from "../../comments/domain/commnetService";
 import {CommentQueryRepository} from "../../comments/repository/comment-query-repository";
 import {SortQueryFieldsType} from "../../core/types/sortQueryFields.type";
 import {sortQueryFieldsUtil} from "../../core/helpers/sort-query-fields-util";
-import {PostQueryInput} from "../input/post-query.input";
+import {PostQueryInput} from "../types/input/post-query.input";
 import {setDefaultPostQueryParams} from "../../core/helpers/set-default-sort-and-pagination";
+import {inject, injectable} from "inversify";
 
-
+@injectable()
 export class PostController {
 
 
-    constructor( protected postService: PostService,
-                 protected postQueryRepository: PostQueryRepository,
-                 protected commentService: CommentService,
-                 protected commentQueryRepository: CommentQueryRepository) {}
+    constructor(@inject(PostService) protected postService: PostService,
+                @inject(PostQueryRepository) protected postQueryRepository: PostQueryRepository,
+                @inject(CommentService) protected commentService: CommentService,
+                @inject(CommentQueryRepository) protected commentQueryRepository: CommentQueryRepository) {}
 
     async createPost(req: RequestWithBody<PostInputModel>, res: Response) {
         try {

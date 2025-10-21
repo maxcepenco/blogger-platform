@@ -3,10 +3,11 @@ import {Result} from "../../core/result/result-type";
 import {SessionRepository} from "../../auth/repository/session-repository";
 import {ResultStatus} from "../../core/result/result-code";
 import {jwtService} from "../../auth/adapters/jwt.service";
+import {inject, injectable} from "inversify";
 
-
+@injectable()
 export class DeviceService {
-    constructor(protected sessionRepository: SessionRepository) {
+    constructor(@inject(SessionRepository)protected sessionRepository: SessionRepository) {
     }
     async findAllSession(userId:string):Promise<Result<DeviceViewModel[]>> {
         const allSession = await this.sessionRepository.findAllSession(userId)

@@ -3,13 +3,15 @@ import {CommentRepository} from "../repository/commnet-repository";
 import {CommentDbType} from "../types/comment-db-type";
 import {Result} from "../../core/result/result-type";
 import {ResultStatus} from "../../core/result/result-code";
+import {inject, injectable} from "inversify";
+import {CommentController} from "../controller/comment-controller";
 
-
+@injectable()
 export class CommentService {
 
 
-    constructor(protected commentRepository: CommentRepository,
-                protected userQueryRepository: UserQueryRepository) {
+    constructor(@inject(CommentController) protected commentRepository: CommentRepository,
+                @inject(UserQueryRepository) protected userQueryRepository: UserQueryRepository) {
     }
 
     async createComment(postId: string, userId: string, content: string): Promise<string | null> {

@@ -1,12 +1,13 @@
-import {Blog} from "../domain/Blog";
+import {Blog} from "../dto/Blog";
 import {ObjectId, WithId} from "mongodb";
 import {blogCollection} from "../../db/mongoDB";
-import {BlogViewModel} from "../output/blog-view-model";
+import {BlogViewModel} from "../types/output/blog-view-model";
 import {PaginateQueryOutput} from "../../core/types/pagination-output-model";
-import {SearchFieldTypeBlog} from "../input/search-blog-type";
+import {SearchFieldTypeBlog} from "../types/input/search-blog-type";
 import {SortQueryFilterType} from "../../core/types/sortQueryFilter.type";
+import {injectable} from "inversify";
 
-
+@injectable()
 export class BlogQueryRepository {
 
     async findMany(inputParams:SortQueryFilterType, searchType: SearchFieldTypeBlog): Promise<PaginateQueryOutput<BlogViewModel>> {

@@ -6,9 +6,10 @@ import {handlerValidationErrors} from "../../core/midleware/handlerValidationErr
 import {BlogPostInputDtoMiddleware} from "../validation/blogPostInputDataMiddleware";
 import {sanitizeQueryParams} from "../../core/midleware/validation/sanitize-qery-param";
 import {validateBlogId} from "../../core/midleware/validationInputBlogIdMiddleware";
-import {blogController} from "../../composition-root";
+import {BlogController} from "../controller/blog-controller";
+import {container} from "../../composition-root";
 
-
+ const blogController = container.get(BlogController)
 export const blogRouter = Router({});
 
 blogRouter

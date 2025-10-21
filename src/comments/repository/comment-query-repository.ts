@@ -1,11 +1,12 @@
 import {commentCollection} from "../../db/mongoDB";
 import {ObjectId, WithId} from "mongodb";
 import {CommentDbType} from "../types/comment-db-type";
-import {CommentViewModel} from "../output/comment.view-model";
+import {CommentViewModel} from "../types/output/comment.view-model";
 import {SortQueryFilterType} from "../../core/types/sortQueryFilter.type";
 import {PaginateQueryOutput} from "../../core/types/pagination-output-model";
+import {injectable} from "inversify";
 
-
+@injectable()
 export class CommentQueryRepository {
 
     async findById(commentId: string): Promise<CommentViewModel | null> {

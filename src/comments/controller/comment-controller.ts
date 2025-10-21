@@ -1,20 +1,21 @@
 import {ReqParamsBodyUserId, ReqParamsUserId, RequestWithParams} from "../../core/types/RequestInputType";
-import {IdComment} from "../input/id-type.comment";
+import {IdComment} from "../types/input/id-type.comment";
 import {HttpStatuses} from "../../core/types/httpSatuses";
 import {CommentQueryRepository} from "../repository/comment-query-repository";
-import {CommentInputModel} from "../input/comment.input-model";
+import {CommentInputModel} from "../types/input/comment.input-model";
 import {IdType} from "../../core/types/id-type.user";
 import {CommentService} from "../domain/commnetService";
 import {ResultStatus} from "../../core/result/result-code";
 import {resultCodeToHttpException} from "../../core/result/resultCodeToHttpException";
 import {Response} from "express";
+import {inject, injectable} from "inversify";
 
-
+@injectable()
 export class CommentController {
 
 
-    constructor(protected commentService: CommentService,
-                protected commentQueryRepository: CommentQueryRepository) {
+    constructor( @inject(CommentService) protected commentService: CommentService,
+                 @inject(CommentQueryRepository) protected commentQueryRepository: CommentQueryRepository) {
     }
 
     async getComment(req: RequestWithParams<IdComment>, res: Response) {

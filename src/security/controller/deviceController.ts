@@ -4,10 +4,11 @@ import {HttpStatuses} from "../../core/types/httpSatuses";
 import {Request, Response} from "express";
 import {RequestWithParams} from "../../core/types/RequestInputType";
 import {DeviceService} from "../domain/divice-service";
+import {inject, injectable} from "inversify";
 
-
+@injectable()
 export class DeviceController {
-    constructor(protected deviceService: DeviceService) {
+    constructor(@inject(DeviceService) protected deviceService: DeviceService) {
     }
 
     async deleteAllDevices(req: Request, res: Response) {

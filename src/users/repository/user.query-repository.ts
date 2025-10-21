@@ -1,12 +1,13 @@
 import {UserAccountDBType} from "../types-user/UserAccountDBType";
 import {userCollection} from "../../db/mongoDB";
 import {ObjectId, Sort, WithId} from "mongodb";
-import {UserViewAuthMe, UserViewModel} from "../output-model/output-model.user";
-import {SearchQueryFieldType} from "../input-model/user-query-field.type";
+import {UserViewAuthMe, UserViewModel} from "../types-user/output-model/output-model.user";
+import {SearchQueryFieldType} from "../routes/input-model/user-query-field.type";
 import {PaginateQueryOutput} from "../../core/types/pagination-output-model";
 import {SortQueryFilterType} from "../../core/types/sortQueryFilter.type";
+import {injectable} from "inversify";
 
-
+@injectable()
 export class UserQueryRepository {
 
     async findById(userId: string): Promise<UserViewModel | null> {

@@ -1,9 +1,10 @@
-import {Post} from "../domain/Post";
-import {PostInputModel} from "../input/post-input-model";
+import {Post} from "../dto/Post";
+import {PostInputModel} from "../types/input/post-input-model";
 import {ObjectId} from "mongodb";
 import {postCollection} from "../../db/mongoDB";
+import {injectable} from "inversify";
 
-
+@injectable()
 export class PostRepository {
 
 

@@ -1,7 +1,10 @@
 import {CreateSessionDto} from "../dto/session-DB-type";
 import {refreshTokenCollection, requestLogsCollection} from "../../db/mongoDB";
 import {DeviceViewModel} from "../../security/dto/device-view-model";
+import {injectable} from "inversify";
 
+
+@injectable()
 export class SessionRepository {
 
     async createSession(newSession: CreateSessionDto): Promise<any> {

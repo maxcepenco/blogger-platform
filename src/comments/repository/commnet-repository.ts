@@ -1,8 +1,9 @@
 import {CommentDbType} from "../types/comment-db-type";
 import {commentCollection} from "../../db/mongoDB";
 import {ObjectId} from "mongodb";
+import {injectable} from "inversify";
 
-
+@injectable()
 export class CommentRepository {
 
     async createCommentForPost(comment: CommentDbType): Promise<string> {

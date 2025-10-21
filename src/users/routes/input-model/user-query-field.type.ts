@@ -1,4 +1,4 @@
-import {SortQueryFieldsType} from "../../core/types/sortQueryFields.type";
+import {SortQueryFieldsType} from "../../../core/types/sortQueryFields.type";
 
 
 export type UserQueryFieldType = SearchQueryFieldType & SortQueryFieldsType

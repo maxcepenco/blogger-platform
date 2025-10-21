@@ -1,21 +1,24 @@
-import {Post} from "../domain/Post";
-import {blogPostInput} from "../../blogs/input/blog-post-input-model";
-import {PostInputModel} from "../input/post-input-model"; // добавьте этот импорт
+import {Post} from "../dto/Post";
+import {blogPostInput} from "../../blogs/types/input/blog-post-input-model";
+import {PostInputModel} from "../types/input/post-input-model"; // добавьте этот импорт
 import {Result} from "../../core/result/result-type";
 import {ResultStatus} from "../../core/result/result-code";
 import {PostRepository} from "../repository/post.repository";
 import {BlogRepository} from "../../blogs/repository/blog.repository";
+import {inject, injectable} from "inversify";
 
+
+@injectable()
 export class PostService {
 
 
-    constructor(protected blogRepository: BlogRepository,
-                protected postRepository: PostRepository) {}
+    constructor(@inject(BlogRepository) protected blogRepository: BlogRepository,
+                @inject(PostRepository) protected postRepository: PostRepository) {}
 
 
     async createPost(dto: PostInputModel): Promise<Result<string | null>> {
 
-        const blogData = await this.blogRepository.findById(dto.blogId)
+        const blogData = await this.blogRepository.findById(dto.blogId) //TODO: Должен ходить к BlogQueryRepository
         if (!blogData) {
             return {
                 status: ResultStatus.BadRequest,

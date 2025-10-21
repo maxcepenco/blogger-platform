@@ -4,28 +4,28 @@ import {
     RequestWithParamsAndBody,
     RequestWithQuery
 } from "../../core/types/RequestInputType";
-import {BlogInputModel} from "../input/blog-input-model";
+import {BlogInputModel} from "../types/input/blog-input-model";
 import {Response} from "express";
 import {HttpStatuses} from "../../core/types/httpSatuses";
-import {blogPostInput} from "../input/blog-post-input-model";
-import {PostService} from "../../posts/application/post.service";
+import {blogPostInput} from "../types/input/blog-post-input-model";
+import {PostService} from "../../posts/domain/post.service";
 import {PostQueryRepository} from "../../posts/repository/post.query-repository";
 import {idType} from "../../core/types/InputIUriParamsModel";
-import {PostQueryInput} from "../../posts/input/post-query.input";
+import {PostQueryInput} from "../../posts/types/input/post-query.input";
 import {setDefaultPostQueryParams} from "../../core/helpers/set-default-sort-and-pagination";
-import {BlogQueryInput} from "../input/blog-query.input";
+import {BlogQueryInput} from "../types/input/blog-query.input";
 import {sortQueryFieldsUtil} from "../../core/helpers/sort-query-fields-util";
-import {BlogService} from "../application/blog.servece";
+import {BlogService} from "../domain/blog.servece";
 import {BlogQueryRepository} from "../repository/blog.query-repository";
+import {inject, injectable} from "inversify";
 
-
+@injectable()
 export class BlogController {
 
-
-    constructor(protected blogService: BlogService,
-                protected blogQueryRepository: BlogQueryRepository,
-                protected postService: PostService,
-                protected postQueryRepository: PostQueryRepository) {
+    constructor(@inject(BlogService) protected blogService: BlogService,
+                @inject(BlogQueryRepository) protected blogQueryRepository: BlogQueryRepository,
+                @inject(PostService) protected postService: PostService,
+                @inject(PostQueryRepository) protected postQueryRepository: PostQueryRepository) {
     }
 
     async createBlog(req: RequestWithBody<BlogInputModel>, res: Response) {
