@@ -5,7 +5,7 @@ import {handlerValidationErrors} from "../../core/midleware/handlerValidationErr
 import {authValidationMiddleware} from "../../auth/routes/middleware/auth-validation-middleware";
 import {accessTokenGuard} from "../../auth/routes/guard/access.token.guard";
 import {commentInputMiddleware} from "../../comments/validation/comment.input-middleware";
-import {postController} from "./postController";
+import {postController} from "../../composition-root";
 
 
 export const postRouter = Router({});

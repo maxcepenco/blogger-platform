@@ -7,13 +7,10 @@ import {PostRepository} from "../repository/post.repository";
 import {BlogRepository} from "../../blogs/repository/blog.repository";
 
 export class PostService {
-    private blogRepository: BlogRepository;
-    private postRepository: PostRepository
 
-    constructor() {
-        this.blogRepository = new BlogRepository()
-        this.postRepository = new PostRepository()
-    }
+
+    constructor(protected blogRepository: BlogRepository,
+                protected postRepository: PostRepository) {}
 
 
     async createPost(dto: PostInputModel): Promise<Result<string | null>> {

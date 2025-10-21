@@ -8,13 +8,12 @@ import {sortQueryFieldsUtil} from "../../core/helpers/sort-query-fields-util";
 import {UserQueryFieldType} from "../input-model/user-query-field.type";
 import {idType} from "../../core/types/InputIUriParamsModel";
 
-class UserController {
-    userService: UserService
-    userQueryRepository: UserQueryRepository;
-    constructor(){
-        this.userService = new UserService();
-        this.userQueryRepository = new UserQueryRepository();
-    }
+export class UserController {
+
+    constructor(
+        protected userService: UserService,
+         protected userQueryRepository: UserQueryRepository,
+    ){}
 
     async createNewUser(req: RequestWithBody<UserInputModel>, res: Response) {
 
@@ -52,5 +51,3 @@ class UserController {
     }
 
 }
-
-export const userController = new UserController();

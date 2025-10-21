@@ -6,7 +6,7 @@ import {handlerValidationErrors} from "../../core/midleware/handlerValidationErr
 import {BlogPostInputDtoMiddleware} from "../validation/blogPostInputDataMiddleware";
 import {sanitizeQueryParams} from "../../core/midleware/validation/sanitize-qery-param";
 import {validateBlogId} from "../../core/midleware/validationInputBlogIdMiddleware";
-import {blogController} from "./blog-controller";
+import {blogController} from "../../composition-root";
 
 
 export const blogRouter = Router({});

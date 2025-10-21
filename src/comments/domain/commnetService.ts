@@ -3,23 +3,18 @@ import {CommentRepository} from "../repository/commnet-repository";
 import {CommentDbType} from "../types/comment-db-type";
 import {Result} from "../../core/result/result-type";
 import {ResultStatus} from "../../core/result/result-code";
-import {CommentQueryRepository} from "../repository/comment-query-repository";
 
 
 export class CommentService {
-    commentRepository: CommentRepository;
-    commentQuery: CommentQueryRepository
-    userQueryRepository: UserQueryRepository
 
-    constructor() {
-        this.commentRepository = new CommentRepository()
-        this.commentQuery = new CommentQueryRepository()
-        this.userQueryRepository = new UserQueryRepository()
+
+    constructor(protected commentRepository: CommentRepository,
+                protected userQueryRepository: UserQueryRepository) {
     }
 
     async createComment(postId: string, userId: string, content: string): Promise<string | null> {
 
-        const user = await this.userQueryRepository.findById(userId!);
+        const user = await this.userQueryRepository.findById(userId!); //TODO: Сервис не может ходить к QueryRepo-НАДО ИСПРАВИТЬ!!!
         if (!user) {
             return null
         }

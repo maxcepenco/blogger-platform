@@ -1,19 +1,20 @@
 import {DeviceViewModel} from "../dto/device-view-model";
 import {Result} from "../../core/result/result-type";
-import {sessionRepository} from "../../auth/repository/session-repository";
+import {SessionRepository} from "../../auth/repository/session-repository";
 import {ResultStatus} from "../../core/result/result-code";
 import {jwtService} from "../../auth/adapters/jwt.service";
 
 
-export const deviceService = {
-
+export class DeviceService {
+    constructor(protected sessionRepository: SessionRepository) {
+    }
     async findAllSession(userId:string):Promise<Result<DeviceViewModel[]>> {
-        const allSession = await sessionRepository.findAllSession(userId)
+        const allSession = await this.sessionRepository.findAllSession(userId)
         return {
             status:ResultStatus.Success,
             data: allSession
         }
-    },
+    }
 
     async deleteAllSession(userId:string, refreshToken:string):Promise<Result<boolean | null>> {
 
@@ -26,7 +27,7 @@ export const deviceService = {
             }
         }
 
-        const deleteSession = await sessionRepository.deleteAllSession(userId, currentDevices.deviceId)
+        const deleteSession = await this.sessionRepository.deleteAllSession(userId, currentDevices.deviceId)
 
         if(!deleteSession) {
             return{
@@ -41,11 +42,11 @@ export const deviceService = {
             data: deleteSession,
         }
 
-    },
+    }
 
     async deleteDeviceForId(userId:string, deviceId: string):Promise<Result<boolean | null>> {
 
-        const device = await sessionRepository.findSessionByDeviceId(deviceId)
+        const device = await this.sessionRepository.findSessionByDeviceId(deviceId)
         console.log('device===', device)
         if(!device) {
             return {
@@ -63,7 +64,7 @@ export const deviceService = {
             }
         }
 
-        const resultDeleted = await sessionRepository.deleteUserSession(userId,deviceId)
+        const resultDeleted = await this.sessionRepository.deleteUserSession(userId,deviceId)
 
         return {
             status: ResultStatus.Success,

@@ -13,13 +13,10 @@ import {emailExamples} from "../adapters/email-example";
 import {SessionRepository} from "../repository/session-repository";
 
 export class AuthService {
-    sessionRepository: SessionRepository
-    userRepository: UserRepository
 
-    constructor() {
-        this.sessionRepository = new SessionRepository
-        this.userRepository = new UserRepository
-    }
+
+    constructor(protected sessionRepository: SessionRepository,
+                protected userRepository: UserRepository) {}
 
     async loginUser(
         loginOrEmail: string,

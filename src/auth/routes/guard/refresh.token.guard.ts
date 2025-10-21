@@ -1,7 +1,7 @@
 import {NextFunction, Request, Response} from "express";
 import {HttpStatuses} from "../../../core/types/httpSatuses";
 import {jwtService} from "../../adapters/jwt.service";
-import {sessionRepository} from "../../repository/session-repository";
+import {sessionRepository} from "../../../composition-root";
 
 
 export const refreshTokenGuard = async (req:Request, res:Response, next: NextFunction) => {

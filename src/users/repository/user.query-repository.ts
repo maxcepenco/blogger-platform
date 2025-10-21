@@ -16,14 +16,11 @@ export class UserQueryRepository {
         }
         return this.mapToUserViewModel(user);
 
-
     }
 
     async findByIdForMe(userId: string): Promise<UserViewAuthMe | null> {
-        console.log(`fidnUserForId: ${userId}`);
 
         const user = await userCollection.findOne({_id: new ObjectId(userId)});
-        console.log(`foundUser: ${user}`);
 
         if (!user) {
             return null;

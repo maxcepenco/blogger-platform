@@ -6,11 +6,8 @@ import {Result} from "../../core/result/result-type";
 import {BlogRepository} from "../repository/blog.repository";
 
 export class BlogService {
-    private blogRepository: BlogRepository
 
-    constructor() {
-        this.blogRepository = new BlogRepository();
-    }
+    constructor(protected blogRepository: BlogRepository) {}
 
     async create(blogDto: BlogInputModel): Promise<Result<string>> {
 

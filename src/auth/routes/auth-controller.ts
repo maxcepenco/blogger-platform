@@ -1,7 +1,7 @@
 import {RequestWithBody, RequestWithUserId} from "../../core/types/RequestInputType";
 import {LoginDto} from "../dto/login.dto";
 import {parseUserAgent} from "../../core/helpers/parseUserAgent";
-import { AuthService} from "../domain/auth.service";
+import {AuthService} from "../domain/auth.service";
 import {ResultStatus} from "../../core/result/result-code";
 import {resultCodeToHttpException} from "../../core/result/resultCodeToHttpException";
 import {HttpStatuses} from "../../core/types/httpSatuses";
@@ -10,18 +10,14 @@ import {UserQueryRepository} from "../../users/repository/user.query-repository"
 import {UserInputModel} from "../../users/input-model/input-model.user";
 import {RegistrationCodConfirmation} from "../dto/RegistrationConfirmaionCodeModel";
 import {Request, Response} from "express";
-import {SessionRepository} from "../repository/session-repository";  // ← Добавьте Request сюда!
 
 
-class AuthController {
-    userQueryRepository: UserQueryRepository;
-    sessionRepository: SessionRepository;
-    authService: AuthService;
-    constructor(){
-        this.userQueryRepository = new UserQueryRepository();
-        this.authService = new AuthService();
-        this.sessionRepository = new SessionRepository()
+export class AuthController {
+
+    constructor(protected userQueryRepository: UserQueryRepository,
+                protected authService: AuthService) {
     }
+
     async authLoginAccess(req: RequestWithBody<LoginDto>, res: Response) {
         const {loginOrEmail, password} = req.body;
 
@@ -132,4 +128,3 @@ class AuthController {
 
 }
 
-export const authController = new AuthController();

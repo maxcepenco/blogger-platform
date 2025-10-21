@@ -8,7 +8,7 @@ import {loginValidation} from "../../users/validation/middleware/login.validatio
 import {codeValidation} from "../../users/validation/middleware/code-validation";
 import {refreshTokenGuard} from "./guard/refresh.token.guard";
 import {userRequestRateLimiter} from "../../core/midleware/rateLimit";
-import {authController} from "./auth-controller";
+import {authController} from "../../composition-root";
 
 export const authRouter = Router();
 

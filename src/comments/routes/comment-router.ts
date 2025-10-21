@@ -4,7 +4,7 @@ import {commentInputMiddleware} from "../validation/comment.input-middleware";
 import {handlerValidationErrors} from "../../core/midleware/handlerValidationErrors";
 import {idValidation} from "../../core/midleware/validationInputIdMiddleware";
 import {validationObjectIdParams} from "../../core/midleware/validationObjectIdParams";
-import {commentController} from "./comment-controller";
+import {commentController} from "../../composition-root";
 
 
 export const commentRouter = Router()

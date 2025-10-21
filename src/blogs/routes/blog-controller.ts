@@ -19,18 +19,13 @@ import {BlogService} from "../application/blog.servece";
 import {BlogQueryRepository} from "../repository/blog.query-repository";
 
 
-class BlogController {
+export class BlogController {
 
-    private blogService: BlogService
-    private blogQueryRepository: BlogQueryRepository
-    private postService: PostService
-    private postQueryRepository: PostQueryRepository
 
-    constructor() {
-        this.blogService = new BlogService();
-        this.blogQueryRepository = new BlogQueryRepository()
-        this.postService = new PostService
-        this.postQueryRepository = new PostQueryRepository()
+    constructor(protected blogService: BlogService,
+                protected blogQueryRepository: BlogQueryRepository,
+                protected postService: PostService,
+                protected postQueryRepository: PostQueryRepository) {
     }
 
     async createBlog(req: RequestWithBody<BlogInputModel>, res: Response) {
@@ -174,4 +169,3 @@ class BlogController {
     }
 }
 
-export const blogController = new BlogController()

@@ -16,22 +16,21 @@ import {Response} from "express";
 import {IdType} from "../../core/types/id-type.user";
 import {idType} from "../../core/types/InputIUriParamsModel";
 import {CommentInputModel} from "../../comments/input/comment.input-model";
-import {commentService} from "../../comments/domain/commnetService";
-import {commentQueryRepository} from "../../comments/repository/comment-query-repository";
+import {CommentService} from "../../comments/domain/commnetService";
+import {CommentQueryRepository} from "../../comments/repository/comment-query-repository";
 import {SortQueryFieldsType} from "../../core/types/sortQueryFields.type";
 import {sortQueryFieldsUtil} from "../../core/helpers/sort-query-fields-util";
 import {PostQueryInput} from "../input/post-query.input";
 import {setDefaultPostQueryParams} from "../../core/helpers/set-default-sort-and-pagination";
 
 
-class PostController {
-    private postService: PostService;
-    private postQueryRepository: PostQueryRepository;
+export class PostController {
 
-    constructor() {
-        this.postService = new PostService();
-        this.postQueryRepository = new PostQueryRepository();
-    }
+
+    constructor( protected postService: PostService,
+                 protected postQueryRepository: PostQueryRepository,
+                 protected commentService: CommentService,
+                 protected commentQueryRepository: CommentQueryRepository) {}
 
     async createPost(req: RequestWithBody<PostInputModel>, res: Response) {
         try {
@@ -72,12 +71,12 @@ class PostController {
             return
         }
 
-        const createdIdComment = await commentService.createComment(postId, userId, req.body.content)
+        const createdIdComment = await this.commentService.createComment(postId, userId, req.body.content)
         if (!createdIdComment) {
             return res.sendStatus(HttpStatuses.BadRequest_400)
         }
 
-        const createdComment = await commentQueryRepository.findById(createdIdComment)
+        const createdComment = await this.commentQueryRepository.findById(createdIdComment)
 
         if (!createdComment) {
             return res.sendStatus(HttpStatuses.NotFound_404)
@@ -99,7 +98,7 @@ class PostController {
 
         const inputQuery = sortQueryFieldsUtil(req.query);
 
-        const foundCommentForPost = await commentQueryRepository.findCommentByPost(inputQuery, postId);
+        const foundCommentForPost = await this.commentQueryRepository.findCommentByPost(inputQuery, postId);
 
         res.status(HttpStatuses.Ok_200).json(foundCommentForPost);
 
@@ -152,4 +151,3 @@ class PostController {
     }
 }
 
-export const postController = new PostController()

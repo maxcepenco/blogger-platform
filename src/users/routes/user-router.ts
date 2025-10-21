@@ -5,7 +5,7 @@ import {handlerValidationErrors} from "../../core/midleware/handlerValidationErr
 import {userPaginateValidation} from "../validation/middleware/user-middleware";
 import {authValidationMiddleware} from "../../auth/routes/middleware/auth-validation-middleware";
 import {emailValidation} from "../validation/middleware/email-validation";
-import {userController} from "./user-controller";
+import {userController} from "../../composition-root";
 
 export const userRouter = Router();
 

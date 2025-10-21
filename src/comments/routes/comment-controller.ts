@@ -10,13 +10,11 @@ import {resultCodeToHttpException} from "../../core/result/resultCodeToHttpExcep
 import {Response} from "express";
 
 
-class CommentController {
-    commentQueryRepository: CommentQueryRepository;
-    commentService: CommentService
+export class CommentController {
 
-    constructor() {
-        this.commentQueryRepository = new CommentQueryRepository();
-        this.commentService = new CommentService();
+
+    constructor(protected commentService: CommentService,
+                protected commentQueryRepository: CommentQueryRepository) {
     }
 
     async getComment(req: RequestWithParams<IdComment>, res: Response) {
@@ -80,4 +78,3 @@ class CommentController {
 }
 
 
-export const commentController = new CommentController()

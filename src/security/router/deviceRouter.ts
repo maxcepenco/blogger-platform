@@ -1,14 +1,12 @@
 import {Router} from "express";
 import {refreshTokenGuard} from "../../auth/routes/guard/refresh.token.guard";
-import {getAllDevices} from "./get-all-devices";
-import {deleteAllDevices} from "./delete-all-devices";
-import {deleteDeviceForId} from "./delete-device-for-Id";
+import {deviceController} from "../../composition-root";
 
 
 export const devicesRouter = Router();
 
 
  devicesRouter
-     .get('/devices',refreshTokenGuard,getAllDevices)
-     .delete('/devices', refreshTokenGuard,deleteAllDevices)
-     .delete('/devices/:id',refreshTokenGuard,deleteDeviceForId)
+     .get('/devices',refreshTokenGuard, deviceController.getAllDevices.bind(deviceController))
+     .delete('/devices', refreshTokenGuard,deviceController.deleteAllDevices.bind(deviceController))
+     .delete('/devices/:id',refreshTokenGuard,deviceController.deleteDeviceForId.bind(deviceController))
