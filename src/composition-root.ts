@@ -19,6 +19,8 @@ import {CommentController} from "./comments/controller/comment-controller";
 import {SessionRepository} from "./auth/repository/session-repository";
 import {AuthService} from "./auth/domain/auth.service";
 import {AuthController} from "./auth/controller/auth-controller";
+import {DeviceService} from "./security/domain/divice-service";
+import {DeviceController} from "./security/controller/deviceController";
 
 
 
@@ -46,3 +48,6 @@ container.bind(UserRepository).to(UserRepository)
 container.bind(UserQueryRepository).to(UserQueryRepository)
 container.bind(UserService).to(UserService)
 container.bind(UserController).to(UserController)
+
+container.bind(DeviceService).to(DeviceService);
+container.bind(DeviceController).to(DeviceController);
