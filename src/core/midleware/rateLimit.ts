@@ -1,7 +1,9 @@
 import {NextFunction} from "express";
 import {Request, Response} from "express";
-import {sessionRepository} from "../../composition-root";
+import {container} from "../../composition-root";
+import {SessionRepository} from "../../auth/repository/session-repository";
 
+const sessionRepository = container.get(SessionRepository)
 const WINDOW_SIZE = 10 // ОКНО ЗАПРОССОВ
 const MAX_COUNT_REQUEST = 5 // лимит запросов
 

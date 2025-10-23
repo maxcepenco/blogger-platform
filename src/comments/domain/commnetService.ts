@@ -10,7 +10,7 @@ import {CommentController} from "../controller/comment-controller";
 export class CommentService {
 
 
-    constructor(@inject(CommentController) protected commentRepository: CommentRepository,
+    constructor(@inject(CommentRepository) protected commentRepository: CommentRepository,
                 @inject(UserQueryRepository) protected userQueryRepository: UserQueryRepository) {
     }
 

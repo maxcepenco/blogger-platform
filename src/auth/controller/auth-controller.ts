@@ -11,6 +11,7 @@ import {UserInputModel} from "../../users/routes/input-model/input-model.user";
 import {RegistrationCodConfirmation} from "../dto/RegistrationConfirmaionCodeModel";
 import {Request, Response} from "express";
 import {inject, injectable} from "inversify";
+import {NewPasswordRecoveryInputModel} from "../dto/NewPasswordRecoveryInputModel";
 
 @injectable()
 export class AuthController {
@@ -127,5 +128,27 @@ export class AuthController {
         res.sendStatus(HttpStatuses.NoContent_204)
     }
 
+    async passwordRecovery(req: RequestWithBody<{ email: string }>, res: Response) {
+
+        const email = req.body.email
+
+        await this.authService.createRecoveryCode(email)
+
+        return res.sendStatus(HttpStatuses.NoContent_204)
+
+    }
+
+    async createNewPassword(req: RequestWithBody<NewPasswordRecoveryInputModel>, res: Response) {
+
+        const recoveryCode = req.body.recoveryCode
+        const newPassword = req.body.newPassword
+
+        const createdPassword = await this.authService.createNewPassword(newPassword, recoveryCode)
+        if (createdPassword.status !== ResultStatus.Success) {
+            return res.sendStatus(resultCodeToHttpException(createdPassword.status))
+        }
+
+        return res.sendStatus(HttpStatuses.NoContent_204)
+    }
 }
 

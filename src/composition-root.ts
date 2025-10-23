@@ -21,13 +21,6 @@ import {AuthService} from "./auth/domain/auth.service";
 import {AuthController} from "./auth/controller/auth-controller";
 
 
-export const userRepository = new UserRepository()
-
-export const blogRepository = new BlogRepository();
-
-export const sessionRepository = new SessionRepository()
-
-export const authService = new AuthService( sessionRepository, userRepository )
 
 export const container = new Container();
 container.bind(SessionRepository).to(SessionRepository)

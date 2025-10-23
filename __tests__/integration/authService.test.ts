@@ -4,7 +4,9 @@ import {nodemailerService} from "../../src/auth/adapters/nodemailer.service";
 import {UserDto} from "../e2e/utils/testingDtosCreator";
 import {ResultStatus} from "../../src/core/result/result-code";
 import {addMinutes} from "date-fns";
-import {authService, userRepository} from "../../src/composition-root";
+import { container} from "../../src/composition-root";
+import {AuthService} from "../../src/auth/domain/auth.service";
+import {UserRepository} from "../../src/users/repository/user.repository";
 
 describe("integration tests for AuthService", () => {
     let mongoServer: MongoMemoryServer;
@@ -18,7 +20,9 @@ describe("integration tests for AuthService", () => {
         await drop();
         await stopDb();
     });
+ const authService = container.get(AuthService);
 
+ const userRepository = container.get(UserRepository)
     describe("User Registration", () => {
 
         beforeAll(() => {

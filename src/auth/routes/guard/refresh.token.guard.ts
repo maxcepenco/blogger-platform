@@ -1,9 +1,10 @@
 import {NextFunction, Request, Response} from "express";
 import {HttpStatuses} from "../../../core/types/httpSatuses";
 import {jwtService} from "../../adapters/jwt.service";
-import {sessionRepository} from "../../../composition-root";
+import {container} from "../../../composition-root";
+import {SessionRepository} from "../../repository/session-repository";
 
-
+const sessionRepository = container.get(SessionRepository)
 export const refreshTokenGuard = async (req:Request, res:Response, next: NextFunction) => {
 
     const refreshToken = req.cookies.refreshToken;

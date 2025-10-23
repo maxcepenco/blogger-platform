@@ -10,6 +10,7 @@ import {refreshTokenGuard} from "./guard/refresh.token.guard";
 import {userRequestRateLimiter} from "../../core/midleware/rateLimit";
 import {container} from "../../composition-root";
 import {AuthController} from "../controller/auth-controller";
+import {recoveryCodeValidation} from "../../core/midleware/validation/recoveryCode";
 
 const authController = container.get(AuthController);
 
@@ -47,6 +48,18 @@ authRouter
         emailValidation,
         handlerValidationErrors,
         authController.registrationEmailResending.bind(authController))
+
+    .post('/password-recovery',
+        // userRequestRateLimiter,
+        // recoveryCodeValidation,
+        // handlerValidationErrors,
+        authController.passwordRecovery.bind(authController))
+
+    .post('/new-password',
+        userRequestRateLimiter,
+        passwordValidation,
+        handlerValidationErrors,
+        authController.createNewPassword.bind(authController))
 
     .post('/refresh-token',
         refreshTokenGuard,

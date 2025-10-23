@@ -254,6 +254,64 @@ export class AuthService {
         }
     }
 
+    async createRecoveryCode(email: string): Promise<Result<boolean | null>> {
+
+        const user = await this.userRepository.findByLoginOrEmail(email)
+        if (!user) {
+            return {
+                status: ResultStatus.Success,
+                data: null,
+                errorMessage: 'Not Found',
+            }
+        }
+        const newCode = randomUUID();
+        const newExpirationDate = add(new Date(), {hours: 6})
+
+        await this.userRepository.updatePasswordRecoveryCode(user._id, newCode, newExpirationDate)
+
+        const sendEmail = await nodemailerService.sendEmail(
+            email,
+            newCode,
+            emailExamples.passwordRecoveryEmail
+        ).catch(er => console.error('error in send email:', er))
+
+        return {
+            status: ResultStatus.Success,
+            data: sendEmail || null,
+        }
+
+    }
+
+    async createNewPassword(password: string, recoveryCode: string): Promise<Result<boolean | null>> {
+
+
+        const foundUser = await this.userRepository.findByRecoveryCode(recoveryCode)
+        if (!foundUser) {
+            return {
+                status: ResultStatus.BadRequest,
+                data: null,
+                errorMessage: 'Not Found User',
+            }
+        }
+
+        if(foundUser.passwordRecovery!.expirationDate!  < new Date()) {
+            return {
+                status: ResultStatus.BadRequest,
+                data: null,
+                errorMessage: 'Recovery code has expired',
+            }
+        }
+
+        const newPassword = await bcryptService.generateHash(password)
+
+        const updatedPassword = await this.userRepository.updateUserPassword(foundUser._id, newPassword)
+
+        return {
+            status: ResultStatus.Success,
+            data: updatedPassword,
+        }
+    }
+
     async emailResending(email: string): Promise<Result<boolean | null>> {
 
         const foundUser = await this.userRepository.findByLoginOrEmail(email)

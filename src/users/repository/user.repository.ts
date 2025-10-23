@@ -1,3 +1,5 @@
+
+
 import {UserAccountDBType} from "../types-user/UserAccountDBType";
 import {userCollection} from "../../db/mongoDB";
 import {ObjectId, WithId} from "mongodb";
@@ -44,16 +46,25 @@ export class UserRepository {
     }
 
     async findByCode(code: string): Promise<WithId<UserAccountDBType> | null> {
-        console.log('Searching for code:', code);
 
         const user = await userCollection.findOne({
             'emailConfirmed.confirmationCode': code,
             'emailConfirmed': {$ne: null}
         });
-        console.log('Searching for user:', user);
 
         if (!user) {
-            console.log(' user found?:', user);
+            return null;
+        }
+        return user;
+    }
+
+    async findByRecoveryCode(code: string): Promise<WithId<UserAccountDBType> | null> {
+
+        const user = await userCollection.findOne({
+            'passwordRecovery.recoveryCode': code,
+        });
+
+        if (!user) {
             return null;
         }
         return user;
@@ -65,6 +76,18 @@ export class UserRepository {
                 {_id},
                 {
                     $set: {isConfirmed: true}
+                })
+        return result.modifiedCount === 1
+    }
+
+    async updateUserPassword(_id: ObjectId, newPassword:string): Promise<boolean> {
+        let result = await userCollection
+            .updateOne(
+                {_id},
+                {
+                    $set: {'accountDate.passwordHash': newPassword },
+                    $unset: { passwordRecovery: '' }, // 🧽 очищаем код
+
                 })
         return result.modifiedCount === 1
     }
@@ -82,5 +105,18 @@ export class UserRepository {
         return result.modifiedCount === 1
     }
 
+    async updatePasswordRecoveryCode(_id: ObjectId, code: string, expirationDate: Date): Promise<boolean> {
+        const result = await userCollection.updateOne(
+            {_id},
+            {
+                $set: {
+                    'passwordRecovery.recoveryCode': code,
+                    'passwordRecovery.expirationDate': expirationDate,
+                }
+            }
+        )
+        return result.modifiedCount === 1
+
+    }
 }
 

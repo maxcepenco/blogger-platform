@@ -1,7 +1,9 @@
 import {body} from "express-validator";
-import {blogRepository} from "../../composition-root";
+import { container} from "../../composition-root";
+import {BlogRepository} from "../../blogs/repository/blog.repository";
 
 
+const blogRepository = container.get(BlogRepository)
 const titleValidation = body('title')
     .isString()
     .withMessage('Title must be a string')

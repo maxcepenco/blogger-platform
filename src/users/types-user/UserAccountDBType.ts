@@ -3,6 +3,7 @@
 export type UserAccountDBType = {
     accountDate: AccountData,
     emailConfirmed: EmailConfirmation | null,
+    passwordRecovery?: PasswordRecovery | null;
     isConfirmed: boolean
 }
 
@@ -20,4 +21,9 @@ export type EmailConfirmation = {
     expirationDate: Date,
 }
 
+export type PasswordRecovery = {
+    recoveryCode:string | null
+    expirationDate: Date
+
+}
 //в видео уроке и репо createdAt: Date
