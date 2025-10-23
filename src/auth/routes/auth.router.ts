@@ -11,6 +11,7 @@ import {userRequestRateLimiter} from "../../core/midleware/rateLimit";
 import {container} from "../../composition-root";
 import {AuthController} from "../controller/auth-controller";
 import {recoveryCodeValidation} from "../../core/midleware/validation/recoveryCode";
+import {newPasswordValidation} from "../../core/midleware/validation/new-password";
 
 const authController = container.get(AuthController);
 
@@ -50,14 +51,15 @@ authRouter
         authController.registrationEmailResending.bind(authController))
 
     .post('/password-recovery',
-        // userRequestRateLimiter,
-        // recoveryCodeValidation,
-        // handlerValidationErrors,
+         userRequestRateLimiter,
+         emailValidation,
+         handlerValidationErrors,
         authController.passwordRecovery.bind(authController))
 
     .post('/new-password',
         userRequestRateLimiter,
-        passwordValidation,
+        recoveryCodeValidation,
+        newPasswordValidation,
         handlerValidationErrors,
         authController.createNewPassword.bind(authController))
 
