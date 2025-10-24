@@ -6,14 +6,15 @@ import {UserAccountDBType} from "../users/types-user/UserAccountDBType";
 import {CommentDbType} from "../comments/types/comment-db-type";
 import {CreateSessionDto} from "../auth/dto/session-DB-type";
 import {UserRequest} from "../core/types/request-limiter";
+import * as mongoose from "mongoose";
 
 
-const BLOG_COLLECTIONS_NAME =  'blogs'
+const BLOG_COLLECTIONS_NAME = 'blogs'
 const POST_COLLECTIONS_NAME = 'posts'
 const USER_COLLECTIONS_NANE = 'users'
-const COMMENT_COLLECTIONS_NAME =  'comments'
-const REFRESH_TOKEN_COLLECTIONS_NAME =  'refresh_token'
-const REQUEST_LOGS_COLLECTIONS_NAME =  'request_logs'
+const COMMENT_COLLECTIONS_NAME = 'comments'
+const REFRESH_TOKEN_COLLECTIONS_NAME = 'refresh_token'
+const REQUEST_LOGS_COLLECTIONS_NAME = 'request_logs'
 
 export let client: MongoClient;
 export let blogCollection: Collection<Blog>
@@ -36,13 +37,11 @@ export const runDB = async (url: string): Promise<void> => {
     requestLogsCollection = db.collection<UserRequest>(REQUEST_LOGS_COLLECTIONS_NAME)
 
 
-
-    try{
-        await client.connect()
-        await db.command({ping: 1})
-        console.log("Connected to database")
-    }catch(e){
-        await client.close()
+    try {
+        await mongoose.connect(url, {dbName: SETTINGS.DB_NAME})
+        console.log("Connected to database via Mongoose")
+    } catch (e) {
+        await mongoose.disconnect()
         throw new Error(`Database not connected: ${e}`)
     }
 
@@ -51,33 +50,18 @@ export const runDB = async (url: string): Promise<void> => {
 
 
 export async function stopDb() {
-    if( !client) {
-        throw new Error(`Mongo client not connected`)
-    }
-    await client.close()
+    await mongoose.disconnect()
+
+    console.log("Disconnected")
 }
 
 export async function drop(): Promise<void> {
     try {
-        if (!client) {
-            throw new Error('Mongo client not connected');
-        }
-
-        const db: Db = client.db(SETTINGS.DB_NAME);
-        const collections = await db.listCollections().toArray();
-
-        // Используем Promise.all для параллельного удаления
-        await Promise.all(
-            collections.map(collection =>
-                db.collection(collection.name).drop()
-            )
-        );
-
-        console.log('All collections dropped successfully');
+        await mongoose.connection.dropDatabase()
+        console.log("All collections dropped successfully")
     } catch (e: unknown) {
-        const errorMessage = e instanceof Error ? e.message : 'Unknown error';
-        console.error('Error in drop db:', errorMessage);
-        throw e; // Пробрасываем ошибку дальше
+        console.error("Error dropping database:", e);
+        throw e;
     }
 }
 

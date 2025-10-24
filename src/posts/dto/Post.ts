@@ -5,8 +5,10 @@ export class Post {
         public content: string,
         public blogId: string,
         public blogName: string,
-        public createdAt: string,
+        public createdAt: Date,
     ) {
     }
 
 }
+
+

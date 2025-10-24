@@ -3,15 +3,15 @@ import {PostInputModel} from "../types/input/post-input-model";
 import {ObjectId} from "mongodb";
 import {postCollection} from "../../db/mongoDB";
 import {injectable} from "inversify";
+import {PostModel} from "./PostModel";
 
 @injectable()
 export class PostRepository {
 
 
     async createPost(newPost: Post): Promise<string> {
-       const insertResult = await postCollection.insertOne(newPost);
-       return insertResult.insertedId.toString();
-
+       const createdPost = await PostModel.create(newPost);
+       return createdPost._id.toString();
     }
 
     async updatePost( id:string, dto:PostInputModel ): Promise<boolean> {

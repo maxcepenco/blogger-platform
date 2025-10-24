@@ -19,7 +19,7 @@ export class BlogService {
             blogDto.name,
             blogDto.description,
             blogDto.websiteUrl,
-            new Date().toISOString(),
+            new Date(),
             false
         )
 

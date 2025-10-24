@@ -33,12 +33,14 @@ export class PostService {
 
             }
         }
-        const newPost = new Post(dto.title,
+        const newPost = new Post(
+            dto.title,
             dto.shortDescription,
             dto.content,
             blogData._id.toString(),
             blogData.name,
-            new Date().toISOString())
+            new Date()
+        )
 
 
         const resultCreate = await this.postRepository.createPost(newPost);
@@ -66,7 +68,7 @@ export class PostService {
             content: postData.content,
             blogId: blogIdData,
             blogName: blogName,
-            createdAt: new Date().toISOString()
+            createdAt: new Date()
         }
 
         return await this.postRepository.createPost(newPost)
