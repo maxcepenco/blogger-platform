@@ -1,4 +1,3 @@
-import {BlogDbType} from "../dto/Blog";
 // import {blogCollection} from "../../db/mongoDB";
 import {BlogViewModel} from "../types/output/blog-view-model";
 import {PaginateQueryOutput} from "../../core/types/pagination-output-model";
@@ -6,6 +5,7 @@ import {SearchFieldTypeBlog} from "../types/input/search-blog-type";
 import {SortQueryFilterType} from "../../core/types/sortQueryFilter.type";
 import {injectable} from "inversify";
 import {BlogModel} from "./blog.model";
+import {BlogDocument} from "../dto/Blog";
 
 @injectable()
 export class BlogQueryRepository {
@@ -36,7 +36,7 @@ export class BlogQueryRepository {
             .sort({[sortBy]: sortDirection})
             .skip(skip)
             .limit(pageSize)
-            .lean()
+
 
 
         const totalCount = await BlogModel.countDocuments(filter);
@@ -44,13 +44,14 @@ export class BlogQueryRepository {
         return result
     }
 
-    async findById(id: string): Promise< BlogDbType  | null> {
-        const result = await BlogModel.findById(id).lean();
-        return result;
+    async findById(id: string): Promise< BlogViewModel  | null> {
+        const result = await BlogModel.findById(id);
+        if(!result) return null;
+        return this.mapToBlogViewModel(result);
     }
 
 
-    mapToBlogViewModel(blog: BlogDbType): BlogViewModel {
+    mapToBlogViewModel(blog: BlogDocument): BlogViewModel {
         return {
             id: blog._id.toString(),
             name: blog.name,
@@ -62,7 +63,7 @@ export class BlogQueryRepository {
     }
 
     mapToBlogListPaginationOutput(
-        items: BlogDbType [],
+        items: BlogDocument [],
         pageNumber: number,
         pageSize: number,
         totalCount: number

@@ -1,16 +1,12 @@
-import {Document, Types} from "mongoose";
-import {ObjectId} from "mongodb";
+import {HydratedDocument} from "mongoose";
 
-export class Blog {
-    constructor(
-        public name: string,
-        public description: string,
-        public websiteUrl: string,
-        public createdAt: Date,
-        public isMembership: boolean,
-    ) {}
+export type Blog = {
+
+        name: string
+        description: string
+        websiteUrl: string
+        createdAt: Date
+        isMembership: boolean
 }
 
-export interface BlogDocument extends Blog, Document {_id: Types.ObjectId}
-
-export type BlogDbType = Blog & {_id: Types.ObjectId};
+export type BlogDocument = HydratedDocument<Blog>

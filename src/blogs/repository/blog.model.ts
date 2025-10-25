@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import {Blog, BlogDocument} from "../dto/Blog";
 
 
-export const BlogSchema = new mongoose.Schema<BlogDocument>({
+export const BlogSchema = new mongoose.Schema<Blog>({
     name: {type: String, required: true},
     description: { type: String, required: true },
     websiteUrl: { type: String, required: true },
@@ -11,4 +11,4 @@ export const BlogSchema = new mongoose.Schema<BlogDocument>({
 })
 
 
-export const BlogModel = mongoose.model<BlogDocument>('blog', BlogSchema)
+export const BlogModel = mongoose.model<Blog>('blog', BlogSchema)

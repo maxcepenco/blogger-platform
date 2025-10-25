@@ -10,18 +10,19 @@ import {inject, injectable} from "inversify";
 @injectable()
 export class BlogService {
 
-    constructor(@inject(BlogRepository)protected blogRepository: BlogRepository) {}
+    constructor(@inject(BlogRepository) protected blogRepository: BlogRepository) {
+    }
 
     async create(blogDto: BlogInputModel): Promise<Result<string>> {
 
-        //class Blog
-        const newBlog = new Blog(
-            blogDto.name,
-            blogDto.description,
-            blogDto.websiteUrl,
-            new Date(),
-            false
-        )
+        const newBlog: Blog = {
+            name: blogDto.name,
+            description: blogDto.description,
+            websiteUrl: blogDto.websiteUrl,
+           createdAt: new Date(),
+            isMembership: false,
+        }
+
 
         const resultCreate = await this.blogRepository.createBlog(newBlog);
         return {

@@ -42,11 +42,10 @@ export class BlogController {
                     }]
                 });
             }
-            const blogViewModel = this.blogQueryRepository.mapToBlogViewModel(foundBlog)
 
             res
                 .status(HttpStatuses.Created_201)
-                .send(blogViewModel)
+                .send(foundBlog)
         } catch (error) {
             res.status(HttpStatuses.BadRequest_400).send({
                 errorsMessages: [{
@@ -94,9 +93,9 @@ export class BlogController {
 
         }
 
-        const blogVewModel = this.blogQueryRepository.mapToBlogViewModel(foundBlog);
+        // const blogVewModel = this.blogQueryRepository.mapToBlogViewModel(foundBlog);
 
-        res.status(HttpStatuses.Ok_200).send(blogVewModel)
+        res.status(HttpStatuses.Ok_200).send(foundBlog)
 
     }
 
