@@ -18,6 +18,8 @@ import {sortQueryFieldsUtil} from "../../core/helpers/sort-query-fields-util";
 import {BlogService} from "../domain/blog.servece";
 import {BlogQueryRepository} from "../repository/blog.query-repository";
 import {inject, injectable} from "inversify";
+import {resultCodeToHttpException} from "../../core/result/resultCodeToHttpException";
+import {ResultStatus} from "../../core/result/result-code";
 
 @injectable()
 export class BlogController {
@@ -45,7 +47,7 @@ export class BlogController {
 
             res
                 .status(HttpStatuses.Created_201)
-                .send(foundBlog)
+                .send(createdBlog)
         } catch (error) {
             res.status(HttpStatuses.BadRequest_400).send({
                 errorsMessages: [{
@@ -64,8 +66,8 @@ export class BlogController {
             const existingBlog = await this.blogQueryRepository.findById(blogId);
 
             if (!existingBlog) {
-                res.sendStatus(HttpStatuses.NotFound_404);
-                return
+                return  res.sendStatus(HttpStatuses.NotFound_404);
+
             }
 
 
@@ -93,7 +95,6 @@ export class BlogController {
 
         }
 
-        // const blogVewModel = this.blogQueryRepository.mapToBlogViewModel(foundBlog);
 
         res.status(HttpStatuses.Ok_200).send(foundBlog)
 
@@ -158,9 +159,9 @@ export class BlogController {
     }
 
     async deleteBlog(req: RequestWithParams<idType>, res: Response) {
-        const isDeleted = await this.blogService.deleteBlog(req.params.id)
-        if (!isDeleted) {
-            res.sendStatus(HttpStatuses.NotFound_404);
+        const result = await this.blogService.deleteBlog(req.params.id)
+        if (result.status !== ResultStatus.Success) {
+          return  res.sendStatus(resultCodeToHttpException(result.status));
         }
 
         res.sendStatus(HttpStatuses.NoContent_204)
