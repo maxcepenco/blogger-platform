@@ -1,10 +1,9 @@
 import {BlogInputModel} from "../types/input/blog-input-model";
-
-import {Blog} from "../dto/Blog";
 import {ResultStatus} from "../../core/result/result-code";
 import {Result} from "../../core/result/result-type";
 import {BlogRepository} from "../repository/blog.repository";
 import {inject, injectable} from "inversify";
+import {BlogModel} from "../repository/blog.model";
 
 
 @injectable()
@@ -15,16 +14,17 @@ export class BlogService {
 
     async create(blogDto: BlogInputModel): Promise<Result<string>> {
 
-        const newBlog: Blog = {
-            name: blogDto.name,
-            description: blogDto.description,
-            websiteUrl: blogDto.websiteUrl,
-           createdAt: new Date(),
-            isMembership: false,
-        }
 
+        const createdBlog = new BlogModel(blogDto)
 
-        const resultCreate = await this.blogRepository.createBlog(newBlog);
+        createdBlog.name = blogDto.name
+        createdBlog.description = blogDto.description
+        createdBlog.websiteUrl = blogDto.websiteUrl
+        createdBlog.createdAt = new Date();
+        createdBlog.isMembership = false
+
+        const resultCreate = await this.blogRepository.saveCreatedBlog(createdBlog)
+
         return {
             status: ResultStatus.Success,
             data: resultCreate,
@@ -33,9 +33,23 @@ export class BlogService {
     }
 
 
-    async updateBlog(id: string, blog: BlogInputModel): Promise<Result<boolean>> {
+    async updateBlog(id: string, blogDto: BlogInputModel): Promise<Result<boolean>> {
 
-        const resultUpdate = await this.blogRepository.updateBlog(id, blog)
+        const blog = await this.blogRepository.findById(id)
+
+        if(!blog)
+            return {
+            status: ResultStatus.NotFound,
+                data: false,
+                errorMessage:"Not Found"
+            }
+
+        blog.name = blogDto.name
+        blog.description = blogDto.description
+        blog.websiteUrl = blogDto.websiteUrl
+
+        const resultUpdate = await this.blogRepository.saveUpdatedBlog(blog)
+
         return {
             status: ResultStatus.Success,
             data: resultUpdate,
@@ -46,12 +60,22 @@ export class BlogService {
 
     async deleteBlog(id: string): Promise<Result<boolean>> {
 
-        const resultDelete = await this.blogRepository.deleteBlog(id)
+        const blogInstance = await this.blogRepository.findById(id);
+
+        if (!blogInstance) return {
+            status: ResultStatus.NotFound,
+            data: false,
+            errorMessage:"Not Found"
+        }
+
+        const res = await blogInstance.deleteOne();
+
         return {
             status: ResultStatus.Success,
-            data: resultDelete,
+            data: true
         }
     }
+
 
 }
 
