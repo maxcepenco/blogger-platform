@@ -1,20 +1,20 @@
-import {commentCollection} from "../../db/mongoDB";
-import {ObjectId, WithId} from "mongodb";
-import {CommentDbType} from "../types/comment-db-type";
+import {CommentDocument} from "../types/comment-db-type";
 import {CommentViewModel} from "../types/output/comment.view-model";
 import {SortQueryFilterType} from "../../core/types/sortQueryFilter.type";
 import {PaginateQueryOutput} from "../../core/types/pagination-output-model";
 import {injectable} from "inversify";
+import {CommentModel} from "./comment-model";
 
 @injectable()
 export class CommentQueryRepository {
 
-    async findById(commentId: string): Promise<CommentViewModel | null> {
-        const result = await commentCollection.findOne({_id: new ObjectId(commentId)});
+    async findById(commentId: string, likeStatus?:string): Promise<CommentViewModel | null> {
+        const result = await CommentModel.findOne({_id: commentId});
+        console.log("result", result);
         if (!result) {
             return null;
         }
-        return this.mapCommentToViewModel(result);
+        return this.mapCommentToViewModel(result, likeStatus);
     }
 
     async findCommentByPost(queryDto: SortQueryFilterType, postId: string): Promise<PaginateQueryOutput<CommentViewModel>> {
@@ -25,14 +25,14 @@ export class CommentQueryRepository {
 
         const skip = (pageNumber - 1) * pageSize;
 
-        const items = await commentCollection
+        const items = await CommentModel
             .find(filter)
             .sort({[sortBy]: sortDirection})
             .skip(skip)
             .limit(pageSize)
-            .toArray()
 
-        const totalCount = await commentCollection.countDocuments(filter)
+
+        const totalCount = await CommentModel.countDocuments(filter)
 
         const result = this.mapToCommentListPagination(items, pageNumber, pageSize, totalCount);
         return result;
@@ -40,7 +40,7 @@ export class CommentQueryRepository {
 
 
     mapToCommentListPagination(
-        items: WithId<CommentDbType>[],
+        items: CommentDocument[],
         pageNumber: number,
         pageSize: number,
         totalCount: number
@@ -52,12 +52,12 @@ export class CommentQueryRepository {
             page: pageNumber,
             pageSize: pageSize,
             totalCount: totalCount,
-            items: items.map(this.mapCommentToViewModel)
+            items: items.map((comment) => this.mapCommentToViewModel(comment))
         }
     }
 
 
-    mapCommentToViewModel(comment: WithId<CommentDbType>): CommentViewModel {
+    mapCommentToViewModel(comment: CommentDocument,likeStatus:string = "None"): CommentViewModel {
         return {
             id: comment._id.toString(),
             content: comment.content,
@@ -65,8 +65,13 @@ export class CommentQueryRepository {
                 userId: comment.commentatorInfo.userId,
                 userLogin: comment.commentatorInfo.userLogin
             },
-            createdAt: comment.createdAt
+            createdAt: comment.createdAt.toISOString(),
+            likeInfo:{
+                likeCount: comment.likesInfo.likesCount,
+                dislikeCount: comment.likesInfo.dislikesCount,
+                myStatus:likeStatus
 
+            }
         }
     }
 }

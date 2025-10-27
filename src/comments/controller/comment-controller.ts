@@ -2,20 +2,21 @@ import {ReqParamsBodyUserId, ReqParamsUserId, RequestWithParams} from "../../cor
 import {IdComment} from "../types/input/id-type.comment";
 import {HttpStatuses} from "../../core/types/httpSatuses";
 import {CommentQueryRepository} from "../repository/comment-query-repository";
-import {CommentInputModel} from "../types/input/comment.input-model";
 import {IdType} from "../../core/types/id-type.user";
 import {CommentService} from "../domain/commnetService";
 import {ResultStatus} from "../../core/result/result-code";
 import {resultCodeToHttpException} from "../../core/result/resultCodeToHttpException";
 import {Response} from "express";
 import {inject, injectable} from "inversify";
+import {CommentInputModel} from "../types/input/likeStatus.input-model";
+import {LikeStatusType} from "../types/input/comment.input-model";
 
 @injectable()
 export class CommentController {
 
 
-    constructor( @inject(CommentService) protected commentService: CommentService,
-                 @inject(CommentQueryRepository) protected commentQueryRepository: CommentQueryRepository) {
+    constructor(@inject(CommentService) protected commentService: CommentService,
+                @inject(CommentQueryRepository) protected commentQueryRepository: CommentQueryRepository) {
     }
 
     async getComment(req: RequestWithParams<IdComment>, res: Response) {
@@ -24,8 +25,8 @@ export class CommentController {
             res.sendStatus(HttpStatuses.NotFound_404)
             return
         }
-
-        const comment = await this.commentQueryRepository.findById(commentId);
+        const likeStatus = "None"
+        const comment = await this.commentQueryRepository.findById(commentId, likeStatus);
         if (!comment) {
             return res.sendStatus(HttpStatuses.NotFound_404)
         }
@@ -56,6 +57,17 @@ export class CommentController {
         }
 
         return res.sendStatus(HttpStatuses.NoContent_204)
+
+    }
+
+    async addLike(req: ReqParamsBodyUserId<IdComment, LikeStatusType, IdType>, res: Response) {
+        const commentId = req.params.id;
+        const likeStatus = req.body.likeStatus //TODO:надо сделать валидацию по enum
+
+        const userId = req.user;
+
+        const updatedComment = await this.commentService.addLikeForComment(commentId, likeStatus, userId)
+
 
     }
 

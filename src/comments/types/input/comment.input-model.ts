@@ -1,4 +1,5 @@
+import {LikeStatus} from "../comment-db-type";
 
-export type CommentInputModel = {
-    content: string
+export type LikeStatusType = {
+    likeStatus: LikeStatus
 }

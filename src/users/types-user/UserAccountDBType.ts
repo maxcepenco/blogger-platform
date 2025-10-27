@@ -1,11 +1,6 @@
 
 
-export type UserAccountDBType = {
-    accountDate: AccountData,
-    emailConfirmed: EmailConfirmation | null,
-    passwordRecovery?: PasswordRecovery | null;
-    isConfirmed: boolean
-}
+
 
 
 
@@ -26,4 +21,10 @@ export type PasswordRecovery = {
     expirationDate: Date
 
 }
-//в видео уроке и репо createdAt: Date
+
+export type UserAccountDBType = {
+    accountDate: AccountData,
+    emailConfirmed: EmailConfirmation | null,
+    passwordRecovery?: PasswordRecovery | null;
+    isConfirmed: boolean
+}

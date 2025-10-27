@@ -74,6 +74,7 @@ export class PostQueryRepository {
             blogId: post.blogId,
             blogName: post.blogName,
             createdAt: post.createdAt.toISOString(),
+
         }
     }
 

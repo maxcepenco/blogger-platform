@@ -1,22 +1,31 @@
-import {CommentDbType} from "../types/comment-db-type";
+import {CommentDbType, CommentDocument, LikeDocument} from "../types/comment-db-type";
 import {commentCollection} from "../../db/mongoDB";
 import {ObjectId} from "mongodb";
 import {injectable} from "inversify";
+import {CommentModel} from "./comment-model";
 
 @injectable()
 export class CommentRepository {
 
-    async createCommentForPost(comment: CommentDbType): Promise<string> {
-        const insertResult = await commentCollection.insertOne(comment);
-        return insertResult.insertedId.toString();
+    async saveComment(comment:CommentDocument):Promise<string | null> {
+         const  saved = await comment.save()
+        if(!saved) return null
+        return  saved._id.toString();
     }
 
-    async findByIdDbType(commentId: string): Promise<CommentDbType | null> {
-        const foundCommentDbType = await commentCollection.findOne({_id: new ObjectId(commentId)})
-        if (!foundCommentDbType) {
-            return null;
-        }
-        return foundCommentDbType;
+    async saveLikeInfo(likeInfo:LikeDocument) {
+        await likeInfo.save()
+    }
+
+    // async createCommentForPost(comment: CommentDbType): Promise<string> {
+    //     const insertResult = await commentCollection.insertOne(comment);
+    //     return insertResult.insertedId.toString();
+    // }
+
+    async findByIdDbType(commentId: string): Promise<CommentDocument | null> {
+        const foundResult = await CommentModel.findOne({_id: commentId})
+        if (!foundResult) return null;
+        return foundResult;
     }
 
     async update(commentId: string, dto: CommentDbType): Promise<boolean> {

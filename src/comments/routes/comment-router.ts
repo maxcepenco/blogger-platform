@@ -6,6 +6,7 @@ import {idValidation} from "../../core/midleware/validationInputIdMiddleware";
 import {validationObjectIdParams} from "../../core/midleware/validationObjectIdParams";
 import {CommentController} from "../controller/comment-controller";
 import {container} from "../../composition-root";
+import {authenticateUser} from "../middleware/authAccessTokenMiddleware";
 
 const commentController = container.get(CommentController)
 export const commentRouter = Router()
@@ -13,6 +14,7 @@ export const commentRouter = Router()
 commentRouter
     .get('/:id',
         validationObjectIdParams(),
+        authenticateUser,
         commentController.getComment.bind(commentController)
     )
     .put('/:id',
@@ -21,6 +23,13 @@ commentRouter
         commentInputMiddleware,
         handlerValidationErrors,
         commentController.updateComment.bind(commentController)
+    )
+
+    .put('/:id/like-status',
+        authenticateUser,
+        idValidation,
+        handlerValidationErrors,
+        commentController.addLike.bind(commentController)
     )
     .delete('/:id',
         validationObjectIdParams(),

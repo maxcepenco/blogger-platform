@@ -1,4 +1,4 @@
-import {CommentatorInfo} from "../commentator-info";
+import {CommentatorInfo} from "../comment-db-type";
 
 
 export type CommentViewModel = {
@@ -6,4 +6,9 @@ export type CommentViewModel = {
     content: string
     commentatorInfo: CommentatorInfo
     createdAt: string
+    likeInfo: {
+        likeCount: number,
+        dislikeCount: number,
+        myStatus: string
+    }
 }
