@@ -81,44 +81,69 @@ export class CommentService {
 
     }
 
-    async addLikeForComment(commentId: string, likeStatus: LikeStatus, userId: string): Promise<Result< boolean | null>> {
+    async addLikeForComment(commentId: string, likeStatus: LikeStatus, userId: string): Promise<Result<boolean>> {
 
-        if(!likeStatus){
+        if (!likeStatus) {
             return {
-                status:ResultStatus.BadRequest,
-                data: null,
+                status: ResultStatus.BadRequest,
+                data: false,
                 errorMessage: "Bad Request",
             }
         }
+
         const comment = await this.commentRepository.findByIdDbType(commentId)
         if (!comment) {
             return {
                 status: ResultStatus.NotFound,
-                data: null,
+                data: false,
                 errorMessage: "Not found"
             }
         }
-        const existingLike = await this.commentRepository.findLike(commentId,userId );
-        if(!existingLike){
+        const existingLike = await this.commentRepository.findLike(commentId, userId);
+
+        if (!existingLike) {
 
             const likeInfo = new LikeModel()
             likeInfo.commentId = commentId
             likeInfo.userId = userId
             likeInfo.myStatus = likeStatus
-
+            console.log("likeInfo",likeInfo)
             await this.commentRepository.saveLikeInfo(likeInfo)
 
 
-            if(likeStatus === LikeStatus.Like ) {
-                comment.likesInfo.likesCount ++
+            if (likeStatus === LikeStatus.Like) {
+                comment.likesInfo.likesCount++
 
             }
 
-            if(likeStatus === LikeStatus.Dislike ) {
-                comment.likesInfo.dislikesCount ++
+            if (likeStatus === LikeStatus.Dislike) {
+                comment.likesInfo.dislikesCount++
 
             }
             await this.commentRepository.saveComment(comment)
+
+            return {
+                status: ResultStatus.Success,
+                data: true
+            }
+        }
+
+        if (likeStatus === existingLike.myStatus && likeStatus === LikeStatus.None) {
+            return {
+                status: ResultStatus.Success,
+                data: true
+            }
+        }
+
+        if (likeStatus === LikeStatus.Like && existingLike.myStatus === LikeStatus.Dislike) {
+
+            comment.likesInfo.dislikesCount--
+            comment.likesInfo.likesCount++
+
+            await this.commentRepository.saveComment(comment)
+
+            existingLike.myStatus = likeStatus
+            await this.commentRepository.saveLikeInfo(existingLike)
 
             return {
                 status:ResultStatus.Success,
@@ -126,21 +151,21 @@ export class CommentService {
             }
         }
 
-        if(likeStatus === existingLike.myStatus && likeStatus === LikeStatus.None) {
-            return{
+        if (likeStatus === LikeStatus.Dislike && existingLike.myStatus === LikeStatus.Like) {
+
+            comment.likesInfo.dislikesCount++
+            comment.likesInfo.likesCount--
+
+            await this.commentRepository.saveComment(comment)
+
+            existingLike.myStatus = likeStatus
+
+            await this.commentRepository.saveLikeInfo(existingLike)
+
+            return {
                 status: ResultStatus.Success,
                 data: true
             }
-        }
-
-        if(likeStatus === LikeStatus.Like && existingLike.myStatus === LikeStatus.Dislike) {
-            comment.likesInfo.dislikesCount --
-            comment.likesInfo.likesCount ++
-        }
-
-        if(likeStatus === LikeStatus.Dislike && existingLike.myStatus === LikeStatus.Like) {
-            comment.likesInfo.dislikesCount ++
-            comment.likesInfo.likesCount --
         }
 
         await this.commentRepository.saveComment(comment)
@@ -148,10 +173,9 @@ export class CommentService {
         return {
             status: ResultStatus.Success,
             data: true
-    }
+        }
 
     }
-
 
 
     async deleteComment(commentId: string, userId: string): Promise<Result<boolean | null>> {

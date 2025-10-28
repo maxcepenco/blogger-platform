@@ -7,7 +7,7 @@ import {CommentModel, LikeModel} from "./comment-model";
 @injectable()
 export class CommentRepository {
 
-    async findLike(commentId:string, userId:string):Promise< LikeDbType | null> {
+    async findLike(commentId:string, userId:string):Promise< LikeDocument | null> {
         const like = await LikeModel.findOne({
             userId: userId,
             commentId: commentId,
@@ -24,6 +24,7 @@ export class CommentRepository {
 
     async saveLikeInfo(likeInfo:LikeDocument) {
         await likeInfo.save()
+        return true
     }
 
     // async createCommentForPost(comment: CommentDbType): Promise<string> {
