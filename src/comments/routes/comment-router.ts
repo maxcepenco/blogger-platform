@@ -26,7 +26,7 @@ commentRouter
     )
 
     .put('/:id/like-status',
-        authenticateUser,
+        accessTokenGuard,
         idValidation,
         handlerValidationErrors,
         commentController.addLike.bind(commentController)

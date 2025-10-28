@@ -1,11 +1,20 @@
-import {CommentDbType, CommentDocument, LikeDocument} from "../types/comment-db-type";
+import {CommentDbType, CommentDocument, LikeDbType, LikeDocument} from "../types/comment-db-type";
 import {commentCollection} from "../../db/mongoDB";
 import {ObjectId} from "mongodb";
 import {injectable} from "inversify";
-import {CommentModel} from "./comment-model";
+import {CommentModel, LikeModel} from "./comment-model";
 
 @injectable()
 export class CommentRepository {
+
+    async findLike(commentId:string, userId:string):Promise< LikeDbType | null> {
+        const like = await LikeModel.findOne({
+            userId: userId,
+            commentId: commentId,
+        })
+        if(!like) return null
+        return like;
+    }
 
     async saveComment(comment:CommentDocument):Promise<string | null> {
          const  saved = await comment.save()

@@ -61,13 +61,20 @@ export class CommentController {
     }
 
     async addLike(req: ReqParamsBodyUserId<IdComment, LikeStatusType, IdType>, res: Response) {
+
         const commentId = req.params.id;
+
         const likeStatus = req.body.likeStatus //TODO:надо сделать валидацию по enum
 
         const userId = req.user;
 
-        const updatedComment = await this.commentService.addLikeForComment(commentId, likeStatus, userId)
+        const updatedComment = await this.commentService.addLikeForComment(commentId, likeStatus, userId!)
 
+        if(updatedComment.status !== ResultStatus.Success){
+            return res.sendStatus(resultCodeToHttpException(updatedComment.status))
+        }
+
+      return   res.sendStatus(HttpStatuses.NoContent_204)
 
     }
 

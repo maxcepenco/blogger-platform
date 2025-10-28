@@ -81,7 +81,7 @@ export class CommentService {
 
     }
 
-    async addLikeForComment(commentId: string, likeStatus: LikeStatus, userId?: string): Promise<Result<boolean | null>> {
+    async addLikeForComment(commentId: string, likeStatus: LikeStatus, userId: string): Promise<Result< boolean | null>> {
 
         if(!likeStatus){
             return {
@@ -89,14 +89,6 @@ export class CommentService {
                 data: null,
                 errorMessage: "Bad Request",
             }
-        }
-        if (userId) {
-            const likeInfo = new LikeModel()
-            likeInfo.commentId = commentId
-            likeInfo.userId = userId
-            likeInfo.myStatus = likeStatus
-
-            await this.commentRepository.saveLikeInfo(likeInfo)
         }
         const comment = await this.commentRepository.findByIdDbType(commentId)
         if (!comment) {
@@ -106,23 +98,61 @@ export class CommentService {
                 errorMessage: "Not found"
             }
         }
-        if(likeStatus === LikeStatus.Like ) {
+        const existingLike = await this.commentRepository.findLike(commentId,userId );
+        if(!existingLike){
+
+            const likeInfo = new LikeModel()
+            likeInfo.commentId = commentId
+            likeInfo.userId = userId
+            likeInfo.myStatus = likeStatus
+
+            await this.commentRepository.saveLikeInfo(likeInfo)
+
+
+            if(likeStatus === LikeStatus.Like ) {
+                comment.likesInfo.likesCount ++
+
+            }
+
+            if(likeStatus === LikeStatus.Dislike ) {
+                comment.likesInfo.dislikesCount ++
+
+            }
+            await this.commentRepository.saveComment(comment)
+
+            return {
+                status:ResultStatus.Success,
+                data: true
+            }
+        }
+
+        if(likeStatus === existingLike.myStatus && likeStatus === LikeStatus.None) {
+            return{
+                status: ResultStatus.Success,
+                data: true
+            }
+        }
+
+        if(likeStatus === LikeStatus.Like && existingLike.myStatus === LikeStatus.Dislike) {
+            comment.likesInfo.dislikesCount --
             comment.likesInfo.likesCount ++
-
         }
 
-        if(likeStatus === LikeStatus.Dislike ) {
-              comment.likesInfo.likesCount ++
-
+        if(likeStatus === LikeStatus.Dislike && existingLike.myStatus === LikeStatus.Like) {
+            comment.likesInfo.dislikesCount ++
+            comment.likesInfo.likesCount --
         }
-         await this.commentRepository.saveComment(comment)
+
+        await this.commentRepository.saveComment(comment)
 
         return {
-            status:ResultStatus.Success,
+            status: ResultStatus.Success,
             data: true
-        }
+    }
 
     }
+
+
 
     async deleteComment(commentId: string, userId: string): Promise<Result<boolean | null>> {
 
