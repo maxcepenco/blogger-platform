@@ -10,6 +10,7 @@ import {Response} from "express";
 import {inject, injectable} from "inversify";
 import {CommentInputModel} from "../types/input/likeStatus.input-model";
 import {LikeStatusType} from "../types/input/comment.input-model";
+import {Types} from "mongoose";
 
 @injectable()
 export class CommentController {
@@ -20,13 +21,18 @@ export class CommentController {
     }
 
     async getComment(req: RequestWithParams<IdComment>, res: Response) {
+
+        const userId = req.user
+
         const commentId = req.params.id;
+
         if (!commentId) {
             res.sendStatus(HttpStatuses.NotFound_404)
             return
         }
-        const likeStatus = "None"
-        const comment = await this.commentQueryRepository.findById(commentId, likeStatus);
+
+
+        const comment = await this.commentQueryRepository.findById(commentId, userId)
         if (!comment) {
             return res.sendStatus(HttpStatuses.NotFound_404)
         }
@@ -63,6 +69,7 @@ export class CommentController {
     async addLike(req: ReqParamsBodyUserId<IdComment, LikeStatusType, IdType>, res: Response) {
 
         const commentId = req.params.id;
+        if (!Types.ObjectId.isValid(commentId)) return res.sendStatus(404)
 
         const likeStatus = req.body.likeStatus //TODO:надо сделать валидацию по enum
 
@@ -70,11 +77,11 @@ export class CommentController {
 
         const updatedComment = await this.commentService.addLikeForComment(commentId, likeStatus, userId!)
 
-        if(updatedComment.status !== ResultStatus.Success){
+        if (updatedComment.status !== ResultStatus.Success) {
             return res.sendStatus(resultCodeToHttpException(updatedComment.status))
         }
 
-      return   res.sendStatus(HttpStatuses.NoContent_204)
+        return res.sendStatus(HttpStatuses.NoContent_204)
 
     }
 

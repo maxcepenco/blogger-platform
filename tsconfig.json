@@ -4,6 +4,8 @@
     "module": "commonjs",
     "rootDir": ".",
     "outDir": "./dist",
+    "sourceMap": true,       // <--- добавляем
+    "inlineSources": true,    // <--- добавляем (удобно)
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "allowSyntheticDefaultImports": true,

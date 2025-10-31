@@ -4,12 +4,14 @@ import {Result} from "../../core/result/result-type";
 import {BlogRepository} from "../repository/blog.repository";
 import {inject, injectable} from "inversify";
 import {BlogModel} from "../repository/blog.model";
+import {PostRepository} from "../../posts/repository/post.repository";
 
 
 @injectable()
 export class BlogService {
 
-    constructor(@inject(BlogRepository) protected blogRepository: BlogRepository) {
+    constructor(@inject(BlogRepository) protected blogRepository: BlogRepository,
+                @inject(PostRepository) protected postRepository: PostRepository) {
     }
 
     async create(blogDto: BlogInputModel): Promise<Result<string>> {
@@ -37,11 +39,11 @@ export class BlogService {
 
         const blog = await this.blogRepository.findById(id)
 
-        if(!blog)
+        if (!blog)
             return {
-            status: ResultStatus.NotFound,
+                status: ResultStatus.NotFound,
                 data: false,
-                errorMessage:"Not Found"
+                errorMessage: "Not Found"
             }
 
         blog.name = blogDto.name
@@ -50,10 +52,14 @@ export class BlogService {
 
         const resultUpdate = await this.blogRepository.saveUpdatedBlog(blog)
 
+
+        await this.postRepository.updatePostByBlogId(blog.id, blogDto.name)
+
         return {
             status: ResultStatus.Success,
             data: resultUpdate,
         }
+
 
     }
 
@@ -65,10 +71,10 @@ export class BlogService {
         if (!blogInstance) return {
             status: ResultStatus.NotFound,
             data: false,
-            errorMessage:"Not Found"
+            errorMessage: "Not Found"
         }
 
-        const res = await blogInstance.deleteOne();
+        await blogInstance.deleteOne();
 
         return {
             status: ResultStatus.Success,

@@ -1,4 +1,4 @@
-import {CommentDbType, CommentDocument, LikeDbType, LikeDocument} from "../types/comment-db-type";
+import {CommentDocument, LikeDocument} from "../types/comment-db-type";
 import {commentCollection} from "../../db/mongoDB";
 import {ObjectId} from "mongodb";
 import {injectable} from "inversify";
@@ -16,10 +16,16 @@ export class CommentRepository {
         return like;
     }
 
-    async saveComment(comment:CommentDocument):Promise<string | null> {
+    async saveCreatedComment(comment:CommentDocument):Promise<string | null> {
          const  saved = await comment.save()
         if(!saved) return null
         return  saved._id.toString();
+    }
+
+    async saveUpdatedComment(comment:CommentDocument):Promise<boolean | null> {
+         const  saved = await comment.save()
+        if(!saved) return null
+        return  true;
     }
 
     async saveLikeInfo(likeInfo:LikeDocument) {
@@ -27,10 +33,7 @@ export class CommentRepository {
         return true
     }
 
-    // async createCommentForPost(comment: CommentDbType): Promise<string> {
-    //     const insertResult = await commentCollection.insertOne(comment);
-    //     return insertResult.insertedId.toString();
-    // }
+
 
     async findByIdDbType(commentId: string): Promise<CommentDocument | null> {
         const foundResult = await CommentModel.findOne({_id: commentId})
@@ -38,13 +41,7 @@ export class CommentRepository {
         return foundResult;
     }
 
-    async update(commentId: string, dto: CommentDbType): Promise<boolean> {
-        const result = await commentCollection.updateOne(
-            {_id: new ObjectId(commentId)},
-            {$set: dto}
-        )
-        return result.matchedCount === 1
-    }
+
 
     async delete(commentId: string): Promise<boolean> {
         const result = await commentCollection.deleteOne({_id: new ObjectId(commentId)})

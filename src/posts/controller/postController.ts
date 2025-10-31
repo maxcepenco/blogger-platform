@@ -33,7 +33,8 @@ export class PostController {
                 @inject(PostQueryRepository) protected postQueryRepository: PostQueryRepository,
                 @inject(CommentService) protected commentService: CommentService,
                 @inject(CommentQueryRepository) protected commentQueryRepository: CommentQueryRepository,
-                @inject(UserQueryRepository) protected userQueryRepository: UserQueryRepository) {}
+                @inject(UserQueryRepository) protected userQueryRepository: UserQueryRepository) {
+    }
 
     async createPost(req: RequestWithBody<PostInputModel>, res: Response) {
         try {
@@ -65,23 +66,27 @@ export class PostController {
     }
 
     async createCommentForPost(req: ReqParamsBodyUserId<idType, CommentInputModel, IdType>, res: Response) {
+
         const userId = req.user as string;
 
         const user = await this.userQueryRepository.findById(userId);
+
         if (!user) {
             return res.sendStatus(HttpStatuses.BadRequest_400)
         }
 
         const postId = req.params.id
         const existingPost = await this.postQueryRepository.findPostById(postId)
+
         if (!existingPost) {
+
             res.sendStatus(HttpStatuses.NotFound_404)
+
             return
         }
 
         const createdIdComment = await this.commentService.createComment(postId, user.id, user.login, req.body.content)
-        console.log('🟢 createdIdComment:', createdIdComment);
-        console.log('📏 Type:', typeof createdIdComment, 'Length:', createdIdComment?.length);
+
         if (!createdIdComment) {
 
             return res.sendStatus(HttpStatuses.BadRequest_400)
@@ -99,8 +104,8 @@ export class PostController {
 
     async getCommentForPost(req: RequestWithParamsAndQuery<IdType, SortQueryFieldsType>, res: Response) {
 
+        const userId = req.user
         const postId = req.params.id
-
 
         const post = await this.postQueryRepository.findPostById(postId)
         if (!post) {
@@ -110,7 +115,7 @@ export class PostController {
 
         const inputQuery = sortQueryFieldsUtil(req.query);
 
-        const foundCommentForPost = await this.commentQueryRepository.findCommentByPost(inputQuery, postId);
+        const foundCommentForPost = await this.commentQueryRepository.findCommentByPost(inputQuery, postId, userId);
 
         res.status(HttpStatuses.Ok_200).json(foundCommentForPost);
 

@@ -6,8 +6,8 @@ export const PostSchema = new mongoose.Schema<Post>({
     title:{ type: String, required: true },
     shortDescription: { type: String, required: true },
     content: { type: String, required: true },
-    blogId: { type: String, required: true },
-    blogName: { type: String, required: true },
+    blogId: { type: String  },
+    blogName: { type: String },
     createdAt: { type: Date, default: Date.now}
 
 })

@@ -8,6 +8,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
     "watch": "tsc -w",
     "dev": "nodemon --inspect dist/src/index.js",
+    "dev:debug": "ts-node-dev --inspect --respawn --transpile-only src/index.ts",
     "debug": "node --inspect --inspect-brk dist/index.js",
     "jest": "jest -i",
     "lint": "eslint --fix .",

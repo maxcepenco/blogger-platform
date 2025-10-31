@@ -7,6 +7,7 @@ import {accessTokenGuard} from "../../auth/routes/guard/access.token.guard";
 import {commentInputMiddleware} from "../../comments/validation/comment.input-middleware";
 import {container} from "../../composition-root";
 import {PostController} from "../controller/postController";
+import {authenticateUser} from "../../comments/middleware/authAccessTokenMiddleware";
 
 const postController = container.get(PostController);
 
@@ -14,18 +15,6 @@ export const postRouter = Router({});
 
 
 postRouter
-    .get('/:id/comments',
-        postController.getCommentForPost.bind(postController),
-    )
-
-    .get('',
-        postController.getPostList.bind(postController),
-    )
-
-    .get('/:id',
-        idValidation,
-        postController.findPostBiId.bind(postController),
-    )
 
     .post('',
         authValidationMiddleware,
@@ -48,6 +37,21 @@ postRouter
         handlerValidationErrors,
         postController.updatePost.bind(postController),
     )
+
+    .get('/:id/comments',
+        authenticateUser,
+        postController.getCommentForPost.bind(postController),
+    )
+
+    .get('',
+        postController.getPostList.bind(postController),
+    )
+
+    .get('/:id',
+        idValidation,
+        postController.findPostBiId.bind(postController),
+    )
+
 
     .delete('/:id',
         authValidationMiddleware,

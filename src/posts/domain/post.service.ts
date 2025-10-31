@@ -19,28 +19,28 @@ export class PostService {
 
     async createPost(dto: PostInputModel): Promise<Result<string | null>> {
 
-        const blogData = await this.blogRepository.findById(dto.blogId)
-        if (!blogData) {
-            return {
-                status: ResultStatus.BadRequest,
-                errorMessage: "Bad Request",
-                extensions: {
-                    errorsMessages: [{
-                        field: 'blog',
-                        message: 'no blog id'
-                    }]
-                },
-                data: null,
-
-            }
-        }
+        // const blogData = await this.blogRepository.findById(dto.blogId)
+        // if (!blogData) {
+        //     return {
+        //         status: ResultStatus.BadRequest,
+        //         errorMessage: "Bad Request",
+        //         extensions: {
+        //             errorsMessages: [{
+        //                 field: 'blog',
+        //                 message: 'no blog id'
+        //             }]
+        //         },
+        //         data: null,
+        //
+        //     }
+        // }
 
         const createdPost = new PostModel({
             title: dto.title,
             shortDescription: dto.shortDescription,
             content: dto.content,
-            blogId: blogData._id.toString(),
-            blogName: blogData.name,
+            // blogId: blogData._id.toString(),
+            // blogName: blogData.name,
         })
 
 
@@ -76,7 +76,7 @@ export class PostService {
         post.title = dto.title
         post.shortDescription = dto.shortDescription
         post.content = dto.content
-        post.blogId = dto.blogId
+        // post.blogId = dto.blogId
 
         return await this.postRepository.saveUpdatedPost(post)
     }

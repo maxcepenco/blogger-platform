@@ -18,21 +18,20 @@ import cookieParser from "cookie-parser";
 import {devicesRouter} from "./security/router/deviceRouter";
 
 
-export const setupApp = (app:Express) => {
+export const setupApp = (app: Express) => {
     app.set('trust proxy', true)
     app.use(express.json());
-  app.use(cookieParser())
+    app.use(cookieParser())
+    app.use(BLOGS_PATHS, blogRouter)
+    app.use(POST_PATHS, postRouter)
+    app.use(TESTING_PATHS, testingRouter);
+    app.use(AUTH_PATHS, authRouter);
+    app.use(USER_PATHS, userRouter);
+    app.use(COMMENT_PATHS, commentRouter);
+    app.use(SECURITY_PATHS, devicesRouter)
 
-    app.use(BLOGS_PATHS,blogRouter )
-  app.use(POST_PATHS, postRouter )
-  app.use(TESTING_PATHS, testingRouter);
-  app.use(AUTH_PATHS, authRouter);
-  app.use(USER_PATHS, userRouter);
-  app.use(COMMENT_PATHS, commentRouter);
-  app.use(SECURITY_PATHS,devicesRouter)
 
-
-  return app
+    return app
 
 
 };

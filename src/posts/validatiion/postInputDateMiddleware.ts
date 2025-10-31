@@ -1,9 +1,8 @@
 import {body} from "express-validator";
-import { container} from "../../composition-root";
-import {BlogRepository} from "../../blogs/repository/blog.repository";
 
 
-const blogRepository = container.get(BlogRepository)
+// const blogRepository = container.get(BlogRepository)
+
 const titleValidation = body('title')
     .isString()
     .withMessage('Title must be a string')
@@ -25,24 +24,24 @@ const contentValidation = body('content')
     .isLength({min: 1,max: 1000})
     .withMessage('Content length not correct ')
 
-const blogIdValidation = body('blogId')
-    .isString()
-    .withMessage('Blog must be a string')
-    .trim()
-    .notEmpty()
-    .withMessage("BlogId is required")
-    .bail()
-    .custom(async (value) => {
-        const blog = await blogRepository.findById(value)
-        if (!blog) {
-            throw new Error('Blog with given id does not exist')
-        }
-        return true
-    })
+// const blogIdValidation = body('blogId')
+//     .isString()
+//     .withMessage('Blog must be a string')
+//     .trim()
+//     .notEmpty()
+//     .withMessage("BlogId is required")
+//     .bail()
+//     .custom(async (value) => {
+//         const blog = await blogRepository.findById(value)
+//         if (!blog) {
+//             throw new Error('Blog with given id does not exist')
+//         }
+//         return true
+//     })
 
 export const postInputDtoMiddleware = [
     titleValidation,
     shortDescriptionValidation,
     contentValidation,
-    blogIdValidation,
+    // blogIdValidation,
 ]

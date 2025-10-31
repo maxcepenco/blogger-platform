@@ -6,9 +6,9 @@ export type CommentViewModel = {
     content: string
     commentatorInfo: CommentatorInfo
     createdAt: string
-    likeInfo: {
-        likeCount: number,
-        dislikeCount: number,
+    likesInfo: {
+        likesCount: number,
+        dislikesCount: number,
         myStatus: string
     }
 }

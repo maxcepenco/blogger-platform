@@ -1,23 +1,39 @@
-import {CommentDocument} from "../types/comment-db-type";
+import {CommentDocument, LikeDbType} from "../types/comment-db-type";
 import {CommentViewModel} from "../types/output/comment.view-model";
 import {SortQueryFilterType} from "../../core/types/sortQueryFilter.type";
 import {PaginateQueryOutput} from "../../core/types/pagination-output-model";
 import {injectable} from "inversify";
-import {CommentModel} from "./comment-model";
+import {CommentModel, LikeModel} from "./comment-model";
 
 @injectable()
 export class CommentQueryRepository {
 
-    async findById(commentId: string, likeStatus?:string): Promise<CommentViewModel | null> {
+    async findLikeInfo(userId: string, commentId: string): Promise<LikeDbType | null> {
+        const result = await LikeModel.findOne({userId: userId, commentId: commentId});
+        if (!result) return null
+        return result
+    }
+    async findLikesInfo(userId: string): Promise<LikeDbType[] | null> {
+        const result = await LikeModel.find({userId: userId});
+        if (!result) return null
+        return result
+    }
+
+    async findById(commentId: string, userId?: string): Promise<CommentViewModel | null> {
+
         const result = await CommentModel.findOne({_id: commentId});
-        console.log("result", result);
         if (!result) {
             return null;
         }
-        return this.mapCommentToViewModel(result, likeStatus);
+
+        const likeInfo = userId ? await this.findLikeInfo(userId, commentId)
+                                : null
+
+
+        return this.mapCommentToViewModel(result, likeInfo?.myStatus);
     }
 
-    async findCommentByPost(queryDto: SortQueryFilterType, postId: string): Promise<PaginateQueryOutput<CommentViewModel>> {
+    async findCommentByPost(queryDto: SortQueryFilterType, postId: string, userId?: string): Promise<PaginateQueryOutput<CommentViewModel>> {
 
         const {pageNumber, pageSize, sortBy, sortDirection} = queryDto;
 
@@ -34,7 +50,10 @@ export class CommentQueryRepository {
 
         const totalCount = await CommentModel.countDocuments(filter)
 
-        const result = this.mapToCommentListPagination(items, pageNumber, pageSize, totalCount);
+        const likes = userId ? await this.findLikesInfo(userId) || undefined : undefined;
+
+
+        const result = this.mapToCommentListPagination(items, pageNumber, pageSize, totalCount,likes );
         return result;
     }
 
@@ -43,8 +62,10 @@ export class CommentQueryRepository {
         items: CommentDocument[],
         pageNumber: number,
         pageSize: number,
-        totalCount: number
+        totalCount: number,
+        likes?: LikeDbType[],
     ): PaginateQueryOutput<CommentViewModel> {
+
         const pagesCount = Math.ceil(totalCount / pageSize);
 
         return {
@@ -52,12 +73,25 @@ export class CommentQueryRepository {
             page: pageNumber,
             pageSize: pageSize,
             totalCount: totalCount,
-            items: items.map((comment) => this.mapCommentToViewModel(comment))
+            items: items.map((comment) => {
+                let myStatus = "None";
+
+                if (likes) {
+                    for (const like of likes) {
+                        if (like.commentId === comment._id.toString()) {
+                            myStatus = like.myStatus;
+                            break;
+                        }
+                    }
+                }
+
+                return this.mapCommentToViewModel(comment, myStatus);
+            })
         }
     }
 
 
-    mapCommentToViewModel(comment: CommentDocument,likeStatus:string = "None"): CommentViewModel {
+    mapCommentToViewModel(comment: CommentDocument, likeStatus: string = "None"): CommentViewModel {
         return {
             id: comment._id.toString(),
             content: comment.content,
@@ -66,10 +100,10 @@ export class CommentQueryRepository {
                 userLogin: comment.commentatorInfo.userLogin
             },
             createdAt: comment.createdAt.toISOString(),
-            likeInfo:{
-                likeCount: comment.likesInfo.likesCount,
-                dislikeCount: comment.likesInfo.dislikesCount,
-                myStatus:likeStatus
+            likesInfo: {
+                likesCount: comment.likesInfo.likesCount,
+                dislikesCount: comment.likesInfo.dislikesCount,
+                myStatus: likeStatus
 
             }
         }

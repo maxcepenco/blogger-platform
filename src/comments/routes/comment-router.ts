@@ -7,12 +7,15 @@ import {validationObjectIdParams} from "../../core/midleware/validationObjectIdP
 import {CommentController} from "../controller/comment-controller";
 import {container} from "../../composition-root";
 import {authenticateUser} from "../middleware/authAccessTokenMiddleware";
+import {likeStatusValidation} from "../validation/like-status-validation";
+import {commentIdValidation} from "../validation/commnetId-validation";
 
 const commentController = container.get(CommentController)
 export const commentRouter = Router()
 
 commentRouter
     .get('/:id',
+        authenticateUser,
         validationObjectIdParams(),
         authenticateUser,
         commentController.getComment.bind(commentController)
@@ -27,7 +30,8 @@ commentRouter
 
     .put('/:id/like-status',
         accessTokenGuard,
-        idValidation,
+        likeStatusValidation,
+        commentIdValidation,
         handlerValidationErrors,
         commentController.addLike.bind(commentController)
     )

@@ -1,6 +1,6 @@
 import {UserQueryRepository} from "../../users/repository/user.query-repository";
 import {CommentRepository} from "../repository/commnet-repository";
-import {CommentDbType, LikeStatus} from "../types/comment-db-type";
+import {CommentDocument, LikeStatus} from "../types/comment-db-type";
 import {Result} from "../../core/result/result-type";
 import {ResultStatus} from "../../core/result/result-code";
 import {inject, injectable} from "inversify";
@@ -27,20 +27,8 @@ export class CommentService {
 
             })
 
-        // const newComment:CommentDbType = {
-        //     postId: postId,
-        //     content: content,
-        //     commentatorInfo: {
-        //         userId: userId,
-        //         userLogin: userLogin
-        //     },
-        //     likesInfo:{
-        //         likesCount: 0,
-        //         dislikesCount: 0
-        //     },
-        //     createdAt: new Date().toISOString()
-        // }
-        const result = await this.commentRepository.saveComment(newComment)
+
+        const result = await this.commentRepository.saveCreatedComment(newComment)
         if (!result) {
             return null;
         }
@@ -50,46 +38,40 @@ export class CommentService {
     async updateComment(commentId: string, comment: string, userId: string): Promise<Result<boolean | null>> {
 
         const foundComment = await this.commentRepository.findByIdDbType(commentId);
+
         if (!foundComment) {
             return {
                 status: ResultStatus.NotFound,
                 data: null,
             }
         }
+
         if (userId !== foundComment.commentatorInfo.userId) {
             return {
                 status: ResultStatus.Forbidden,
                 data: null,
             };
         }
-        const updatedComment: CommentDbType = {
-            postId: foundComment.postId,
-            content: comment,
-            commentatorInfo: foundComment.commentatorInfo,
-            createdAt: foundComment.createdAt,
-            likesInfo: {
-                likesCount: 0,
-                dislikesCount: 0,
+
+        foundComment.content = comment;
+
+        const result = await this.commentRepository.saveUpdatedComment(foundComment)
+        if (!result) {
+            return {
+                status: ResultStatus.NotFound,
+                data: null,
             }
         }
-
-        const result = await this.commentRepository.update(commentId, updatedComment)
         return {
             status: ResultStatus.Success,
-            data: result,
+            data: result
         }
+
 
     }
 
-    async addLikeForComment(commentId: string, likeStatus: LikeStatus, userId: string): Promise<Result<boolean>> {
 
-        if (!likeStatus) {
-            return {
-                status: ResultStatus.BadRequest,
-                data: false,
-                errorMessage: "Bad Request",
-            }
-        }
+    async addLikeForComment(commentId: string, likeStatus: LikeStatus, userId: string): Promise<Result<boolean>> {
 
         const comment = await this.commentRepository.findByIdDbType(commentId)
         if (!comment) {
@@ -99,6 +81,7 @@ export class CommentService {
                 errorMessage: "Not found"
             }
         }
+
         const existingLike = await this.commentRepository.findLike(commentId, userId);
 
         if (!existingLike) {
@@ -107,9 +90,8 @@ export class CommentService {
             likeInfo.commentId = commentId
             likeInfo.userId = userId
             likeInfo.myStatus = likeStatus
-            console.log("likeInfo",likeInfo)
-            await this.commentRepository.saveLikeInfo(likeInfo)
 
+            await this.commentRepository.saveLikeInfo(likeInfo)
 
             if (likeStatus === LikeStatus.Like) {
                 comment.likesInfo.likesCount++
@@ -120,7 +102,7 @@ export class CommentService {
                 comment.likesInfo.dislikesCount++
 
             }
-            await this.commentRepository.saveComment(comment)
+            await this.commentRepository.saveUpdatedComment(comment)
 
             return {
                 status: ResultStatus.Success,
@@ -128,47 +110,111 @@ export class CommentService {
             }
         }
 
-        if (likeStatus === existingLike.myStatus && likeStatus === LikeStatus.None) {
+        if (likeStatus === existingLike.myStatus) {
             return {
                 status: ResultStatus.Success,
                 data: true
             }
         }
 
-        if (likeStatus === LikeStatus.Like && existingLike.myStatus === LikeStatus.Dislike) {
+        // const oldStatus = existingLike.myStatus
 
-            comment.likesInfo.dislikesCount--
-            comment.likesInfo.likesCount++
+        // const findStatus = async (statusLike: LikeStatus, oldStatusLike: LikeStatus) => {
+        //
+        //     if (likeStatus !== existingLike.myStatus) {
+        //
+        //         existingLike.myStatus = likeStatus
+        //
+        //         return await this.commentRepository.saveLikeInfo(existingLike)
+        //     }
+        // }
 
-            await this.commentRepository.saveComment(comment)
+        // if (likeStatus === LikeStatus.Like && existingLike.myStatus === LikeStatus.Dislike) {
+        //
+        //     comment.likesInfo.dislikesCount--
+        //     comment.likesInfo.likesCount++
+        //
+        //     await this.commentRepository.saveUpdatedComment(comment)
+        //
+        //     const resultStatus = findStatus(likeStatus, existingLike.myStatus)
+        //
+        //     return {
+        //         status: ResultStatus.Success,
+        //         data: true
+        //     }
+        // }
+        //
+        // if (likeStatus === LikeStatus.Dislike && oldStatus === LikeStatus.Like) {
+        //
+        //     comment.likesInfo.dislikesCount++
+        //     comment.likesInfo.likesCount--
+        //
+        //     await this.commentRepository.saveUpdatedComment(comment)
+        //
+        //     const resultStatus = findStatus(likeStatus, existingLike.myStatus)
+        //
+        //     return {
+        //         status: ResultStatus.Success,
+        //         data: true
+        //     }
+        // }
+        //
+        // if (likeStatus === LikeStatus.None && existingLike.myStatus === LikeStatus.Dislike) {
+        //
+        //     comment.likesInfo.dislikesCount--
+        //
+        //     await this.commentRepository.saveUpdatedComment(comment)
+        //
+        //     const resultStatus = findStatus(likeStatus, existingLike.myStatus)
+        //
+        //
+        // }
+        //
+        // if (likeStatus === LikeStatus.None && existingLike.myStatus === LikeStatus.Like) {
+        //
+        //     comment.likesInfo.likesCount--
+        //
+        //     await this.commentRepository.saveUpdatedComment(comment)
+        //
+        //     const resultStatus = findStatus(likeStatus, existingLike.myStatus)
+        //
+        // }
+        //
+        // if (likeStatus === LikeStatus.Like && existingLike.myStatus === LikeStatus.None) {
+        //
+        //     comment.likesInfo.likesCount++
+        //
+        //     await this.commentRepository.saveUpdatedComment(comment)
+        //
+        //     const resultStatus = findStatus(likeStatus, existingLike.myStatus)
+        //
+        //     return {
+        //         status: ResultStatus.Success,
+        //         data: true
+        //     }
+        // }
+        //
+        // if (likeStatus === LikeStatus.Dislike && oldStatus === LikeStatus.None) {
+        //
+        //     comment.likesInfo.dislikesCount++
+        //
+        //     await this.commentRepository.saveUpdatedComment(comment)
+        //     const resultStatus = findStatus(likeStatus, existingLike.myStatus)
+        //
+        //
+        //     return {
+        //         status: ResultStatus.Success,
+        //         data: true
+        //     }
+        // }
 
-            existingLike.myStatus = likeStatus
-            await this.commentRepository.saveLikeInfo(existingLike)
+        this.switchLikeStatus(comment, existingLike.myStatus, likeStatus)
 
-            return {
-                status:ResultStatus.Success,
-                data: true
-            }
-        }
+        existingLike.myStatus = likeStatus
 
-        if (likeStatus === LikeStatus.Dislike && existingLike.myStatus === LikeStatus.Like) {
+        await this.commentRepository.saveLikeInfo(existingLike)
 
-            comment.likesInfo.dislikesCount++
-            comment.likesInfo.likesCount--
-
-            await this.commentRepository.saveComment(comment)
-
-            existingLike.myStatus = likeStatus
-
-            await this.commentRepository.saveLikeInfo(existingLike)
-
-            return {
-                status: ResultStatus.Success,
-                data: true
-            }
-        }
-
-        await this.commentRepository.saveComment(comment)
+        await this.commentRepository.saveUpdatedComment(comment)
 
         return {
             status: ResultStatus.Success,
@@ -177,6 +223,39 @@ export class CommentService {
 
     }
 
+    private switchLikeStatus(comment: CommentDocument, oldStatus: LikeStatus, newStatus: LikeStatus) {
+        switch (newStatus) {
+
+            case LikeStatus.None:
+                if (oldStatus === LikeStatus.Like) {
+                    comment.likesInfo.likesCount--;
+                }
+                if (oldStatus === LikeStatus.Dislike) {
+                    comment.likesInfo.dislikesCount--;
+                }
+                break;
+
+            case LikeStatus.Like:
+                if (oldStatus === LikeStatus.Dislike) {
+                    comment.likesInfo.dislikesCount--;
+                    comment.likesInfo.likesCount++;
+                }
+                if (oldStatus === LikeStatus.None) {
+                    comment.likesInfo.likesCount++;
+                }
+                break;
+
+            case LikeStatus.Dislike:
+                if (oldStatus === LikeStatus.Like) {
+                    comment.likesInfo.likesCount--;
+                    comment.likesInfo.dislikesCount++;
+                }
+                if (oldStatus === LikeStatus.None) {
+                    comment.likesInfo.dislikesCount++;
+                }
+                break;
+        }
+    }
 
     async deleteComment(commentId: string, userId: string): Promise<Result<boolean | null>> {
 
@@ -200,7 +279,6 @@ export class CommentService {
             data: result,
         }
     }
-
 
 }
 
